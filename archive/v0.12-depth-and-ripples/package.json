@@ -1,0 +1,14 @@
+{
+  "name": "koi-motion-study",
+  "version": "0.12.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "check": "node --test tools/motion.test.mjs tools/school.test.mjs tools/rhythm.test.mjs tools/roaming.test.mjs tools/garden.test.mjs tools/water.test.mjs",
+    "preview": "python3 tools/preview.py --no-browser"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

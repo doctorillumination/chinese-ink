@@ -1,0 +1,39 @@
+
+> koi-motion-study@0.12.0 check
+> node --test tools/motion.test.mjs tools/school.test.mjs tools/rhythm.test.mjs tools/roaming.test.mjs tools/garden.test.mjs tools/water.test.mjs
+
+✔ painted leaves and petioles stay joined to their moving branches (8.700333ms)
+✔ pads and debris drift smoothly while rooted plants remain anchored and pause holds the pose (2.813666ms)
+✔ passing ripples carry pads and keep all painted leaf junctions connected (1.799834ms)
+✔ seeded exploration repeats exactly (23.84375ms)
+✔ spine length stays fixed through hard turns and maximum tail effort (11.139083ms)
+✔ a glide reduces forward speed and muscle effort without an instantaneous velocity change (1.856542ms)
+✔ stopping the preferred speed decays to rest without reversing or pivoting rapidly (12.473208ms)
+✔ angular acceleration is bounded during a sudden steering reversal (0.788417ms)
+✔ default cruise includes repeated active and low-effort phases (1.895625ms)
+✔ head path guides the tail through a turn after forward travel (1.418667ms)
+✔ long exploration stays finite and near the bounded study area (34.709292ms)
+✔ generated fish has finite vertices and normals across changing poses (22.490833ms)
+✔ spontaneous swimming adds short speed increases and quiet drifts with smooth acceleration (26.234125ms)
+✔ fish take spontaneous flutters and quiet periods on independent schedules (1836.624041ms)
+✔ avoidance braking still takes priority during a spontaneous flutter (3.852833ms)
+✔ the fixed view stays inhabited while individual fish can leave the frame (3613.883875ms)
+✔ the six-fish school is deterministic while its individuals retain different gaits (1031.760125ms)
+✔ three minutes of default schooling maintain torso clearance and bounded 3D motion (3601.230333ms)
+✔ all supported school sizes preserve torso clearance in the initial minute (9352.435291ms)
+✔ head-on and crossing encounters pass without overlapping torso envelopes (113.304917ms)
+✔ scatter and regroup preserve positions at activation, and regroup draws fish together sooner (978.527209ms)
+✔ a shared pointer destination retains space between the fish (1156.109125ms)
+✔ social perception ignores fish beyond the local sensing range (3.271791ms)
+✔ schooling produces shared headings more often than the independent preset (3148.2855ms)
+✔ a click wave travels outward, stays smooth, and expires without lingering displacement (1.201458ms)
+✔ water input is bounded during dragging, clears on reset, and rejects invalid coordinates (0.160167ms)
+✔ individual optical depths rise and fall smoothly without mutating swimming state (0.219417ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19464.121042

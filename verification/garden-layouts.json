@@ -1,5 +1,5 @@
 {
-  "edition": "0.12",
+  "edition": "0.13",
   "cases": [
     {
       "aspect": 0.45,
@@ -9,11 +9,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -24,11 +24,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -39,11 +39,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -54,11 +54,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -69,11 +69,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -84,11 +84,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -99,11 +99,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -114,11 +114,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     },
     {
@@ -129,11 +129,11 @@
       "free_pads_and_fragments": 12,
       "stem_vertices": 986,
       "times": [
-        0,
+        0.2,
         2,
         6
       ],
-      "ripples": true,
+      "shaped_waves": true,
       "finite": true
     }
   ]

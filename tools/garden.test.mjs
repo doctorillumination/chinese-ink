@@ -61,15 +61,21 @@ test('pads and debris drift smoothly while rooted plants remain anchored and pau
 
 test('passing ripples carry pads and keep all painted leaf junctions connected', () => {
   const garden = new InkGarden(), camera = view(), water = new WaterSurface();
-  garden.update(camera, 1);
+  garden.update(camera, 0);
   const freeIndex = garden.leafRecords.findIndex((leaf) => leaf.free);
   const anchor = garden.leafRecords[freeIndex].point;
-  const before = leafPoint(garden, freeIndex), root = centre(garden, garden.strokes[0].start);
-  water.add(anchor.x - RIPPLE_SPEED, anchor.z, 0); water.update(1);
-  garden.update(camera, 1, water.ripples);
-  assert.ok(leafPoint(garden, freeIndex).distanceTo(before) > .15);
-  assert.ok(centre(garden, garden.strokes[0].start).distanceTo(root) < .000001);
-  for (const joint of garden.branchJoints) assert.ok(centre(garden, joint.parentPair).distanceTo(centre(garden, joint.childPair)) < .000005);
-  for (const joint of garden.attachments) assert.ok(leafPoint(garden, joint.leafIndex).distanceTo(centre(garden, joint.stemEndPair)) < .000005);
+  const root = centre(garden, garden.strokes[0].start);
+  water.add(anchor.x - RIPPLE_SPEED, anchor.z, 0);
+  let displacement = 0;
+  for (let time = .5; time < 2; time += .05) {
+    garden.update(camera, time);
+    const before = leafPoint(garden, freeIndex);
+    water.update(time); garden.update(camera, time, water.ripples);
+    displacement = Math.max(displacement, leafPoint(garden, freeIndex).distanceTo(before));
+    assert.ok(centre(garden, garden.strokes[0].start).distanceTo(root) < .000001);
+    for (const joint of garden.branchJoints) assert.ok(centre(garden, joint.parentPair).distanceTo(centre(garden, joint.childPair)) < .000005);
+    for (const joint of garden.attachments) assert.ok(leafPoint(garden, joint.leafIndex).distanceTo(centre(garden, joint.stemEndPair)) < .000005);
+  }
+  assert.ok(displacement > .15);
   dispose(garden);
 });

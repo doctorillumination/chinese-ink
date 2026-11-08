@@ -1,7 +1,7 @@
 import * as THREE from '../vendor/three.module.js';
 import { inkNoise, inkLoadForFish } from './ink-material.mjs';
 import { InkGarden } from './ink-garden.mjs';
-import { WaterSurface, rippleGLSL, RIPPLE_SPEED } from './water.mjs';
+import { WaterSurface, rippleGLSL, rippleGeometryGLSL, RIPPLE_SPEED } from './water.mjs';
 
 const quadVertex = `
   varying vec2 vUv;
@@ -11,7 +11,7 @@ const quadVertex = `
 export class InkRenderer {
   constructor(renderer) {
     this.renderer = renderer;
-    this.params = { strength: 1.0, bleed: 0.85, trails: 0, paper: 0.65, water: 0.65, depth: .8, rippleInk: .75 };
+    this.params = { strength: 1.0, bleed: 0.85, trails: 0, paper: .78, water: 0.65, depth: .8, rippleInk: .75, surfaceLight: .7 };
     this.garden = new InkGarden();
     this.gardenTarget = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthBuffer: false });
     this.gardenTarget.samples = Math.min(2, renderer.capabilities.maxSamples);
@@ -59,6 +59,7 @@ export class InkRenderer {
         uQuantized: { value: floatingInk ? 0 : 1 },
         uHeads: { value: this.heads }, uTails: { value: this.tails }, uForward: { value: this.forward },
         uRipples: { value: this.ripples },
+        uRippleShapes: { value: this.water.shapes },
       },
       vertexShader: quadVertex,
       fragmentShader: `
@@ -67,9 +68,9 @@ export class InkRenderer {
         uniform float uSpan, uTexel, uTime, uDelta, uQuantized;
         uniform int uCount;
         uniform vec4 uHeads[9], uTails[9], uForward[9];
-        uniform vec4 uRipples[6];
         varying vec2 vUv;
         ${inkNoise}
+        ${rippleGeometryGLSL}
         float oldInk(vec2 uv) {
           if (uv.x < 0. || uv.y < 0. || uv.x > 1. || uv.y > 1.) return 0.;
           return texture2D(uPrevious, uv).r;
@@ -95,10 +96,11 @@ export class InkRenderer {
           }
           for (int i = 0; i < 6; i++) {
             if (uRipples[i].w < .5) continue;
-            vec2 d = world - uRipples[i].xy;
-            float r = length(d), age = uRipples[i].z;
-            float push = exp(-pow((r - age * ${RIPPLE_SPEED.toFixed(2)}) / .5, 2.)) * exp(-age * .26) * uRipples[i].w;
-            velocity += d / max(r, .01) * push * .18;
+            vec4 shape = rippleGeometry(world, i);
+            float age = uRipples[i].z;
+            float front = shape.z - age * ${RIPPLE_SPEED.toFixed(2)} * uRippleShapes[i].w;
+            float push = exp(-pow(front / .5, 2.)) * exp(-age * .26) * uRipples[i].w;
+            velocity += shape.xy * push * .18;
           }
           vec2 oldUv = (world - uOldCenter) / uSpan + .5 - velocity * uDelta / uSpan;
           float ink = oldInk(oldUv);
@@ -118,11 +120,13 @@ export class InkRenderer {
         uFish: { value: this.fishTarget.texture }, uSoft: { value: this.softTargets[1].texture }, uField: { value: this.fields[0].texture },
         uGarden: { value: this.gardenTarget.texture }, uTime: { value: 0 }, uWater: { value: .65 },
         uRippleInk: { value: .75 },
+        uSurfaceLight: { value: .7 },
         uResolution: { value: new THREE.Vector2(1, 1) }, uRatio: { value: 1 },
         uInverseProjection: { value: new THREE.Matrix4() }, uCameraWorld: { value: new THREE.Matrix4() },
         uCenter: { value: this.center }, uSpan: { value: this.span },
         uStrength: { value: 1 }, uBleed: { value: .65 }, uTrails: { value: 0 }, uPaper: { value: .65 },
         uRipples: { value: this.ripples },
+        uRippleShapes: { value: this.water.shapes },
       },
       vertexShader: quadVertex,
       fragmentShader: `
@@ -130,19 +134,35 @@ export class InkRenderer {
         uniform vec2 uResolution, uCenter;
         uniform mat4 uInverseProjection, uCameraWorld;
         uniform float uSpan, uRatio, uStrength, uBleed, uTrails, uPaper;
-        uniform float uTime, uWater, uRippleInk;
+        uniform float uTime, uWater, uRippleInk, uSurfaceLight;
         varying vec2 vUv;
         ${inkNoise}
         ${rippleGLSL}
+        float paperFibre(vec2 p, float seed) {
+          vec2 cell = floor(p), local = fract(p);
+          float sampleSeed = hash21(cell + seed);
+          float angle = hash21(cell.yx + seed * 3.7) * 6.28318;
+          vec2 axis = vec2(cos(angle), sin(angle));
+          vec2 center = .28 + vec2(hash21(cell + seed + 8.), hash21(cell + seed + 17.)) * .44;
+          vec2 d = local - center;
+          float along = dot(d, axis), across = dot(d, vec2(-axis.y, axis.x));
+          across -= sin(along * 13. + sampleSeed * 6.) * .015;
+          float halfLength = .07 + sampleSeed * .14;
+          float distance = length(vec2(max(0., abs(along) - halfLength), across));
+          float strand = 1. - smoothstep(.009, .045, distance);
+          return strand * (sampleSeed - .45) * smoothstep(.28, .62, hash21(cell + seed + 27.));
+        }
         void main() {
           vec2 pixel = 1. / uResolution;
           vec2 paperPixel = gl_FragCoord.xy / uRatio;
-          float cotton = fbm2(paperPixel * vec2(.085, .34));
+          float cotton = fbm2(paperPixel * vec2(.18, .15));
           float tooth = noise2(paperPixel * .75);
-          float fibre = noise2(paperPixel * vec2(.026, .60));
           float broad = fbm2(paperPixel * .006);
-          vec3 paper = vec3(.968, .965, .946);
-          paper += (cotton * .018 + tooth * .013 + fibre * .012 + broad * .014 - .028) * uPaper;
+          float pulp = fbm2(paperPixel * .024 + vec2(broad * 2., cotton));
+          float threads = paperFibre(paperPixel / 13., 6.) + paperFibre(paperPixel / 6.5, 31.) * .5;
+          vec3 paper = vec3(.965, .963, .950);
+          paper += ((cotton - .5) * .035 + (tooth - .5) * .019 + (pulp - .5) * .045
+                   + (broad - .5) * .025 + threads * .045) * uPaper;
           vec4 nearView = uInverseProjection * vec4(vUv * 2. - 1., -1., 1.);
           vec3 origin = (uCameraWorld * vec4(nearView.xyz, 1.)).xyz;
           vec3 ray = normalize((uCameraWorld * vec4(0., 0., -1., 0.)).xyz);
@@ -157,7 +177,9 @@ export class InkRenderer {
           float lapB = sin(length(ringB) * 3.1 - uTime * .73 + 1.4);
           slope += ringA / max(length(ringA), .05) * lapA * .19;
           slope += ringB / max(length(ringB), .05) * lapB * .13;
-          vec3 ripple = waterRipple(surface);
+          float surfaceRelief = dot(slope, vec2(-.55, -.835)) * .018;
+          surfaceRelief += sin(dot(surface, vec2(.33, .19)) - uTime * .14) * .004;
+          vec4 ripple = waterRipple(surface);
           slope += ripple.xy * 2.4;
           vec2 warp = vec2(fbm2(paperPixel * .075), fbm2(paperPixel.yx * .069 + 13.)) - .5;
           vec2 uv = vUv + warp * pixel * uRatio * uBleed * 2.3;
@@ -175,10 +197,11 @@ export class InkRenderer {
           float wetness = .72 + fbm2(paperPixel * .035) * .28;
           float interior = smoothstep(.60, .95, softInk.g);
           // Preserve brush detail inside bodies and fins, with wet margins outside.
-          float softness = mix(.68, .14, interior);
+          float softness = mix(.42, .12, interior);
           float pigment = mix(coreInk.r, softInk.r, uBleed * softness);
           float haze = smoothstep(.08, .85, depth);
-          pigment = mix(pigment, softInk.r, haze * .85);
+          float definition = smoothstep(.12, .75, coreInk.g);
+          pigment = mix(pigment, softInk.r, haze * mix(.40, .20, definition));
           pigment += halo * uBleed * .08 * wetness;
           pigment *= 1. - depth * .46;
           float lensLight = 1. + uWater * (.045 * lapA + .025 * lapB);
@@ -194,6 +217,8 @@ export class InkRenderer {
           pigment *= 1. + (cotton - .5) * uPaper * .12 + (tooth - .5) * uPaper * .09;
           vec3 absorption = mix(vec3(3.3, 3.0, 2.75), vec3(3.5, 3.7, 3.95), smoothstep(.14, .8, pigment));
           vec3 colour = paper * exp(-pigment * uStrength * absorption);
+          colour *= 1. + surfaceRelief * uSurfaceLight * uWater;
+          colour += vec3(ripple.w) * uSurfaceLight * (.35 + uRippleInk * .65) * (1. - garden.g * .85);
           gl_FragColor = vec4(colour, 1.);
         }
       `,
@@ -268,7 +293,7 @@ export class InkRenderer {
     renderer.clear();
     renderer.render(this.garden.scene, camera);
     const blur = this.blurMaterial.uniforms;
-    const radius = (.18 + this.params.bleed * .45 + this.params.depth * 1.25) * renderer.getPixelRatio();
+    const radius = (.18 + this.params.bleed * .45 + this.params.depth * .40) * renderer.getPixelRatio();
     this.quad.material = this.blurMaterial;
     blur.uSource.value = this.fishTarget.texture;
     blur.uDirection.value.set(radius / this.softTargets[0].width, 0);
@@ -289,6 +314,7 @@ export class InkRenderer {
     u.uTime.value = school.time;
     u.uWater.value = this.params.water;
     u.uRippleInk.value = this.params.rippleInk;
+    u.uSurfaceLight.value = this.params.surfaceLight;
     this.quad.material = this.displayMaterial;
     renderer.setRenderTarget(null);
     renderer.render(this.quadScene, this.quadCamera);

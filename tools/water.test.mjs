@@ -6,19 +6,46 @@ test('a click wave travels outward, stays smooth, and expires without lingering 
   const water = new WaterSurface(), out = {};
   assert.ok(water.add(0, 0, 0));
   water.update(1);
-  const ahead = sampleWaterRipples(water.ripples, RIPPLE_SPEED * 2, 0, out).x;
-  const front = sampleWaterRipples(water.ripples, RIPPLE_SPEED, 0, out).x;
-  assert.ok(front > .15 && Math.abs(ahead) < front * .05);
+  const peak = () => {
+    let best = { radius: 0, displacement: 0 };
+    for (let radius = .1; radius < 8; radius += .025) {
+      sampleWaterRipples(water.ripples, radius, 0, out);
+      if (out.x > best.displacement) best = { radius, displacement: out.x };
+    }
+    return best;
+  };
+  const first = peak();
+  assert.ok(first.displacement > .15);
+  assert.ok(Math.abs(sampleWaterRipples(water.ripples, 8, 0, out).x) < .001);
   water.update(2);
-  const nextFront = sampleWaterRipples(water.ripples, RIPPLE_SPEED * 2, 0, out).x;
-  assert.ok(nextFront > .12, 'the wave must reach the more distant pad');
+  const next = peak();
+  assert.ok(next.radius > first.radius + 1.5 && next.displacement > .12, 'the wave must reach more distant pads');
   water.update(2.001);
-  assert.ok(Math.abs(sampleWaterRipples(water.ripples, RIPPLE_SPEED * 2, 0, out).x - nextFront) < .003);
+  assert.ok(Math.abs(sampleWaterRipples(water.ripples, next.radius, 0, out).x - next.displacement) < .003);
   const paused = water.ripples.map((ripple) => ripple.toArray());
   water.update(2.001);
   assert.deepEqual(water.ripples.map((ripple) => ripple.toArray()), paused);
   water.update(RIPPLE_LIFE + 1);
   assert.deepEqual(sampleWaterRipples(water.ripples, RIPPLE_SPEED * 2, 0, out), { x: 0, z: 0, height: 0 });
+});
+
+test('click waves have repeatable directional variation instead of circular symmetry', () => {
+  const water = new WaterSurface(), repeat = new WaterSurface(), out = {};
+  water.add(0, 0, 0); repeat.add(0, 0, 0);
+  assert.deepEqual(water.shapes.map((shape) => shape.toArray()), repeat.shapes.map((shape) => shape.toArray()));
+  water.update(2);
+  const radii = [0, Math.PI / 4, Math.PI / 2, Math.PI * .75].map((angle) => {
+    let best = 0, peakRadius = 0;
+    for (let radius = 2.5; radius < 7; radius += .02) {
+      sampleWaterRipples(water.ripples, Math.cos(angle) * radius, Math.sin(angle) * radius, out);
+      const push = Math.hypot(out.x, out.z);
+      if (push > best) { best = push; peakRadius = radius; }
+    }
+    return peakRadius;
+  });
+  assert.ok(Math.max(...radii) - Math.min(...radii) > .2, 'wavefront reaches different directions at different distances');
+  water.add(0, 0, .2);
+  assert.notDeepEqual(water.shapes[0].toArray(), water.shapes[1].toArray());
 });
 
 test('water input is bounded during dragging, clears on reset, and rejects invalid coordinates', () => {

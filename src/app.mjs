@@ -389,7 +389,7 @@ for (const button of document.querySelectorAll('button[data-rendering]')) button
   state.rendering = button.dataset.rendering;
   applyRendering();
 });
-const inkControls = { 'ink-strength': 'strength', 'ink-bleed': 'bleed', 'ink-trails': 'trails', 'paper-grain': 'paper', 'water-refraction': 'water', 'water-depth': 'depth', 'ripple-ink': 'rippleInk' };
+const inkControls = { 'ink-strength': 'strength', 'ink-bleed': 'bleed', 'ink-trails': 'trails', 'paper-grain': 'paper', 'water-refraction': 'water', 'water-depth': 'depth', 'ripple-ink': 'rippleInk', 'surface-light': 'surfaceLight' };
 function updateInkControls() {
   for (const [id, key] of Object.entries(inkControls)) {
     const input = $(id), value = ink.params[key];
@@ -462,6 +462,8 @@ function updateTelemetry() {
     inkPrecision: ink.precision,
     waterRefraction: ink.params.water.toFixed(2),
     waterDepth: ink.params.depth.toFixed(2),
+    surfaceLight: ink.params.surfaceLight.toFixed(2),
+    paperGrain: ink.params.paper.toFixed(2),
     fishDepths: models.map((model) => model.inkDepth.toFixed(3)).join(','),
     activeRipples: String(ink.ripples.filter((ripple) => ripple.w > 0).length),
     rippleCount: String(ink.water.count),
@@ -539,7 +541,7 @@ function reset() {
   updatePlayback();
   updateProjection();
   state.rendering = 'ink';
-  Object.assign(ink.params, { strength: 1, bleed: 0.85, trails: 0, paper: 0.65, water: 0.65, depth: .8, rippleInk: .75 });
+  Object.assign(ink.params, { strength: 1, bleed: 0.85, trails: 0, paper: .78, water: 0.65, depth: .8, rippleInk: .75, surfaceLight: .7 });
   applyRendering();
   updateInkControls();
 }

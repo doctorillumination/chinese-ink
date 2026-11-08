@@ -1,0 +1,20 @@
+{
+  "changed_pixels_over_2": 46370,
+  "comparison": "Paused school, Water refraction 0% versus 100%",
+  "edition": "0.9",
+  "image_size": [
+    1517,
+    1243
+  ],
+  "quiet_paper_max_channel_difference": 2,
+  "quiet_paper_mean_channel_difference": 0.00041300980898296334,
+  "quiet_paper_patch_normalized": [
+    0.4,
+    0.12,
+    0.7,
+    0.24
+  ],
+  "encoding": "JPEG screenshots decoded with CoreGraphics",
+  "paper_comparison_tolerance_per_channel": 2,
+  "interpretation": "Fish image changes; the quiet paper sample is unchanged within negligible JPEG differences (at most 2/255 per channel)."
+}

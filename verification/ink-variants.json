@@ -1,5 +1,5 @@
 {
-  "edition": "0.12",
+  "edition": "0.13",
   "default_school": {
     "dense": 2,
     "contour": 2,
@@ -99,5 +99,5 @@
   ],
   "marks_attached_to_body_coordinates": true,
   "local_bleed": "Irregular, warped pigment cores with narrow, spatially varying feathered fringes.",
-  "fish_materials_retained_from": "Family parameters retained from 0.11, with depth metadata and broad wash modulation added."
+  "fish_materials_retained_from": "0.12"
 }
