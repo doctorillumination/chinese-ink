@@ -1,6 +1,7 @@
 import * as THREE from '../vendor/three.module.js';
 import { inkNoise, inkLoadForFish } from './ink-material.mjs';
 import { InkGarden } from './ink-garden.mjs';
+import { WaterSurface, rippleGLSL, RIPPLE_SPEED } from './water.mjs';
 
 const quadVertex = `
   varying vec2 vUv;
@@ -10,7 +11,7 @@ const quadVertex = `
 export class InkRenderer {
   constructor(renderer) {
     this.renderer = renderer;
-    this.params = { strength: 1.0, bleed: 0.85, trails: 0, paper: 0.65, water: 0.65 };
+    this.params = { strength: 1.0, bleed: 0.85, trails: 0, paper: 0.65, water: 0.65, depth: .8, rippleInk: .75 };
     this.garden = new InkGarden();
     this.gardenTarget = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthBuffer: false });
     this.gardenTarget.samples = Math.min(2, renderer.capabilities.maxSamples);
@@ -48,10 +49,8 @@ export class InkRenderer {
     this.heads = Array.from({ length: 9 }, () => new THREE.Vector4());
     this.tails = Array.from({ length: 9 }, () => new THREE.Vector4());
     this.forward = Array.from({ length: 9 }, () => new THREE.Vector4());
-    this.ripples = Array.from({ length: 6 }, () => new THREE.Vector4(0, 0, 0, 0));
-    this.rippleStarts = Array(6).fill(-100);
-    this.rippleIndex = 0;
-    this.lastRippleTime = -100;
+    this.water = new WaterSurface();
+    this.ripples = this.water.ripples;
     this.flowMaterial = new THREE.ShaderMaterial({
       uniforms: {
         uPrevious: { value: null }, uCenter: { value: this.center }, uOldCenter: { value: this.previousCenter },
@@ -98,7 +97,7 @@ export class InkRenderer {
             if (uRipples[i].w < .5) continue;
             vec2 d = world - uRipples[i].xy;
             float r = length(d), age = uRipples[i].z;
-            float push = exp(-pow((r - age * 1.7) / .3, 2.)) * exp(-age * 1.3);
+            float push = exp(-pow((r - age * ${RIPPLE_SPEED.toFixed(2)}) / .5, 2.)) * exp(-age * .26) * uRipples[i].w;
             velocity += d / max(r, .01) * push * .18;
           }
           vec2 oldUv = (world - uOldCenter) / uSpan + .5 - velocity * uDelta / uSpan;
@@ -118,6 +117,7 @@ export class InkRenderer {
       uniforms: {
         uFish: { value: this.fishTarget.texture }, uSoft: { value: this.softTargets[1].texture }, uField: { value: this.fields[0].texture },
         uGarden: { value: this.gardenTarget.texture }, uTime: { value: 0 }, uWater: { value: .65 },
+        uRippleInk: { value: .75 },
         uResolution: { value: new THREE.Vector2(1, 1) }, uRatio: { value: 1 },
         uInverseProjection: { value: new THREE.Matrix4() }, uCameraWorld: { value: new THREE.Matrix4() },
         uCenter: { value: this.center }, uSpan: { value: this.span },
@@ -130,10 +130,10 @@ export class InkRenderer {
         uniform vec2 uResolution, uCenter;
         uniform mat4 uInverseProjection, uCameraWorld;
         uniform float uSpan, uRatio, uStrength, uBleed, uTrails, uPaper;
-        uniform float uTime, uWater;
-        uniform vec4 uRipples[6];
+        uniform float uTime, uWater, uRippleInk;
         varying vec2 vUv;
         ${inkNoise}
+        ${rippleGLSL}
         void main() {
           vec2 pixel = 1. / uResolution;
           vec2 paperPixel = gl_FragCoord.xy / uRatio;
@@ -157,18 +157,16 @@ export class InkRenderer {
           float lapB = sin(length(ringB) * 3.1 - uTime * .73 + 1.4);
           slope += ringA / max(length(ringA), .05) * lapA * .19;
           slope += ringB / max(length(ringB), .05) * lapB * .13;
-          for (int i = 0; i < 6; i++) {
-            if (uRipples[i].w < .5) continue;
-            vec2 d = surface - uRipples[i].xy;
-            float r = length(d), age = uRipples[i].z;
-            float front = r - age * 1.7;
-            float pulse = cos(front * 7.) * exp(-front * front / .38) * exp(-age * 1.2);
-            slope += d / max(r, .05) * pulse * 1.1;
-          }
+          vec3 ripple = waterRipple(surface);
+          slope += ripple.xy * 2.4;
           vec2 warp = vec2(fbm2(paperPixel * .075), fbm2(paperPixel.yx * .069 + 13.)) - .5;
           vec2 uv = vUv + warp * pixel * uRatio * uBleed * 2.3;
-          // Only the submerged ink is refracted. Paper and surface leaves stay quiet.
-          uv += slope * pixel * uRatio * uWater * 4.4;
+          vec3 metadata = texture2D(uSoft, vUv).rgb;
+          float depth = clamp(metadata.b / max(metadata.g, .001), 0., 1.);
+          vec3 deflection = vec3(slope.x, 0., slope.y);
+          vec2 screenSlope = vec2(dot(deflection, uCameraWorld[0].xyz), dot(deflection, uCameraWorld[1].xyz));
+          // Deeper ink moves further beneath the same surface wave.
+          uv += screenSlope * pixel * uRatio * uWater * (1.8 + depth * 7.5);
           vec3 coreInk = texture2D(uFish, uv).rgb;
           vec3 softInk = texture2D(uSoft, uv).rgb;
           vec2 softStep = pixel * uRatio * (2. + uBleed * 3.);
@@ -176,17 +174,20 @@ export class InkRenderer {
                       + texture2D(uSoft, uv + vec2(0,softStep.y)).r + texture2D(uSoft, uv - vec2(0,softStep.y)).r) * .25;
           float wetness = .72 + fbm2(paperPixel * .035) * .28;
           float interior = smoothstep(.60, .95, softInk.g);
-          float fin = clamp(coreInk.b / max(coreInk.g, .001), 0., 1.);
           // Preserve brush detail inside bodies and fins, with wet margins outside.
-          float softness = mix(mix(.80, .14, interior), .22, fin);
+          float softness = mix(.68, .14, interior);
           float pigment = mix(coreInk.r, softInk.r, uBleed * softness);
-          pigment += halo * uBleed * .10 * wetness;
+          float haze = smoothstep(.08, .85, depth);
+          pigment = mix(pigment, softInk.r, haze * .85);
+          pigment += halo * uBleed * .08 * wetness;
+          pigment *= 1. - depth * .46;
           float lensLight = 1. + uWater * (.045 * lapA + .025 * lapB);
           pigment *= lensLight;
           vec2 fieldUv = (world.xz - uCenter) / uSpan + .5;
           float trail = 0.;
           if (min(fieldUv.x,fieldUv.y) > 0. && max(fieldUv.x,fieldUv.y) < 1.) trail = texture2D(uField, fieldUv).r;
           pigment += trail * uTrails * 2.5;
+          pigment += ripple.z * uRippleInk;
           vec2 gardenWarp = (vec2(noise2(paperPixel * .11 + 7.), noise2(paperPixel.yx * .13)) - .5) * pixel * uRatio * .7;
           vec2 garden = texture2D(uGarden, vUv + gardenWarp).rg;
           pigment = pigment * (1. - garden.g) + garden.r;
@@ -217,17 +218,11 @@ export class InkRenderer {
     renderer.setClearColor(color, alpha);
     this.accumulator = 0;
     this.lastTime = 0;
-    this.rippleStarts.fill(-100);
-    for (const ripple of this.ripples) ripple.w = 0;
-    this.lastRippleTime = -100;
+    this.water.clear();
   }
 
-  ripple(x, z, time) {
-    if (time - this.lastRippleTime < .22) return;
-    const i = this.rippleIndex++ % this.ripples.length;
-    this.ripples[i].set(x, z, 0, 1);
-    this.rippleStarts[i] = time;
-    this.lastRippleTime = time;
+  ripple(x, z, time, strength = 1) {
+    return this.water.add(x, z, time, strength);
   }
 
   resize(width, height, ratio) {
@@ -242,10 +237,7 @@ export class InkRenderer {
     const renderer = this.renderer;
     const delta = Math.max(0, Math.min(.1, school.time - this.lastTime));
     this.lastTime = school.time;
-    this.ripples.forEach((ripple, i) => {
-      ripple.z = school.time - this.rippleStarts[i];
-      ripple.w = ripple.z < 2.4 ? 1 : 0;
-    });
+    this.water.update(school.time);
     this.accumulator += delta;
     if (this.accumulator >= 1 / 30) {
       this.previousCenter.copy(this.center);
@@ -271,12 +263,12 @@ export class InkRenderer {
     renderer.setRenderTarget(this.fishTarget);
     renderer.clear();
     renderer.render(scene, camera);
-    this.garden.update(camera, school.time);
+    this.garden.update(camera, school.time, this.ripples);
     renderer.setRenderTarget(this.gardenTarget);
     renderer.clear();
     renderer.render(this.garden.scene, camera);
     const blur = this.blurMaterial.uniforms;
-    const radius = (.18 + this.params.bleed * .45) * renderer.getPixelRatio();
+    const radius = (.18 + this.params.bleed * .45 + this.params.depth * 1.25) * renderer.getPixelRatio();
     this.quad.material = this.blurMaterial;
     blur.uSource.value = this.fishTarget.texture;
     blur.uDirection.value.set(radius / this.softTargets[0].width, 0);
@@ -296,6 +288,7 @@ export class InkRenderer {
     u.uPaper.value = this.params.paper;
     u.uTime.value = school.time;
     u.uWater.value = this.params.water;
+    u.uRippleInk.value = this.params.rippleInk;
     this.quad.material = this.displayMaterial;
     renderer.setRenderTarget(null);
     renderer.render(this.quadScene, this.quadCamera);

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three.module.js';
 import { InkGarden } from '../src/ink-garden.mjs';
+import { WaterSurface, RIPPLE_SPEED } from '../src/water.mjs';
 
 function view() {
   const camera = new THREE.OrthographicCamera(-12.75, 12.75, 8.5, -8.5, .1, 150);
@@ -55,5 +56,20 @@ test('pads and debris drift smoothly while rooted plants remain anchored and pau
   const paused = Array.from(garden.leaves.geometry.attributes.aOrigin.array);
   garden.update(camera, 20.1);
   assert.deepEqual(Array.from(garden.leaves.geometry.attributes.aOrigin.array), paused);
+  dispose(garden);
+});
+
+test('passing ripples carry pads and keep all painted leaf junctions connected', () => {
+  const garden = new InkGarden(), camera = view(), water = new WaterSurface();
+  garden.update(camera, 1);
+  const freeIndex = garden.leafRecords.findIndex((leaf) => leaf.free);
+  const anchor = garden.leafRecords[freeIndex].point;
+  const before = leafPoint(garden, freeIndex), root = centre(garden, garden.strokes[0].start);
+  water.add(anchor.x - RIPPLE_SPEED, anchor.z, 0); water.update(1);
+  garden.update(camera, 1, water.ripples);
+  assert.ok(leafPoint(garden, freeIndex).distanceTo(before) > .15);
+  assert.ok(centre(garden, garden.strokes[0].start).distanceTo(root) < .000001);
+  for (const joint of garden.branchJoints) assert.ok(centre(garden, joint.parentPair).distanceTo(centre(garden, joint.childPair)) < .000005);
+  for (const joint of garden.attachments) assert.ok(leafPoint(garden, joint.leafIndex).distanceTo(centre(garden, joint.stemEndPair)) < .000005);
   dispose(garden);
 });

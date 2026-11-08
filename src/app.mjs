@@ -170,17 +170,22 @@ for (const button of document.querySelectorAll('[data-view]')) {
 const raycaster = new THREE.Raycaster();
 const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 const pointerWorld = new THREE.Vector3();
-function steerAt(event, persistent = false) {
+function projectPointer(event) {
   const rect = renderer.domElement.getBoundingClientRect();
   const pointer = new THREE.Vector2((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
   raycaster.setFromCamera(pointer, camera);
-  if (raycaster.ray.intersectPlane(plane, pointerWorld)) {
+  return raycaster.ray.intersectPlane(plane, pointerWorld);
+}
+function disturbAt(event, strength = 1) {
+  if (projectPointer(event)) ink.ripple(pointerWorld.x, pointerWorld.z, school.time, strength);
+}
+function steerAt(event, persistent = false) {
+  if (projectPointer(event)) {
     // A side view can intersect a distant plane. Keep input local to the fish.
     const center = school.centroid;
     const offset = pointerWorld.clone().sub(new THREE.Vector3(center.x, 0, center.z));
     if (offset.length() > 20) offset.setLength(20);
     school.setTarget(center.x + offset.x, center.z + offset.z, persistent);
-    if (state.rendering === 'ink') ink.ripple(center.x + offset.x, center.z + offset.z, school.time);
     if (school.mode === 'straight') {
       school.mode = 'wander';
       $('mode').value = school.mode;
@@ -196,13 +201,23 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
   renderer.domElement.setPointerCapture(event.pointerId);
   pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
   gesture = { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, moved: false, multiple: pointers.size > 1 };
-  if (pointers.size === 2) {
+  if (state.rendering === 'ink') disturbAt(event);
+  if (pointers.size === 2 && state.rendering !== 'ink') {
     const p = [...pointers.values()];
     pinchDistance = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
   }
 });
 renderer.domElement.addEventListener('pointermove', (event) => {
   if (pointers.has(event.pointerId)) pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+  if (state.rendering === 'ink') {
+    if (gesture && pointers.has(event.pointerId)) {
+      if (Math.hypot(event.clientX - gesture.startX, event.clientY - gesture.startY) > 5) {
+        gesture.moved = true;
+        disturbAt(event, .60);
+      }
+    } else if (school.mode === 'pointer' && event.pointerType !== 'touch') steerAt(event, true);
+    return;
+  }
   if (pointers.size === 2) {
     const p = [...pointers.values()];
     const distance = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
@@ -232,7 +247,7 @@ renderer.domElement.addEventListener('pointermove', (event) => {
   }
 });
 function releasePointer(event, cancelled = false) {
-  if (!cancelled && gesture && !gesture.moved && !gesture.multiple) steerAt(event, school.mode === 'pointer');
+  if (!cancelled && gesture && !gesture.moved && !gesture.multiple && (state.rendering !== 'ink' || school.mode === 'pointer')) steerAt(event, school.mode === 'pointer');
   pointers.delete(event.pointerId);
   if (!pointers.size) gesture = null;
   pinchDistance = 0;
@@ -241,6 +256,7 @@ renderer.domElement.addEventListener('pointerup', (event) => releasePointer(even
 renderer.domElement.addEventListener('pointercancel', (event) => releasePointer(event, true));
 renderer.domElement.addEventListener('wheel', (event) => {
   event.preventDefault();
+  if (state.rendering === 'ink') return;
   cameraState.zoom = clamp(cameraState.zoom * Math.exp(event.deltaY * 0.001), 0.4, 2.5);
   updateProjection();
 }, { passive: false });
@@ -360,6 +376,8 @@ function applyRendering() {
   renderer.shadowMap.enabled = !isInk;
   for (const model of models) model.setStyle(state.rendering);
   $('ink-controls').hidden = !isInk;
+  $('gesture-hint').innerHTML = isInk ? 'Click for ripples <span>·</span> Drag to stir the water' : 'Drag to orbit <span>·</span> Scroll to zoom <span>·</span> Click to steer';
+  $('scene').setAttribute('aria-label', isInk ? 'Ink pond. Click for spreading ripples or drag to stir the water. The camera stays still.' : '3D fish. Drag to orbit, scroll to zoom, or click to steer.');
   for (const button of document.querySelectorAll('button[data-rendering]')) {
     const active = button.dataset.rendering === state.rendering;
     button.classList.toggle('active', active);
@@ -371,7 +389,7 @@ for (const button of document.querySelectorAll('button[data-rendering]')) button
   state.rendering = button.dataset.rendering;
   applyRendering();
 });
-const inkControls = { 'ink-strength': 'strength', 'ink-bleed': 'bleed', 'ink-trails': 'trails', 'paper-grain': 'paper', 'water-refraction': 'water' };
+const inkControls = { 'ink-strength': 'strength', 'ink-bleed': 'bleed', 'ink-trails': 'trails', 'paper-grain': 'paper', 'water-refraction': 'water', 'water-depth': 'depth', 'ripple-ink': 'rippleInk' };
 function updateInkControls() {
   for (const [id, key] of Object.entries(inkControls)) {
     const input = $(id), value = ink.params[key];
@@ -443,6 +461,11 @@ function updateTelemetry() {
     rendering: state.rendering,
     inkPrecision: ink.precision,
     waterRefraction: ink.params.water.toFixed(2),
+    waterDepth: ink.params.depth.toFixed(2),
+    fishDepths: models.map((model) => model.inkDepth.toFixed(3)).join(','),
+    activeRipples: String(ink.ripples.filter((ripple) => ripple.w > 0).length),
+    rippleCount: String(ink.water.count),
+    pointerAction: state.rendering === 'ink' ? 'water' : 'orbit',
     surfaceLeaves: String(ink.garden.leafCount),
     cameraTracking: String(state.follow),
     cameraPosition: camera.position.toArray().map((v) => v.toFixed(6)).join(','),
@@ -516,7 +539,7 @@ function reset() {
   updatePlayback();
   updateProjection();
   state.rendering = 'ink';
-  Object.assign(ink.params, { strength: 1, bleed: 0.85, trails: 0, paper: 0.65, water: 0.65 });
+  Object.assign(ink.params, { strength: 1, bleed: 0.85, trails: 0, paper: 0.65, water: 0.65, depth: .8, rippleInk: .75 });
   applyRendering();
   updateInkControls();
 }
@@ -543,7 +566,7 @@ function animate(now) {
       accumulator -= FIXED_STEP;
     }
   }
-  for (const fish of models) fish.update();
+  for (const fish of models) { fish.depthAmount = ink.params.depth; fish.update(); }
   if (state.trail) updateTrail();
   updateCamera(realDelta || 1 / 60);
   targetMarker.visible = Boolean(school.target) && state.rendering !== 'ink';

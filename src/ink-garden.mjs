@@ -1,5 +1,6 @@
 import * as THREE from '../vendor/three.module.js';
 import { inkNoise } from './ink-material.mjs';
+import { sampleWaterRipples } from './water.mjs';
 
 export class InkGarden {
   constructor() {
@@ -10,6 +11,8 @@ export class InkGarden {
     this.strokes = [];
     this.attachments = [];
     this.branchJoints = [];
+    this.ripples = [];
+    this.waterSample = { x: 0, z: 0, height: 0 };
     this.leafMaterial = new THREE.ShaderMaterial({
       vertexShader: `
         attribute vec3 aOrigin;
@@ -124,7 +127,8 @@ export class InkGarden {
     this.scene.add(this.leaves);
   }
 
-  update(camera, time) {
+  update(camera, time, ripples = []) {
+    this.ripples = ripples;
     const key = [...camera.projectionMatrix.elements, ...camera.matrixWorld.elements].map((v) => v.toFixed(4)).join(',');
     if (key !== this.layoutKey) {
       this.layoutKey = key;
@@ -141,7 +145,8 @@ export class InkGarden {
       + (Math.sin(time * .13 + seed * 2.1) - Math.sin(seed * 2.1)) * amplitude * .20;
     const flowX = (Math.sin(point.z * .43 + time * .34) - Math.sin(point.z * .43)) * .065;
     const flowZ = (Math.cos(point.x * .36 - time * .29) - Math.cos(point.x * .36)) * .055;
-    return out.set(point.x + (dx + flowX) * weight, point.y, point.z + (dz + flowZ) * weight);
+    const water = sampleWaterRipples(this.ripples, point.x, point.z, this.waterSample);
+    return out.set(point.x + (dx + flowX + water.x) * weight, point.y + water.height * weight, point.z + (dz + flowZ + water.z) * weight);
   }
 
   pose(time) {

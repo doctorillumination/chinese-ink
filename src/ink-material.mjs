@@ -42,6 +42,7 @@ export function createInkMaterial(seed, fin = false) {
       uLoad: { value: variant.load * (fin ? variant.finGain : 1) },
       uStyle: { value: variant.style },
       uSubmerge: { value: .9 },
+      uDepth: { value: 0 },
     },
     vertexShader: `
       attribute vec3 aInk;
@@ -60,7 +61,7 @@ export function createInkMaterial(seed, fin = false) {
       uniform float uSeed;
       uniform float uFin;
       uniform float uOpacity;
-      uniform float uLoad, uSubmerge, uStyle;
+      uniform float uLoad, uSubmerge, uStyle, uDepth;
       varying vec3 vInk;
       varying vec3 vNormal;
       varying vec3 vView;
@@ -100,8 +101,8 @@ export function createInkMaterial(seed, fin = false) {
           float edge = 1. - smoothstep(.42 + wash * .15, .91 + (wash - .5) * .16, uv.y);
           float density = (.10 + .18 * wash + bristle * .22) * uLoad * uSubmerge;
           float alpha = (.57 + .24 * wash) * mix(1., .36, uv.y) * edge * uOpacity;
-          // Red stores pigment, green coverage, and blue the fin contribution.
-          gl_FragColor = vec4(density, 1., 1., alpha);
+          // Red stores pigment, green coverage, and blue optical depth.
+          gl_FragColor = vec4(density, 1., uDepth, alpha);
           return;
         }
         float s = vInk.x;
@@ -152,7 +153,8 @@ export function createInkMaterial(seed, fin = false) {
         density *= mix(uStyle < .5 ? .72 : .30 + wash * .22, 1., margin);
         density *= mix(1., .34, smoothstep(.65, 1., s));
         density *= uLoad * uSubmerge;
-        gl_FragColor = vec4(clamp(density, 0., 1.), 1., 0., uOpacity);
+        density *= mix(1., .67 + clouds * .58, uDepth * .75);
+        gl_FragColor = vec4(clamp(density, 0., 1.), 1., uDepth, uOpacity);
       }
     `,
     side: fin ? THREE.DoubleSide : THREE.FrontSide,

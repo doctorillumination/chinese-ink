@@ -1,0 +1,103 @@
+{
+  "edition": "0.11",
+  "default_school": {
+    "dense": 2,
+    "contour": 2,
+    "mottled": 2
+  },
+  "variants": [
+    {
+      "fish": 1,
+      "name": "Deep ink",
+      "family": "dense",
+      "style": 2,
+      "load": 1,
+      "finGain": 0.95,
+      "rays": 0.075,
+      "details": 0.12
+    },
+    {
+      "fish": 2,
+      "name": "Pale contour",
+      "family": "contour",
+      "style": 0,
+      "load": 0.95,
+      "finGain": 0.62,
+      "rays": 0.04,
+      "details": 0.07
+    },
+    {
+      "fish": 3,
+      "name": "Blotched wash",
+      "family": "mottled",
+      "style": 1,
+      "load": 1,
+      "finGain": 0.8,
+      "rays": 0.065,
+      "details": 0.1
+    },
+    {
+      "fish": 4,
+      "name": "Silver contour",
+      "family": "contour",
+      "style": 0,
+      "load": 0.78,
+      "finGain": 0.68,
+      "rays": 0.035,
+      "details": 0.065
+    },
+    {
+      "fish": 5,
+      "name": "Pooled ink",
+      "family": "mottled",
+      "style": 1,
+      "load": 1.08,
+      "finGain": 0.78,
+      "rays": 0.06,
+      "details": 0.1
+    },
+    {
+      "fish": 6,
+      "name": "Charcoal wash",
+      "family": "dense",
+      "style": 2,
+      "load": 0.79,
+      "finGain": 0.88,
+      "rays": 0.065,
+      "details": 0.1
+    },
+    {
+      "fish": 7,
+      "name": "Paper contour",
+      "family": "contour",
+      "style": 0,
+      "load": 0.87,
+      "finGain": 0.6,
+      "rays": 0.035,
+      "details": 0.065
+    },
+    {
+      "fish": 8,
+      "name": "Scattered ink",
+      "family": "mottled",
+      "style": 1,
+      "load": 0.94,
+      "finGain": 0.8,
+      "rays": 0.06,
+      "details": 0.1
+    },
+    {
+      "fish": 9,
+      "name": "Smoke wash",
+      "family": "dense",
+      "style": 2,
+      "load": 0.89,
+      "finGain": 0.9,
+      "rays": 0.07,
+      "details": 0.11
+    }
+  ],
+  "marks_attached_to_body_coordinates": true,
+  "local_bleed": "Irregular, warped pigment cores with narrow, spatially varying feathered fringes.",
+  "fish_materials_retained_from": "0.10"
+}

@@ -1,4 +1,5 @@
 import * as THREE from '../vendor/three.module.js';
+import { fishWaterDepth } from './water.mjs';
 import { BODY_LENGTH, JOINT_COUNT, clamp } from './simulation.mjs';
 import { createInkMaterial, inkVariantForFish } from './ink-material.mjs';
 
@@ -249,6 +250,12 @@ export class ProceduralFish {
 
   update() {
     const sim = this.sim;
+    this.inkDepth = fishWaterDepth(sim, this.depthAmount ?? .8);
+    this.group.position.y = this.style === 'ink' ? -this.inkDepth * .85 : 0;
+    this.spineGroup.position.y = this.group.position.y;
+    this.inkMaterial.uniforms.uDepth.value = this.inkDepth;
+    this.inkFinMaterial.uniforms.uDepth.value = this.inkDepth;
+    for (const material of [this.inkRayMaterial, this.inkEyeMaterial, this.inkDetailMaterial]) material.color.setRGB(1, 1, this.inkDepth);
     this.inkMaterial.uniforms.uSubmerge.value = clamp(.90 + sim.y * .16, .65, 1.05);
     this.inkFinMaterial.uniforms.uSubmerge.value = this.inkMaterial.uniforms.uSubmerge.value;
     sim.updateSpine();

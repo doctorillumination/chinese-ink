@@ -1,6 +1,6 @@
 # Ink pond: swimming study 03
 
-An interactive, browser-based ink pond. Version 0.11, November 8, 2026. Connected brush branches now sway in the water, pads drift, and more fallen leaves gather around the margins. Water refraction is more visible on the fish while the paper stays quiet. Fish materials, swimming, schooling, tighter bounds, and fixed camera are retained. Earlier editions are preserved under `archive/`, including the v0.10 organic planting edition and its SHA-256 manifest.
+An interactive, browser-based ink pond. Version 0.12, November 8, 2026. Fish now rise and sink through layers of soft ink, with depth-dependent clarity, fading, and refraction. Clicking sends broken ink rings across the pond, and dragging stirs the water and floating leaves. Swimming, schooling, tighter bounds, connected planting, and the fixed camera are retained. Earlier editions are preserved under `archive/`, including the v0.11 drifting pond and its SHA-256 manifest.
 
 ## Run locally
 
@@ -18,11 +18,11 @@ The default view draws the existing 3D fish as layered ink washes on textured pa
 - **Blotched washes:** light grey bodies with broad, irregular pools of dark ink. Blotches have uneven margins, diluted fringes, and pigment variation within them.
 - **Deep ink:** charcoal bodies with denser pooling, lighter breaks, and translucent fin strokes.
 
-Each fish has its own persistent pigment placement and ink load. Fin and detail strengths vary with its ink family. The nine-fish setting adds a further contour fish, blotched fish, and dark fish. These are material variations on the existing model; body shape and swimming remain unchanged. Pigment markings stay attached to the body as it bends, rather than being regenerated each frame.
+Each fish has its own persistent pigment placement and ink load. Fin and detail strengths vary with its ink family. The nine-fish setting adds a further contour fish, blotched fish, and dark fish. These are material variations on the existing model; body shape and swimming remain unchanged. Their appearance also responds to optical depth. Pigment markings stay attached to the body as it bends, rather than being regenerated each frame.
 
 The definition work from v0.6 is retained inside the bodies and fins, together with pale, irregular margins. The renderer keeps more of the original pigment detail inside each fish, and concentrates the two-pass diffusion near its silhouette. Fin strokes and fine rays are more visible, with translucent, fading tips. Uneven, tapered brush strokes, broken bristles, and broad pooling remain. Ink patches now have more irregular lobes and a narrow, uneven feathered fringe around a defined core. Contour pressure and small pooled washes vary along the bodies; the overall blur filter is unchanged. Edge bleed starts at 85% and remains adjustable. These changes affect the rendering only.
 
-The camera starts still over the pond, with no automatic tracking or zoom. Exploration now uses a smaller soft oval and predicts earlier return turns. Fish can swim across the frame edges and curve back through their existing steering, acceleration, and avoidance. In a paired three-minute check of the default school, the previous view was empty in 46.7% of samples; the new view stayed inhabited, with at least three fish visible while others still passed outside it. This is a finite check of the default settings, rather than a guarantee for every manual command or zoom level. Reset restores the fixed view. Drag, zoom, and camera buttons remain available for deliberate changes to the view.
+The camera starts still over the pond, with no automatic tracking or zoom. Exploration now uses a smaller soft oval and predicts earlier return turns. Fish can swim across the frame edges and curve back through their existing steering, acceleration, and avoidance. In a paired three-minute check of the default school, the previous view was empty in 46.7% of samples; the new view stayed inhabited, with at least three fish visible while others still passed outside it. This is a finite check of the default settings, rather than a guarantee for every manual command or zoom level. Reset restores the fixed view. Ink mode reserves the pointer for water interaction and leaves the camera still. Camera view buttons remain available for deliberate view changes; orbiting and zooming are available in Form study.
 
 The paper and pigment variation are generated in the browser. The trailing wake is off by default, so the fish leave no grey blur behind them. There are no image textures to download. The ink mode uses a body pigment pass, a small evolving wash field, and a final paper composite. The wash advects, spreads, and fades in world coordinates, so it stays with the pond when the camera moves. It is a stylized flow approximation, not a complete ink or fluid simulation. Swimming continues smoothly with the approved timing.
 
@@ -32,7 +32,7 @@ The paper and pigment variation are generated in the browser. The trailing wake 
 - **Paper grain** adjusts the visible texture and pigment settling.
 - **Ink / Form study** changes the rendering without restarting the school.
 - **View artwork** hides the interface. **Show controls**, or **H**, brings it back.
-- Clicking or tapping keeps the steering interaction and adds a brief local water distortion through the submerged ink.
+- Clicking or tapping creates an expanding group of ink ripples. Dragging stirs successive waves through the pond. Default water interaction leaves the school's steering unchanged.
 
 The grid and cast shadows are shown in Form study. Spines begin hidden in Ink, and remain available in the inspection controls. The default camera looks almost straight down. **Follow inspected fish** is an optional tracking control, off by default. Choosing a fish for inspection leaves the camera still until tracking is enabled.
 
@@ -42,9 +42,15 @@ A few broad pond leaves enter from the upper left, a forked brush sprig enters f
 
 The plants use warped, asymmetric silhouettes, uneven folds, sparse broken veins, pooled washes, and soft bleeding margins. Leaf size, angle, and spacing vary, while stems vary in width and ink pressure. Floating fragments mix irregular lobed and narrow shapes. They are drawn as a separate surface layer, so a fish can pass beneath them. The layout follows the view edges when the viewport changes.
 
-**Water refraction** starts at 65%. Several directional waves and two broad circular wave fields gently displace the submerged fish image. A slight change in pigment brightness adds a passing lens effect. These effects leave fish geometry and the camera unchanged. Set the control to zero to remove refraction, or increase it to compare the effect. The paper texture is sampled independently and stays visually still. Surface leaves remain above the refraction. Clicking creates a short local refractive pulse through the fish layer.
+**Water depth** starts at 80%. Each fish has a smooth, independent rise-and-dive cycle, also influenced by its existing swimming depth. Deeper fish lose some ink density and fine detail, gather broader washes, and refract more strongly. Shallow fish recover their body and fin definition. A small vertical rendering offset gives the submerged layers a different projected position beneath the crisp surface leaves. Set depth to zero to compare the flatter view.
 
-Water and floating-leaf animation use simulation time, so Pause, slow motion, and the reduced-motion starting preference remain consistent. This is a stylized optical approximation rather than a full water simulation. All geometry and shaders are embedded in the HTML; no plant images or models are downloaded.
+Depth is an optical treatment of the existing school. It does not alter the swimming motor, collision bodies, or steering. Marks stay attached to each fish rather than flickering into new patterns. The underlying geometry remains the same shape.
+
+**Water refraction** starts at 65%. Directional waves, two circular lapping wave fields, and passing click ripples displace the submerged fish image. The same wave produces a larger optical displacement at greater depth, creating parallax beneath the surface. A small pigment-only brightness change adds a passing lens effect. The paper texture stays still, and surface leaves remain crisp.
+
+**Ripple ink** starts at 75%. Click or tap anywhere on the pond to send several thin, uneven ink rings outward. Drag to stir a sequence of overlapping waves. The rings travel through the fish layer for up to eight simulated seconds and fade away. Their shared wave field gently carries and bobs nearby pads and fragments while rooted plant junctions remain connected. Set Ripple ink to zero to hide the painted ring marks while retaining their refraction and leaf response. Water interaction never rotates, pinches, or zooms the Ink view. Form study retains its inspection gestures.
+
+Water, depth cycles, and leaf animation use simulation time, so Pause and slow motion remain consistent. Reduced-motion browser preferences start the artwork paused. These are stylized optical and surface-wave approximations, rather than complete fluid or light-transport simulations. All geometry and shaders are embedded in the HTML; no plant images or models are downloaded.
 
 ## Rhythm refinement retained from v0.3
 
@@ -63,12 +69,12 @@ Each fish now makes seeded, irregular transitions between cruising, a brief flut
 - **Personal space** adjusts the comfort distance around the body. Physical avoidance remains active at all settings, including the Independent preset.
 - **Loose**, **School**, and **Independent** change social tendencies while the simulation continues.
 - **Scatter** introduces a short outward swimming intention. **Regroup** temporarily strengthens local cohesion. Both act through movement controls, with no teleporting or forced formation.
-- Click to set a temporary destination. **Follow pointer** updates the destination as the mouse moves. Each fish approaches a different part of the destination area, preserving room between them.
+- In Form study, click to set a temporary destination. **Follow pointer** explicitly enables steering with the mouse in either rendering mode. Each fish approaches a different part of the destination area, preserving room between them.
 - **Direction: Straight swim** disables exploration and boundary containment. Local schooling and avoidance remain active, so the group can travel indefinitely through the reference space.
 
 ## Inspect movement
 
-- Drag to orbit. Scroll to zoom. Touch supports orbiting and two-finger zoom.
+- In Ink mode, click for ripples and drag to stir the water. In Form study, drag to orbit and scroll to zoom; touch supports orbiting and two-finger zoom.
 - **3D**, **Top**, and **Side** change the camera angle.
 - **Inspect** chooses the whole school's measurements or a chosen fish's tail rhythm and effort. It leaves the fixed camera unchanged. With **Follow inspected fish** enabled, the camera follows and frames that selection.
 - **Visible spines**, **Transparent body**, **Wireframe**, and **Head paths** expose motion and geometry. Each fish has a constant-length, 29-point spine.
@@ -102,14 +108,15 @@ The geometry, interface, and simulation are original to this study. The referenc
 - `src/app.mjs`: group rendering, camera framing, controls, and timing.
 - `src/ink-material.mjs`: persistent ink families, body-attached blotches, contours, washes, and fin strokes.
 - `src/ink-renderer.mjs`: evolving wash, selective pigment diffusion, water refraction, surface compositing, and paper.
-- `src/ink-garden.mjs`: procedural edge plants, brush stems, and floating leaves.
+- `src/ink-garden.mjs`: procedural edge plants, connected brush stems, floating leaves, and wave response.
+- `src/water.mjs`: independent optical depth cycles and the shared traveling ripple field.
 - `src/shell.html` and `src/style.css`: interface.
 - `vendor/`: Three.js r180 and its MIT license.
 - `tools/`: standalone bundling, movement checks, and plant connection/drift checks.
-- `verification/`: current verification record and preview images. `flowing-pond-chrome.jpg` shows v0.11 running in Chrome. The paired `flow-water-off.jpg` and `flow-water-on.jpg` show refraction at an identical paused pose. Earlier previews retain their original edition labels.
+- `verification/`: current verification record and preview images. `depth-and-ripples-chrome.jpg` shows v0.12 in Chrome. The paired `water-depth-off.jpg` and `water-depth-full.jpg` compare depth at an identical paused swimming pose and camera. Earlier comparisons and previews retain their original edition labels.
 - `archive/`: unchanged earlier editions and their hash manifests.
 
-To rebuild after editing, run `npm install` and `npm run build`. Run `npm run check` for the 23 motion, geometry, rhythm, schooling, fixed-view occupancy, and moving-plant checks. Rebuilding requires Node.js; opening the finished HTML does not.
+To rebuild after editing, run `npm install` and `npm run build`. Run `npm run check` for the 27 motion, geometry, rhythm, schooling, fixed-view occupancy, moving-plant, depth, and traveling-wave checks. Rebuilding requires Node.js; opening the finished HTML does not.
 
 Source repository: [doctorillumination/chinese-ink](https://github.com/doctorillumination/chinese-ink). The repository contains the finished HTML and editable source. Hosted deployment is not configured as part of this edition.
 

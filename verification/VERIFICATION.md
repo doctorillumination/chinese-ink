@@ -1,37 +1,31 @@
-# Verification: drifting ink pond
+# Verification: depth and interactive water
 
-November 8, 2026, America/Vancouver. Web edition v0.11.
+November 8, 2026, America/Vancouver. Web edition v0.12.
 
-## Retained behaviour
+## Movement and depth
 
-Fish geometry, ink materials, individual swimming, rhythm, schooling, and tighter bounds are byte-for-byte identical to v0.10. The only change in `app.mjs` is the water refraction reset value, from 0.45 to 0.65. Its camera and simulation code are unchanged. Source hashes are recorded in `movement-preservation.json`.
+Individual swimming, rhythm, schooling, collision planning, and tighter bounds are byte-for-byte identical to v0.11. The camera block is also unchanged. Fish geometry generation remains unchanged after excluding the new optical depth setup. `movement-preservation.json` records these comparisons.
 
-All 23 checks pass. Complete output is in `test-output.txt`. The existing 21 motion, geometry, rhythm, schooling, avoidance, Regroup, and fixed-view occupancy checks remain. Two new checks measure the rendered plant attributes: branch and petiole junctions remain connected at several times; free pads and fragments move smoothly while rooted ends remain anchored. Repeated updates at an identical simulation time produce an identical pose.
+Each fish has a smooth optical rise-and-dive cycle influenced by its existing depth. The ink materials carry depth into the existing pigment target. The compositor uses it for selective softening, fading, and stronger refraction. A small vertical rendering offset separates deeper layers from the surface; visible spine inspection follows the same offset. This does not change the swimming or collision state. Surface leaves retain their definition.
 
-## Planting and water
+All 27 tests pass. Four added checks cover outward wave propagation, expiry and pause behaviour, bounded drag input, independent smooth depth cycles, and pad displacement without broken plant junctions. After the final spine alignment adjustment, the nine motion and fish geometry checks were rerun and passed. The full suite output is in `test-output.txt`.
 
-The forked sprig and smaller opposite sprig have ten leaves, each attached at its painted base to a petiole. Shared motion fields keep junctions continuous. Rooted pads and branches flex progressively toward their tips. Two free pads and ten fallen fragments drift and rotate gently. Twenty-six surface leaf instances leave the central opening available for fish.
+## Interaction and surface response
 
-Nine combinations of aspect ratio and camera angle produced finite plant geometry at 0, 20, and 60 seconds. Counts remained consistent. `garden-layouts.json` records these cases; they do not constitute physical mobile-device testing.
+Ink mode uses click, touch, and drag for water interaction. Default clicks leave school steering unchanged. Pointer motion, wheel input, and pinch gestures do not rotate or zoom this view. Explicit camera view buttons remain available; Form study retains orbiting and zooming. Follow pointer remains an explicit steering mode.
 
-Refraction combines directional waves, two circular lapping wave fields, and a small pigment-only brightness modulation. It samples the submerged fish layer and leaves paper and surface plants outside the optical effect. The default increases to 65%. Trailing wash remains off.
+Six bounded wave slots carry expanding rings for up to eight simulated seconds. Painted rings use thin, irregular, partly broken strokes. The same traveling field refracts the fish and displaces nearby pads and fragments. Rooted plants share their motion at leaf and branch junctions. Pausing holds depth, water, and plant motion. Nine aspect-ratio and camera-angle layouts produced finite plant attributes with passing waves, as recorded in `garden-layouts.json`.
 
-`flow-water-off.jpg` and `flow-water-on.jpg` compare 0% and 100% water at an identical paused fish pose and camera. Their DOM diagnostics are in `flow-refraction-verification.json`. The earlier v0.9 numeric JPEG comparison remains separately labeled in `refraction-verification.json`; its pixel measurements do not describe this edition.
+## Chrome checks
 
-## Chrome verification
+A real click created a ripple, and a drag created several ripples while camera position, rotation, and projection stayed identical. Browser DOM diagnostics are in `camera-verification.json` and `depth-and-ripple-verification.json`. `depth-and-ripples-chrome.jpg` shows a stirred surface in Chrome.
 
-The updated artwork was visually checked in Chrome over loopback HTTP. `flowing-pond-chrome.jpg` shows the result. Browser diagnostics record v0.11, six fish, 26 surface leaves, water at 65%, trailing wash at zero, and tracking off. The artwork continued animating. Two uninterrupted artwork-view samples, 45.475 simulated seconds apart, retained identical camera position, rotation, and projection. Showing controls deliberately changes the scene aspect ratio and projection.
+`water-depth-off.jpg` and `water-depth-full.jpg` compare depth at an identical paused simulation time, position, speed, effort, clearance, and camera. These images change only the depth treatment and its optical positioning. The default was then restored to 80% depth, 75% ripple ink, 65% refraction, trailing wash off, and camera tracking off. The six-fish simulation continued animating.
 
-No artwork shader, WebGL, or other runtime warnings or errors were observed. Installed-extension warnings and asynchronous browser message-channel errors were counted separately in `browser-verification.json`. The loaded Chrome tab was retained as the deliverable.
+No artwork shader, WebGL, or runtime warnings or errors were observed in the captured browser logs. Installed-extension warnings and browser message-channel errors are counted separately in `browser-verification.json`. Earlier comparisons retain their original edition labels and do not describe this edition's depth treatment.
 
-## Packaging and limits
+## Self-contained delivery
 
-The HTML embeds code, shaders, procedural geometry and paper, and the Three.js MIT license. It contains one inline script and style, unique element IDs, and no external asset tags. `artifact-audit.json` records its hash and the verified file counts for all ten preserved editions. Every archived file matches its SHA-256 manifest.
+The HTML contains one inline script, one inline style, unique element IDs, the Three.js MIT license, and no external asset tags. Its hash and check results are in `artifact-audit.json`. All eleven preserved editions match their SHA-256 manifests, including the 59-file v0.11 snapshot.
 
-The artifact was verified over loopback HTTP. Direct double-click launch remains unverified because the previous preview browser blocked file URLs; another browser was not used to bypass that restriction. Physical mobile devices, Safari, Firefox, and the 8-bit rendering fallback remain untested. The water and plant currents are stylized approximations. No hosted deployment is configured.
-
-## Local loading follow-up
-
-The preview server was stopped after the earlier handoff, making the localhost address unavailable on subsequent requests. It has been restarted and kept running for the user's Chrome session. A fresh Chrome reload rendered the pond, showed no application error panel, and advanced the fish simulation. `chrome-load-fix.json` and `chrome-load-fix.jpg` record this check.
-
-`Open Ink Pond.command` now starts a local server and opens Chrome. `npm run preview` uses the same server without opening a browser. Launcher checks cover shell/Python syntax, exact served HTML bytes, reuse of the existing pond server, and fallback when another process occupies the requested port. The automatic Chrome open command is provided for user launch; browser QA used the supported Chrome control tool. The artwork HTML and movement code are unchanged by this fix.
+The loopback server is kept running for the user's Chrome session. The Mac launcher and `npm run preview` remain available. No hosted deployment is configured. Direct file launch, physical mobile devices, Safari, Firefox, and the 8-bit rendering fallback remain untested. This is an artistic optical and wave model, not a full fluid or light-transport simulation.
