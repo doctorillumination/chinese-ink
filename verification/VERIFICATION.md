@@ -29,3 +29,9 @@ No artwork shader, WebGL, or other runtime warnings or errors were observed. Ins
 The HTML embeds code, shaders, procedural geometry and paper, and the Three.js MIT license. It contains one inline script and style, unique element IDs, and no external asset tags. `artifact-audit.json` records its hash and the verified file counts for all ten preserved editions. Every archived file matches its SHA-256 manifest.
 
 The artifact was verified over loopback HTTP. Direct double-click launch remains unverified because the previous preview browser blocked file URLs; another browser was not used to bypass that restriction. Physical mobile devices, Safari, Firefox, and the 8-bit rendering fallback remain untested. The water and plant currents are stylized approximations. No hosted deployment is configured.
+
+## Local loading follow-up
+
+The preview server was stopped after the earlier handoff, making the localhost address unavailable on subsequent requests. It has been restarted and kept running for the user's Chrome session. A fresh Chrome reload rendered the pond, showed no application error panel, and advanced the fish simulation. `chrome-load-fix.json` and `chrome-load-fix.jpg` record this check.
+
+`Open Ink Pond.command` now starts a local server and opens Chrome. `npm run preview` uses the same server without opening a browser. Launcher checks cover shell/Python syntax, exact served HTML bytes, reuse of the existing pond server, and fallback when another process occupies the requested port. The automatic Chrome open command is provided for user launch; browser QA used the supported Chrome control tool. The artwork HTML and movement code are unchanged by this fix.

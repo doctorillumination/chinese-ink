@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node tools/build.mjs",
     "check": "node --test tools/motion.test.mjs tools/school.test.mjs tools/rhythm.test.mjs tools/roaming.test.mjs tools/garden.test.mjs",
-    "preview": "python3 -m http.server 8876 --bind 127.0.0.1"
+    "preview": "python3 tools/preview.py --no-browser"
   },
   "devDependencies": {
     "esbuild": "0.25.12"

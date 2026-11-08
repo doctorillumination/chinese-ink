@@ -4,9 +4,11 @@ An interactive, browser-based ink pond. Version 0.11, November 8, 2026. Connecte
 
 ## Run locally
 
-Open `index.html` in your browser. All runtime code, including Three.js, is embedded in that one file. There are no remote fonts, textures, models, scripts, accounts, or runtime downloads. WebGL 2 is required. Viewing the finished study does not require Node.js or installation.
+On macOS, double-click **Open Ink Pond.command** to start the local server and open Chrome. Keep its Terminal window open while viewing, including when reloading the page. Press Control-C in that window when you want to stop it. The launcher requires Python 3 and does not install anything. If the pond is already served on its usual port, the launcher reuses it; if another project occupies that port, it chooses a free one.
 
-The test browser blocks `file:` URLs, so direct double-click launch remains unverified. The identical single-file artifact was verified over loopback HTTP. If you need a local server, run `python3 -m http.server 8876 --bind 127.0.0.1` in this folder and open http://127.0.0.1:8876. Choose another free port if 8876 is occupied.
+For a manual launch, run `python3 tools/preview.py --no-browser` in this folder and open the printed local URL in Chrome. The usual address is http://127.0.0.1:8876/. That address is available only while the server is running.
+
+All runtime code, including Three.js, is embedded in `index.html`. There are no remote fonts, textures, models, scripts, accounts, or runtime downloads. WebGL 2 is required. Viewing the finished study does not require Node.js or installation. Opening `index.html` directly may also work, but direct file launch remains unverified because the test browser blocks `file:` URLs. The single-file artifact was verified over loopback HTTP.
 
 ## Ink edition
 
