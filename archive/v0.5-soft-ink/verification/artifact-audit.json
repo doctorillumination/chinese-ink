@@ -1,0 +1,29 @@
+{
+  "edition": "0.5",
+  "title": "Ink pond: swimming study 03",
+  "verified_at": "2026-11-07T21:16:03.119073-07:00",
+  "bytes": 583197,
+  "sha256": "f3cd4c546e2b5fcb258e3fa1c4ae6be27df0ff7a235fde97790c5cb54b15ba6b",
+  "inline_scripts": 1,
+  "inline_styles": 1,
+  "external_asset_tags": [],
+  "unique_element_ids": 67,
+  "checks_passed": 20,
+  "movement_sources_unchanged": true,
+  "compared_geometry_poses": 60,
+  "maximum_geometry_deviation": 0,
+  "preserved_edition_files": {
+    "v0.1-one-fish": 20,
+    "v0.2-schooling": 21,
+    "v0.3-rhythm": 24,
+    "v0.4-ink": 28
+  },
+  "browser_ink_precision": "half-float",
+  "fixed_camera_verified_seconds": 61.1666,
+  "camera_matrices_unchanged": true,
+  "visible_fish_sample": [
+    "6",
+    "2"
+  ],
+  "direct_file_browser_test": "unverified: preview browser blocks file protocol"
+}

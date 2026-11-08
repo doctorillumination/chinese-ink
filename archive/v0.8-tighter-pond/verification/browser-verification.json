@@ -1,0 +1,16 @@
+{
+  "edition": "0.8",
+  "client_date": "2026-11-08",
+  "defaults": {
+    "bleed": "0.85",
+    "count": "6",
+    "tracking": false,
+    "trailingWash": "0",
+    "version": "v0.8",
+    "viewport": {
+      "height": 1243,
+      "width": 1517
+    }
+  },
+  "console_warnings_or_errors": []
+}

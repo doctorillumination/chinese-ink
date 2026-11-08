@@ -1,0 +1,17 @@
+{
+  "compared_with": "archive/v0.9-water-and-plants",
+  "unchanged_source_sha256": {
+    "simulation.mjs": "ed52f812778120623403a0d394bb4fe9e6728a1533266b77d6d72ce8bb3fe7b6",
+    "simulation-math.mjs": "a3a5b661924b23ebcef132d3f7c6ab780aeaee8799b3989e4a3e332e1fab5bc7",
+    "rhythm.mjs": "4e53d19e271c7f52a3650ac2f0da68c0b7482653c746c540d98370a8da518684",
+    "school.mjs": "8d87006cd78e9ddc88377cfffdcbf83c85a2c6dadbf4776f8eac977d55351928",
+    "fish.mjs": "66910ac8bcbd94f20e7d02a7f802d61281999fe5a31af165eba147052814cde4",
+    "ink-material.mjs": "fcc795789116b1d47a0c0890aaee11f8aa60ea2928c77b9184608b7b2ad3852d",
+    "app.mjs": "f0a5ca8f1f8ccb0f59a7fe4b62eb3130ed5730f8d7ce7c81947db8b93a607c20",
+    "ink-renderer.mjs": "199891e2344950510828f1c6c3fe83372ab88225145a4b1e1e13e8faa9ad5d69"
+  },
+  "only_runtime_source_changed": "ink-garden.mjs",
+  "camera_and_water_refraction_unchanged": true,
+  "tighter_roaming_retained": true,
+  "fish_materials_geometry_and_movement_unchanged": true
+}

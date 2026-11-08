@@ -1,0 +1,21 @@
+{
+  "edition": "0.10",
+  "client_date": "2026-11-08",
+  "browser": "Chrome",
+  "defaults": {
+    "count": "6",
+    "tracking": false,
+    "trailingWash": "0",
+    "version": "v0.10",
+    "viewport": {
+      "height": 1429,
+      "width": 2349
+    },
+    "waterRefraction": "0.45"
+  },
+  "other_page_warnings_or_errors": [],
+  "page_reported_message_channel_error_count": 3,
+  "page_reported_message_channel_error": "Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received",
+  "extension_warning_count": 6,
+  "artwork_continued_animating": true
+}

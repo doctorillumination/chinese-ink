@@ -1,0 +1,33 @@
+
+> koi-motion-study@0.9.0 check
+> node --test tools/motion.test.mjs tools/school.test.mjs tools/rhythm.test.mjs tools/roaming.test.mjs
+
+✔ seeded exploration repeats exactly (20.208542ms)
+✔ spine length stays fixed through hard turns and maximum tail effort (12.859292ms)
+✔ a glide reduces forward speed and muscle effort without an instantaneous velocity change (1.9785ms)
+✔ stopping the preferred speed decays to rest without reversing or pivoting rapidly (11.781375ms)
+✔ angular acceleration is bounded during a sudden steering reversal (1.071541ms)
+✔ default cruise includes repeated active and low-effort phases (1.779667ms)
+✔ head path guides the tail through a turn after forward travel (1.381667ms)
+✔ long exploration stays finite and near the bounded study area (36.7625ms)
+✔ generated fish has finite vertices and normals across changing poses (22.979708ms)
+✔ spontaneous swimming adds short speed increases and quiet drifts with smooth acceleration (22.425125ms)
+✔ fish take spontaneous flutters and quiet periods on independent schedules (1844.713875ms)
+✔ avoidance braking still takes priority during a spontaneous flutter (3.866667ms)
+✔ the fixed view stays inhabited while individual fish can leave the frame (3613.342083ms)
+✔ the six-fish school is deterministic while its individuals retain different gaits (1042.75525ms)
+✔ three minutes of default schooling maintain torso clearance and bounded 3D motion (3559.9825ms)
+✔ all supported school sizes preserve torso clearance in the initial minute (9444.814292ms)
+✔ head-on and crossing encounters pass without overlapping torso envelopes (114.860291ms)
+✔ scatter and regroup preserve positions at activation, and regroup draws fish together sooner (986.946958ms)
+✔ a shared pointer destination retains space between the fish (1150.366083ms)
+✔ social perception ignores fish beyond the local sensing range (3.3615ms)
+✔ schooling produces shared headings more often than the independent preset (3111.200709ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19490.409625

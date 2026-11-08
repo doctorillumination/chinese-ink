@@ -1,0 +1,49 @@
+{
+  "edition": "0.6",
+  "samples": [
+    {
+      "activities": "cruise,cruise,cruise,cruise,cruise,cruise",
+      "alignment": "0.99111",
+      "cameraFrame": "-5.500000,5.500000,12.148889,-12.148889",
+      "cameraPosition": "0.000000,44.494699,6.724716",
+      "cameraRotation": "-0.652136,0.000000,0.000000,0.758102",
+      "cameraTracking": "false",
+      "clearance": "1.14373",
+      "count": "6",
+      "effort": "0.17749",
+      "fluttering": "0",
+      "focus": "all",
+      "fps": "60.0",
+      "inkPrecision": "half-float",
+      "rendering": "ink",
+      "simulationTime": "1.2417",
+      "spacing": "1.00266",
+      "speed": "0.53009",
+      "visibleFish": "6",
+      "x": "0.38620",
+      "z": "0.05772"
+    },
+    {
+      "activities": "cruise,coast,flutter,coast,cruise,coast",
+      "alignment": "0.96120",
+      "cameraFrame": "-5.500000,5.500000,12.148889,-12.148889",
+      "cameraPosition": "0.000000,44.494699,6.724716",
+      "cameraRotation": "-0.652136,0.000000,0.000000,0.758102",
+      "cameraTracking": "false",
+      "clearance": "0.83874",
+      "count": "6",
+      "effort": "0.56374",
+      "fluttering": "1",
+      "focus": "all",
+      "fps": "59.9",
+      "inkPrecision": "half-float",
+      "rendering": "ink",
+      "simulationTime": "96.1583",
+      "spacing": "0.96413",
+      "speed": "0.44580",
+      "visibleFish": "3",
+      "x": "-8.15751",
+      "z": "-6.24260"
+    }
+  ]
+}

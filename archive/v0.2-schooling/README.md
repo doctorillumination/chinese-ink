@@ -1,0 +1,71 @@
+# Swimming study 02: Schooling
+
+A small school of procedural 3D koi. Version 0.2, November 7, 2026. Six fish by default, with two to nine available. The first one-fish edition is preserved in `archive/v0.1-one-fish/`, including its standalone file, source, verification, and SHA-256 manifest.
+
+## Run locally
+
+Open `index.html` in your browser. All runtime code, including Three.js, is embedded in that one file. There are no remote fonts, textures, models, scripts, accounts, or runtime downloads. WebGL 2 is required. Viewing the finished study does not require Node.js or installation.
+
+The test browser blocks `file:` URLs, so direct double-click launch remains unverified. The identical single-file artifact was verified over loopback HTTP. If you need a local server, run `python3 -m http.server 8876 --bind 127.0.0.1` in this folder and open http://127.0.0.1:8876. Choose another free port if 8876 is occupied.
+
+## Schooling controls
+
+- **Fish** changes the count and restarts the group with a reproducible, irregular arrangement.
+- **Cruise speed** sets a preferred speed in body lengths per second. Actual speed responds through propulsion, drag, turning, and braking.
+- **Togetherness** encourages a fish to approach local neighbours when the group spreads out. There is a comfortable zone with no attraction toward the neighbourhood center.
+- **Alignment** encourages similar headings and some speed matching.
+- **Personal space** adjusts the comfort distance around the body. Physical avoidance remains active at all settings, including the Independent preset.
+- **Loose**, **School**, and **Independent** change social tendencies while the simulation continues.
+- **Scatter** introduces a short outward swimming intention. **Regroup** temporarily strengthens local cohesion. Both act through movement controls, with no teleporting or forced formation.
+- Click to set a temporary destination. **Follow pointer** updates the destination as the mouse moves. Each fish approaches a different part of the destination area, preserving room between them.
+- **Direction: Straight swim** disables exploration and boundary containment. Local schooling and avoidance remain active, so the group can travel indefinitely through the reference space.
+
+## Inspect movement
+
+- Drag to orbit. Scroll to zoom. Touch supports orbiting and two-finger zoom.
+- **3D**, **Top**, and **Side** change the camera angle.
+- **Inspect** follows the whole school or a chosen fish. The school view frames the group's changing extent. Individual inspection moves closer and shows that fish's tail rhythm and effort.
+- **Visible spines**, **Transparent body**, **Wireframe**, and **Head paths** expose motion and geometry. Each fish has a constant-length, 29-point spine.
+- **Camera follows group** enables or disables tracking. With an individual selected, it tracks that fish.
+- **Swimming & individuality** exposes gait variation, tail effort, beat-and-glide rhythm, turning bias, tempo, front body stiffness, drag, and wandering. Gait settings apply to the group while retaining individual phase offsets.
+- **Space** pauses outside form controls. **0.35×** slows simulation time. Reset restores the original settings.
+- Reduced-motion browser preferences start the study paused.
+
+School telemetry shows mean speed, heading alignment, and mean nearest-neighbour spacing. Alignment is the length of the mean heading vector, expressed as a percentage. It describes shared direction; it is not a realism or quality score. Spacing uses body centers and the reference fish's body length. The graph shows recent mean speed and effort, or the selected fish's values during individual inspection.
+
+## How the school moves
+
+Each animal has a different scale, preferred pace, tail phase, gait variation, sensing interval, and depth preference. Social observations are staggered in time. Fish respond to at most four nearby neighbours in a broad forward field of view. Safety perception also covers nearby animals behind them. The same pre-step state is used for all observations. There is no permanent leader or prescribed group route.
+
+Separation, alignment, and a comfortable cohesion zone provide the social tendencies. Steering and angular acceleration are constrained. Each fish retains its own propulsion and recovery rhythm. Speed matching, braking fins, and small, smooth depth changes help resolve crowded turns and crossings.
+
+Avoidance considers overlapping spheres along the actual bent torso. When a crossing is predicted, a short-horizon planner compares feasible turns and braking amounts. It predicts the body following the head's path, not just a point moving through space. Passing preferences persist through an encounter to reduce indecision. Candidate safety takes priority over social attraction. The torso envelope excludes flexible fins.
+
+Individual swimming advances at 120 fixed steps per simulated second. The head's heading and depth history guide a constant-length spine. A traveling bending wave grows toward the tail. Pectoral fins tuck, spread, paddle, brake, and respond to turns. Dorsal and tail fin edges add delayed secondary movement. Spine markers use instancing to keep the group inexpensive to draw.
+
+This remains a simplified procedural motion model. It does not solve water pressure or derive propulsion from full fluid forces on the fins. Biological accuracy is unverified. Avoidance tests cover selected configurations and finite simulation windows; they do not prove collision-free motion for every possible parameter combination. Ink rendering and realistic water remain outside this edition.
+
+The geometry, interface, and simulation are original to this study. The reference artwork prompted the investigation; its source code was not copied.
+
+## Source and rebuilding
+
+- `src/simulation.mjs`: individual propulsion, turning, depth control, path history, and spine.
+- `src/school.mjs`: local social behaviour, individual traits, predictive avoidance, and group actions.
+- `src/fish.mjs`: generated body, fins, details, instanced spine markers, and disposal.
+- `src/app.mjs`: group rendering, camera framing, controls, and timing.
+- `src/shell.html` and `src/style.css`: interface.
+- `vendor/`: Three.js r180 and its MIT license.
+- `tools/`: standalone bundling and motion/schooling checks.
+- `verification/`: current verification record and preview images.
+- `archive/v0.1-one-fish/`: unchanged first edition.
+
+To rebuild after editing, run `npm install` and `npm run build`. Run `npm run check` for the 17 motion, geometry, and schooling tests. Rebuilding requires Node.js; opening the finished HTML does not.
+
+This is a local draft and has not been published.
+
+## Research references
+
+- Craig Reynolds, [Steering Behaviors for Autonomous Characters](https://www.red3d.com/cwr/steer/gdc99/).
+- Craig Reynolds, [Boids](https://red3d.com/cwr/boids/index.html).
+- Xiaoyuan Tu and Demetri Terzopoulos, [Artificial Fishes: Physics, Locomotion, Perception, Behavior](https://faculty.cc.gatech.edu/~turk/bio_sim/articles/fish_terzopoulos.pdf), SIGGRAPH 1994.
+- Graphics Noob / zz85, [Koi: a pond of painted fish and ink in water](https://zz85.github.io/random-sketches/vibes/koi/BLOG.html), the reference artwork's author explanation.

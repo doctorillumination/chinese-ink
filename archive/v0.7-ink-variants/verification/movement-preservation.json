@@ -1,0 +1,15 @@
+{
+  "simulation_source_sha256": {
+    "simulation.mjs": "ed52f812778120623403a0d394bb4fe9e6728a1533266b77d6d72ce8bb3fe7b6",
+    "simulation-math.mjs": "a3a5b661924b23ebcef132d3f7c6ab780aeaee8799b3989e4a3e332e1fab5bc7",
+    "school.mjs": "9eca184a28d414a41a56e9b99010336968adf5718ef0369b872df718d5fd618d",
+    "rhythm.mjs": "4e53d19e271c7f52a3650ac2f0da68c0b7482653c746c540d98370a8da518684"
+  },
+  "app_source_sha256": "d1d2eec9d170e877ea9270878e8b83137f565f42983b1d136b2ea0ddc24f8f0c",
+  "renderer_source_sha256": "2b195c655dc6aabb936f097a7b3e6bae84e58e603fb5a796aae8ae4d60620841",
+  "camera_controls_and_movement_logic_unchanged": true,
+  "compared_with": "archive/v0.6-definition",
+  "compared_poses": 60,
+  "maximum_body_fin_or_normal_deviation": 0,
+  "paint_coordinates_finite": true
+}

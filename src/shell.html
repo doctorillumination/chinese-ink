@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="An interactive ink pond: procedural 3D koi swimming through soft washes on textured paper. A self-contained browser artwork.">
+  <meta name="color-scheme" content="light">
+  <title>Ink pond: swimming study 03</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23647672' d='M10 32Q28 8 47 30L60 20V44L47 34Q28 56 10 32Z'/%3E%3Ccircle cx='23' cy='28' r='2' fill='%23f3f1e9'/%3E%3C/svg%3E">
+  <style>/* INLINE_STYLES */</style>
+</head>
+<body data-rendering="ink">
+  <main class="study">
+    <section class="viewport" aria-label="Interactive 3D fish study">
+      <div id="scene" tabindex="0" aria-label="3D fish. Drag to orbit, scroll to zoom, or click to set a destination. Use the view buttons for keyboard camera control."></div>
+      <header class="masthead">
+        <p class="eyebrow"><span class="small-line"></span> Swimming study <span class="edition seal">03</span></p>
+        <h1>Ink pond</h1>
+        <p class="subtitle">A moving wash, a living school.</p>
+      </header>
+      <div class="top-actions">
+        <button id="artwork" class="round-button" aria-pressed="false">View artwork</button>
+        <button id="panel-toggle" class="round-button" aria-label="Hide controls" aria-expanded="true" aria-controls="controls">Controls <span aria-hidden="true">↗</span></button>
+      </div>
+      <div class="view-controls" role="group" aria-label="Camera views">
+        <button data-view="oblique" aria-pressed="false">3D</button>
+        <button data-view="top" class="active" aria-pressed="true">Top</button>
+        <button data-view="side" aria-pressed="false">Side</button>
+      </div>
+      <div class="scene-caption"><span class="spine-swatch"></span><span id="spine-caption">6 fish / spines hidden</span><span class="caption-separator">/</span><span id="focus-caption">Whole school</span></div>
+      <div class="telemetry" aria-label="Live swimming measurements">
+        <div class="state"><span id="state-dot"></span><span id="swim-state">Schooling</span></div>
+        <div class="readouts">
+          <div><span class="readout-label">Speed</span><span id="speed-readout" class="readout">0.40 <small>BL/s</small></span></div>
+          <div><span class="readout-label" id="second-label" title="Similarity of the fish's headings">Alignment</span><span id="tempo-readout" class="readout">90 <small>%</small></span></div>
+          <div><span class="readout-label" id="third-label">Spacing</span><span id="effort-readout" class="readout">1.0 <small>BL</small></span></div>
+        </div>
+        <canvas id="motion-graph" width="320" height="58" aria-label="Recent speed and muscle effort graph"></canvas>
+        <div class="graph-label"><span><i class="speed-key"></i>speed</span><span><i class="effort-key"></i>effort</span><span class="graph-time">last 12 seconds</span></div>
+      </div>
+      <p class="gesture-hint">Drag to orbit <span>·</span> Scroll to zoom <span>·</span> Click to steer</p>
+      <div class="playback">
+        <button id="pause" class="play-button" aria-label="Pause swimming"><span id="play-icon" aria-hidden="true">Ⅱ</span><span id="play-label">Pause</span></button>
+        <button id="slow" class="speed-button" aria-pressed="false">0.35×</button>
+        <span class="playback-rule"></span>
+        <button id="scatter" class="text-button">Scatter <span aria-hidden="true">↗</span></button>
+        <button id="regroup" class="text-button">Regroup</button>
+      </div>
+      <div id="error" role="alert" hidden><strong>The 3D view could not start.</strong><p>This study needs WebGL 2. Try a current browser with graphics acceleration enabled.</p><pre id="error-detail"></pre></div>
+    </section>
+
+    <aside id="controls" class="controls" aria-label="Swimming controls">
+      <div class="panel-header"><p class="eyebrow">A browser artwork</p><span class="version">v0.11</span></div>
+      <h2>Ink &amp; movement</h2>
+      <p class="panel-intro">Drifting pads, loose brush stems, and small fragments carried by the water.</p>
+      <div class="look-switch" role="group" aria-label="Rendering style"><button data-rendering="ink" class="active" aria-pressed="true">Ink</button><button data-rendering="study" aria-pressed="false">Form study</button></div>
+      <section id="ink-controls" class="ink-appearance" aria-label="Ink appearance">
+        <div class="slider-group"><div class="slider-label"><label for="ink-strength">Ink density</label><output for="ink-strength" id="ink-strength-value"></output></div><input id="ink-strength" type="range" min="0.5" max="1.6" step="0.01" value="1"></div>
+        <div class="slider-group"><div class="slider-label"><label for="ink-bleed">Edge bleed</label><output for="ink-bleed" id="ink-bleed-value"></output></div><input id="ink-bleed" type="range" min="0" max="1" step="0.01" value="0.85"></div>
+        <div class="slider-group"><div class="slider-label"><label for="ink-trails">Trailing wash</label><output for="ink-trails" id="ink-trails-value"></output></div><input id="ink-trails" type="range" min="0" max="1" step="0.01" value="0"></div>
+        <div class="slider-group"><div class="slider-label"><label for="paper-grain">Paper grain</label><output for="paper-grain" id="paper-grain-value"></output></div><input id="paper-grain" type="range" min="0" max="1" step="0.01" value="0.65"></div>
+        <div class="slider-group"><div class="slider-label"><label for="water-refraction">Water refraction</label><output for="water-refraction" id="water-refraction-value"></output></div><input id="water-refraction" type="range" min="0" max="1" step="0.01" value="0.65"></div>
+      </section>
+      <div class="presets" role="group" aria-label="Swimming presets">
+        <button data-preset="loose" aria-pressed="false">Loose</button>
+        <button data-preset="school" class="active" aria-pressed="true">School</button>
+        <button data-preset="independent" aria-pressed="false">Independent</button>
+      </div>
+      <div class="control-row mode-row"><label for="mode">Direction</label><select id="mode"><option value="wander">Explore</option><option value="pointer">Follow pointer</option><option value="straight">Straight swim</option></select></div>
+      <div class="sliders">
+        <div class="slider-group"><div class="slider-label"><label for="count">Fish</label><output for="count" id="count-value"></output></div><input id="count" type="range" min="2" max="9" step="1" value="6"><div class="range-ends"><span>Two</span><span>Nine</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="speed">Cruise speed</label><output for="speed" id="speed-value"></output></div><input id="speed" type="range" min="0" max="0.85" step="0.01" value="0.47"><div class="range-ends"><span>Still</span><span>Quick</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="cohesion">Togetherness</label><output for="cohesion" id="cohesion-value"></output></div><input id="cohesion" type="range" min="0" max="1" step="0.01" value="0.56"><div class="range-ends"><span>Independent</span><span>Draw together</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="alignment">Alignment</label><output for="alignment" id="alignment-value"></output></div><input id="alignment" type="range" min="0" max="1" step="0.01" value="0.68"><div class="range-ends"><span>Own heading</span><span>Shared heading</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="spacing">Personal space</label><output for="spacing" id="spacing-value"></output></div><input id="spacing" type="range" min="0.7" max="1.6" step="0.01" value="1.05"><div class="range-ends"><span>Close</span><span>Spacious</span></div></div>
+      </div>
+      <details class="tuning"><summary>Swimming &amp; individuality <span aria-hidden="true">+</span></summary>
+        <div class="slider-group"><div class="slider-label"><label for="liveliness">Spurts &amp; pauses</label><output for="liveliness" id="liveliness-value"></output></div><input id="liveliness" type="range" min="0" max="1" step="0.01" value="0.65"><div class="range-ends"><span>Steady</span><span>More variation</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="individuality">Individuality</label><output for="individuality" id="individuality-value"></output></div><input id="individuality" type="range" min="0" max="1" step="0.01" value="0.65"></div>
+        <div class="slider-group"><div class="slider-label"><label for="amplitude">Tail effort</label><output for="amplitude" id="amplitude-value"></output></div><input id="amplitude" type="range" min="0.4" max="1.6" step="0.01" value="1"><div class="range-ends"><span>Restrained</span><span>Strong</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="rhythm">Beat &amp; glide</label><output for="rhythm" id="rhythm-value"></output></div><input id="rhythm" type="range" min="0" max="1" step="0.01" value="0.82"><div class="range-ends"><span>Continuous</span><span>Distinct pauses</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="turn">Turning bias</label><output for="turn" id="turn-value"></output></div><input id="turn" type="range" min="-1" max="1" step="0.01" value="0"><div class="range-ends"><span>Left</span><span>Right</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="tempo">Tail tempo</label><output for="tempo" id="tempo-value"></output></div><input id="tempo" type="range" min="0.5" max="1.6" step="0.01" value="1"></div>
+        <div class="slider-group"><div class="slider-label"><label for="stiffness">Front body stiffness</label><output for="stiffness" id="stiffness-value"></output></div><input id="stiffness" type="range" min="0.2" max="1" step="0.01" value="0.72"></div>
+        <div class="slider-group"><div class="slider-label"><label for="drag">Water drag</label><output for="drag" id="drag-value"></output></div><input id="drag" type="range" min="0.1" max="1" step="0.01" value="0.45"></div>
+        <div class="slider-group"><div class="slider-label"><label for="wander">Wandering</label><output for="wander" id="wander-value"></output></div><input id="wander" type="range" min="0" max="1" step="0.01" value="0.7"></div>
+      </details>
+      <section class="inspection" aria-label="Inspection options">
+        <h3>Look closer</h3>
+        <div class="control-row focus-row"><label for="focus">Inspect</label><select id="focus"><option value="all">Whole school</option></select></div>
+        <label class="toggle-row" for="spine"><span><i class="spine-dot"></i>Visible spines</span><input id="spine" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row" for="translucent"><span>Transparent body</span><input id="translucent" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row" for="wireframe"><span>Wireframe</span><input id="wireframe" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row" for="trail"><span>Head paths</span><input id="trail" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row" for="follow"><span>Follow inspected fish</span><input id="follow" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+      </section>
+      <div class="panel-footer"><button id="reset" class="reset-button">Reset pond <span aria-hidden="true">↺</span></button><span>Space to pause · H to hide</span></div>
+      <p class="model-note">Every fish keeps its own swimming rhythm. The paper, pigment, and flowing wash are drawn in the browser.</p>
+    </aside>
+  </main>
+  <script>/* INLINE_APP */</script>
+</body>
+</html>

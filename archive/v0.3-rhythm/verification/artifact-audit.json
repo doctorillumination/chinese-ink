@@ -1,0 +1,22 @@
+{
+  "edition": "0.3",
+  "verified_at": "2026-11-07T18:33:04.348718-07:00",
+  "bytes": 559584,
+  "sha256": "9f518e5078d5b635af307e666f5885e8edd05a6cbe889b4ca1606a1ffaa805dc",
+  "inline_scripts": 1,
+  "inline_styles": 1,
+  "external_asset_tags": [],
+  "unique_element_ids": 57,
+  "checks_passed": 20,
+  "preserved_edition_files": {
+    "v0.1-one-fish": 20,
+    "v0.2-schooling": 21
+  },
+  "default_cruise_BL_per_s": 0.47,
+  "previous_cruise_BL_per_s": 0.42,
+  "paired_180s_mean_speed_BL_per_s": {
+    "previous": 0.40463017423306824,
+    "revised": 0.4491406635345239
+  },
+  "direct_file_browser_test": "unverified: preview browser blocks file protocol"
+}

@@ -1,0 +1,13 @@
+{
+  "edition": "0.2",
+  "verified_at": "2026-11-07T18:10:15.063397-07:00",
+  "bytes": 556503,
+  "sha256": "a6702f3d8485c0b1d2de7af3e6876b8e0c0626a62a00e43d71b1924d4048c128",
+  "inline_scripts": 1,
+  "inline_styles": 1,
+  "external_asset_tags": [],
+  "unique_element_ids": 55,
+  "motion_geometry_and_schooling_checks": 17,
+  "original_edition_verified_files": 20,
+  "direct_file_browser_test": "unverified: test browser blocks file protocol"
+}

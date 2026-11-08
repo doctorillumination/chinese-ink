@@ -1,0 +1,23 @@
+{
+  "index.html": "a6702f3d8485c0b1d2de7af3e6876b8e0c0626a62a00e43d71b1924d4048c128",
+  "README.md": "2521d4f03f9b3cda4e7cd56ed21c98145458ed7ae73b875bd68e56ff60392aa1",
+  ".gitignore": "6c7d15d2ab1a0b51ebcae7e88b9ad01f0713d0833bc2dbe8f3bcc7a81b66b344",
+  "package-lock.json": "ac6cc9338fb65ed397b881f1747e286f2eadd5ec5fbd5581cb32914bd91564ef",
+  "package.json": "9cf9c6ad32af22ad255e3e0ece001d211c62bcdf012448ce5deb999ee161ac1b",
+  "tools/motion.test.mjs": "d1ab42afcbe065f1560dc43c91cc13ef1b9a15d67319df63d781355fecf701ff",
+  "tools/build.mjs": "023204e8c5c77fed468eb0fcc367bb056a09a801b3dfae28fa2806ba48007c00",
+  "tools/school.test.mjs": "0bd38f5892aaa240272ebb9a7462b4aa1910c160276764bb958aa90a7db1744a",
+  "verification/artifact-audit.json": "a05d81815b30e69c2ff653b911236676ba201e1a443e281420abe68a0849ab15",
+  "verification/overview.jpg": "40b55f2e4d8f7fc985ff038e5d274863ff22222fc9ef786b0ae2dad41b73b85a",
+  "verification/narrow-preview.jpg": "982afbbc91b10ca22711a64d588f8a47b9d21cff1874bede19c93d53c0878c6e",
+  "verification/VERIFICATION.md": "d4a5be976dca67ed36cf13bcd2ff22a05d518002ed77adf72fb5be9f95c73e03",
+  "vendor/three.module.js": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a",
+  "vendor/THREE-LICENSE.txt": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+  "vendor/three.core.js": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
+  "src/shell.html": "87dbf7149a6daa57fd2a41f72292da8b2d322257a6d0d6b4d338a3c065d7f6d1",
+  "src/fish.mjs": "d9003d2bf0ec80fe54b3e7c9e743bbf2e5a49874ada8c7e92e403c2816dec6b7",
+  "src/simulation.mjs": "2687cd35febf8d015994a81f91a5b1a19d61f8ddf8d754c11d20647fbac05d68",
+  "src/style.css": "1e0fc4a8f6c2999184c71f908f7e3002ae749fed07e75d605db8a4943b4c50fc",
+  "src/school.mjs": "96f91b180edd5ce333b1b71859b8c9ee8140de9abb3fcc71bb59881a76cc1396",
+  "src/app.mjs": "8a33347f0438a8ccb5e56ba2c117edcf974e350290011050b959e7d7ed2953e2"
+}

@@ -1,0 +1,33 @@
+
+> koi-motion-study@0.8.0 check
+> node --test tools/motion.test.mjs tools/school.test.mjs tools/rhythm.test.mjs tools/roaming.test.mjs
+
+✔ seeded exploration repeats exactly (59.121125ms)
+✔ spine length stays fixed through hard turns and maximum tail effort (19.312458ms)
+✔ a glide reduces forward speed and muscle effort without an instantaneous velocity change (2.499042ms)
+✔ stopping the preferred speed decays to rest without reversing or pivoting rapidly (13.457542ms)
+✔ angular acceleration is bounded during a sudden steering reversal (0.912459ms)
+✔ default cruise includes repeated active and low-effort phases (3.2235ms)
+✔ head path guides the tail through a turn after forward travel (2.079458ms)
+✔ long exploration stays finite and near the bounded study area (24.988958ms)
+✔ generated fish has finite vertices and normals across changing poses (28.317667ms)
+✔ spontaneous swimming adds short speed increases and quiet drifts with smooth acceleration (42.17975ms)
+✔ fish take spontaneous flutters and quiet periods on independent schedules (1989.735375ms)
+✔ avoidance braking still takes priority during a spontaneous flutter (4.312542ms)
+✔ the fixed view stays inhabited while individual fish can leave the frame (3845.426167ms)
+✔ the six-fish school is deterministic while its individuals retain different gaits (1170.12275ms)
+✔ three minutes of default schooling maintain torso clearance and bounded 3D motion (3747.552625ms)
+✔ all supported school sizes preserve torso clearance in the initial minute (9815.286209ms)
+✔ head-on and crossing encounters pass without overlapping torso envelopes (118.122333ms)
+✔ scatter and regroup preserve positions at activation, and regroup draws fish together sooner (1070.5275ms)
+✔ a shared pointer destination retains space between the fish (1188.756208ms)
+✔ social perception ignores fish beyond the local sensing range (3.466875ms)
+✔ schooling produces shared headings more often than the independent preset (3260.003625ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20474.434167

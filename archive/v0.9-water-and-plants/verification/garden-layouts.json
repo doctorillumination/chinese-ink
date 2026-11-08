@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "aspect": 0.45,
+      "polar": 0.15,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 0.45,
+      "polar": 0.68,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 0.45,
+      "polar": 1.46,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 1.5,
+      "polar": 0.15,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 1.5,
+      "polar": 0.68,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 1.5,
+      "polar": 1.46,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 2,
+      "polar": 0.15,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 2,
+      "polar": 0.68,
+      "leaves": 15,
+      "stem_vertices": 290
+    },
+    {
+      "aspect": 2,
+      "polar": 1.46,
+      "leaves": 15,
+      "stem_vertices": 290
+    }
+  ]
+}
