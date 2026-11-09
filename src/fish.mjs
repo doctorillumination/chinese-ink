@@ -162,6 +162,7 @@ export class ProceduralFish {
     this.inkRayMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: this.inkVariant.rays, toneMapped: false });
     this.inkEyeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
     this.inkDetailMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: this.inkVariant.details, toneMapped: false });
+    this.inkMouthMaterial = this.inkDetailMaterial.clone();
     this.style = 'study';
     this.localFrame = { center: new THREE.Vector3(), forward: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3() };
     this.pointValue = new THREE.Vector3();
@@ -256,12 +257,14 @@ export class ProceduralFish {
 
   update() {
     const sim = this.sim;
+    const bite = clamp(this.biteAmount ?? 0, 0, 1);
     this.inkDepth = fishWaterDepth(sim, this.depthAmount ?? .8);
     this.group.position.y = this.style === 'ink' ? -this.inkDepth * .85 : 0;
     this.spineGroup.position.y = this.group.position.y;
     this.inkMaterial.uniforms.uDepth.value = this.inkDepth;
     this.inkFinMaterial.uniforms.uDepth.value = this.inkDepth;
-    for (const material of [this.inkRayMaterial, this.inkEyeMaterial, this.inkDetailMaterial]) material.color.setRGB(1, 1, this.inkDepth);
+    for (const material of [this.inkRayMaterial, this.inkEyeMaterial, this.inkDetailMaterial, this.inkMouthMaterial]) material.color.setRGB(1, 1, this.inkDepth);
+    this.inkMouthMaterial.opacity = mix(this.inkVariant.details, .50, bite);
     this.inkMaterial.uniforms.uSubmerge.value = clamp(.90 + sim.y * .16, .65, 1.05);
     this.inkFinMaterial.uniforms.uSubmerge.value = this.inkMaterial.uniforms.uSubmerge.value;
     sim.updateSpine();
@@ -270,20 +273,23 @@ export class ProceduralFish {
       const s = i / (this.rings - 1);
       const [width, back, belly] = this.bodyProfiles[i];
       const frame = this.frame(s);
+      const pucker = bite * Math.pow(Math.max(0, 1 - s / .085), 2);
       for (let j = 0; j < this.radials; j++) {
         const [cosine, sine] = this.radialDirections[j];
         const y = sine * (sine >= 0 ? back : belly);
-        const xScale = cosine * width * sim.scale, yScale = y * sim.scale;
+        const xScale = cosine * (width + pucker * .022) * sim.scale, yScale = y * sim.scale;
+        const reach = pucker * .025 * sim.scale;
         positions.setXYZ(i * this.radials + j,
-          frame.center.x + frame.right.x * xScale + frame.up.x * yScale,
-          frame.center.y + frame.right.y * xScale + frame.up.y * yScale,
-          frame.center.z + frame.right.z * xScale + frame.up.z * yScale);
+          frame.center.x + frame.right.x * xScale + frame.up.x * yScale + frame.forward.x * reach,
+          frame.center.y + frame.right.y * xScale + frame.up.y * yScale + frame.forward.y * reach,
+          frame.center.z + frame.right.z * xScale + frame.up.z * yScale + frame.forward.z * reach);
       }
     }
     const cap = this.rings * this.radials;
     const head = sim.spine[0];
     const tail = sim.spine[sim.spine.length - 1];
-    positions.setXYZ(cap, head.x, head.y, head.z);
+    const nose = this.frame(0).forward, reach = bite * .025 * sim.scale;
+    positions.setXYZ(cap, head.x + nose.x * reach, head.y + nose.y * reach, head.z + nose.z * reach);
     positions.setXYZ(cap + 1, tail.x, tail.y, tail.z);
     positions.needsUpdate = true;
     this.geometry.computeVertexNormals();
@@ -327,8 +333,10 @@ export class ProceduralFish {
     const mouth = this.mouth.geometry.attributes.position;
     for (let i = 0; i < mouth.count; i++) {
       const a = i / mouth.count * Math.PI * 2;
-      const point = this.point(-0.001, Math.cos(a) * 0.043, Math.sin(a) * 0.025 - 0.021);
-      point.addScaledVector(this.frame(0).forward, 0.004 * sim.scale);
+      // The lip tips toward the surface so the small opening reads from above.
+      const lipHeight = mix(Math.sin(a) * .025 - .021, .105, bite);
+      const point = this.point(-0.001, Math.cos(a) * (.043 + bite * .028), lipHeight);
+      point.addScaledVector(this.frame(0).forward, (.004 + bite * (.015 + Math.sin(a) * .045)) * sim.scale);
       mouth.setXYZ(i, point.x, point.y, point.z);
     }
     mouth.needsUpdate = true;
@@ -378,7 +386,7 @@ export class ProceduralFish {
     for (const fin of this.fins) { fin.mesh.material = this.inkFinMaterial; fin.rays.material = this.inkRayMaterial; }
     for (const { eye, pupil } of this.eyes) { eye.material = this.inkEyeMaterial; pupil.material = this.inkEyeMaterial; }
     for (const { line } of this.gills) line.material = this.inkDetailMaterial;
-    this.mouth.material = this.inkDetailMaterial;
+    this.mouth.material = this.inkMouthMaterial;
   }
 
   dispose() {
@@ -394,7 +402,7 @@ export class ProceduralFish {
     }
     for (const geometry of geometries) geometry.dispose();
     for (const material of this.studyMaterials.values()) materials.add(material);
-    for (const material of [this.inkMaterial, this.inkFinMaterial, this.inkRayMaterial, this.inkEyeMaterial, this.inkDetailMaterial]) materials.add(material);
+    for (const material of [this.inkMaterial, this.inkFinMaterial, this.inkRayMaterial, this.inkEyeMaterial, this.inkDetailMaterial, this.inkMouthMaterial]) materials.add(material);
     for (const material of materials) material.dispose();
   }
 }

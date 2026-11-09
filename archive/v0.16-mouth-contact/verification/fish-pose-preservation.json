@@ -1,0 +1,10 @@
+{
+  "edition": "0.14",
+  "compared_with": "archive/v0.13-paper-and-surface",
+  "poses": 60,
+  "values_compared": 1394640,
+  "maximum_position_or_normal_deviation": 0,
+  "body_rings": 81,
+  "body_radials": 32,
+  "geometry_resolution_unchanged": true
+}

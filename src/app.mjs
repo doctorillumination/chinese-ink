@@ -3,6 +3,7 @@ import { FIXED_STEP } from './simulation.mjs';
 import { SchoolSimulation } from './school.mjs';
 import { ProceduralFish } from './fish.mjs';
 import { InkRenderer } from './ink-renderer.mjs';
+import { biteAmount } from './bite-feedback.mjs';
 
 const surface = document.getElementById('scene');
 const school = new SchoolSimulation();
@@ -76,10 +77,11 @@ surface.addEventListener('keydown', (event) => {
 });
 
 let previous = null, accumulator = 0, frames = 0, frameWindow = 0, measuredFps = 0, diagnosticClock = 0;
+let bitingFish = '';
 const cost = { simulation: 0, models: 0, render: 0 };
 function diagnostics() {
   Object.assign(surface.dataset, {
-    version: '0.16', simulationTime: school.time.toFixed(4), count: String(school.fish.length),
+    version: '0.17', simulationTime: school.time.toFixed(4), count: String(school.fish.length),
     fps: measuredFps.toFixed(1), simulationMs: cost.simulation.toFixed(2), modelMs: cost.models.toFixed(2), renderMs: cost.render.toFixed(2),
     rendering: 'ink', geometryDetail: 'pond', inkPrecision: ink.precision,
     foodPieces: String(school.food.remaining), foodEaten: String(school.food.eaten),
@@ -88,6 +90,9 @@ function diagnostics() {
     headingAlignment: school.metrics.alignment.toFixed(4), swimmingStates: school.fish.map((fish) => fish.rhythm.state).join(','),
     lastBite: school.food.bites.length ? JSON.stringify(school.food.bites.at(-1)) : '',
     automaticRipples: String(ink.water.ambientCount), rippleCount: String(ink.water.count),
+    biteRipples: String(ink.water.biteCount),
+    bitingFish,
+    biteFeedback: models.map((model) => `${model.sim.id}:${(model.biteAmount ?? 0).toFixed(3)}`).join(','),
     surfaceLeaves: String(ink.garden.leafCount), submergedObjects: String(ink.garden.submergedRecords.length),
     cameraTracking: 'false', cameraPosition: camera.position.toArray().map((v) => v.toFixed(6)).join(','),
     cameraRotation: camera.quaternion.toArray().map((v) => v.toFixed(6)).join(','),
@@ -105,7 +110,15 @@ function animate(now) {
   accumulator += Math.min(wall, .1);
   while (accumulator + 1e-10 >= FIXED_STEP) { school.step(FIXED_STEP); accumulator -= FIXED_STEP; }
   const modelStart = performance.now(); cost.simulation += (modelStart - start - cost.simulation) * .08;
-  for (const model of models) { model.depthAmount = ink.params.depth; model.update(); }
+  const biting = [];
+  for (const model of models) {
+    model.depthAmount = ink.params.depth;
+    model.biteAmount = biteAmount(school.food.bites, model.sim.id, school.time);
+    if (model.biteAmount > .5) biting.push(model.sim.id);
+    model.update();
+  }
+  const state = biting.join(',');
+  if (state !== bitingFish) { bitingFish = state; surface.dataset.bitingFish = state; }
   const renderStart = performance.now(); cost.models += (renderStart - modelStart - cost.models) * .08;
   ink.render(scene, camera, school);
   cost.render += (performance.now() - renderStart - cost.render) * .08;

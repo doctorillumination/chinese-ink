@@ -1,6 +1,6 @@
 # Ink pond
 
-A self-contained browser artwork, version 0.16, November 8, 2026. Twelve fish swim through an ink-painted pond with textured paper, drifting plants, submerged fragments, optical depth, and gentle surface ripples. The artwork fills the browser viewport from a fixed, directly overhead camera. There are no visible labels, menus, buttons, measurements, or settings.
+A self-contained browser artwork, version 0.17, November 8, 2026. Twelve fish swim through an ink-painted pond with textured paper, drifting plants, submerged fragments, optical depth, and gentle surface ripples. The artwork fills the browser viewport from a fixed, directly overhead camera. There are no visible labels, menus, buttons, measurements, or settings.
 
 Click or tap to drop three small ink blots of food and send ripples across the water. Nearby fish notice promptly, approach the food, rise toward the surface, slow at the blots, and place their snouts against them to eat. Drag to stir the water without dropping food. Keyboard users can focus the pond and press Enter to feed its centre. Interaction never rotates or zooms the view.
 
@@ -20,9 +20,9 @@ Loose groups continue to form and separate, while some fish explore independentl
 
 Feeding selects a nearby fish using travel distance and heading. Up to two other interested fish approach the outside of the patch, leaving room for the feeding fish. The eater keeps its destination, brakes before reaching it, and uses small pectoral adjustments for the final placement of its snout. These adjustments have bounded velocity and acceleration. They never move the food.
 
-Food remains at the spot where it lands. A bite requires slow movement, a near-surface fish, and brief contact inside a small region directly in front of the mouth. Passing with a flank or tail does not count. Each swallowed blot shrinks away over 0.24 seconds at the snout. The fish can then make another small adjustment to the next blot. Up to four patches can be active, and uneaten food fades after 28 simulated seconds. Fish never teleport to food.
+Food remains at the spot where it lands. A bite requires slow movement, a near-surface fish, and brief contact inside a small region directly in front of the mouth. Passing with a flank or tail does not count. Each swallowed blot shrinks away over 0.24 seconds at the snout. Each confirmed bite now adds a brief opening and closing of the snout and one tiny, uneven ripple at the mouth. The lip tips toward the surface so the movement reads from the overhead view. The fish can then make another small adjustment to the next blot. Up to four patches can be active, and uneaten food fades after 28 simulated seconds. Fish never teleport to food.
 
-The ordinary individual swimming motor matches v0.15 in paired, 60-second straight and wandering runs without feeding. Startup configuration and close feeding movement intentionally change. The lighter display geometry and ink materials from v0.15 are retained.
+Swimming, schooling, startup, and food-contact logic are unchanged from v0.16. A paired 40-second school run, including feeding, matches exactly. The new mouth motion is a rendering effect and returns to the previous resting geometry between bites. Bite ripples use the bounded existing water system and do not replace click waves.
 
 This is an artistic motion model with simplified propulsion and optical water effects. It does not solve full fluid pressure or light transport. Collision checks cover selected configurations and finite simulation windows.
 
@@ -34,9 +34,9 @@ Near-surface fish emit occasional faint ripples without interaction. Click rippl
 
 ## Edit, verify, or host
 
-Run `npm install` and `npm run build` to rebuild the single HTML file after source changes. Run `npm run check` for the 36 motion, geometry, schooling, occupancy, rhythm, feeding, plants, depth, and ripple checks. `node tools/verify-edition.mjs` checks dispersed startup, the ordinary swimming motor against v0.15, fixed food positions, mouth-contact bites, and feeding timing. Results and Chrome evidence are under `verification/`.
+Run `npm install` and `npm run build` to rebuild the single HTML file after source changes. Run `npm run check` for the 38 motion, geometry, schooling, occupancy, rhythm, feeding, plants, depth, and ripple checks. `node tools/verify-edition.mjs` checks motion and bite timing against v0.16, unchanged resting geometry, and one ripple per confirmed bite. Results and Chrome evidence are under `verification/`.
 
-The simulation is in `src/simulation.mjs`, `src/school.mjs`, `src/rhythm.mjs`, and `src/pond-life.mjs`. Procedural fish geometry is in `src/fish.mjs`. Ink, water, and plants are in `src/ink-material.mjs`, `src/ink-renderer.mjs`, `src/ink-garden.mjs`, and `src/water.mjs`. `src/app.mjs`, `src/shell.html`, and `src/style.css` provide the full-viewport artwork and pointer interaction. Source APIs retain development capabilities, but the current artwork exposes no inspection interface.
+The simulation is in `src/simulation.mjs`, `src/school.mjs`, `src/rhythm.mjs`, and `src/pond-life.mjs`. Procedural fish geometry is in `src/fish.mjs`, with the short bite envelope in `src/bite-feedback.mjs`. Ink, water, and plants are in `src/ink-material.mjs`, `src/ink-renderer.mjs`, `src/ink-garden.mjs`, and `src/water.mjs`. `src/app.mjs`, `src/shell.html`, and `src/style.css` provide the full-viewport artwork and pointer interaction. Source APIs retain development capabilities, but the current artwork exposes no inspection interface.
 
 Earlier editions are preserved under `archive/` with SHA-256 manifests. The complete v0.14 edition retains the earlier inspection interface; v0.15 preserves the first interface-free edition. The reference artwork prompted the investigation; its source code was not copied.
 

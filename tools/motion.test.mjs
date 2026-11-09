@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { FishSimulation, BODY_LENGTH, JOINT_COUNT, FIXED_STEP } from '../src/simulation.mjs';
 import { ProceduralFish, profile } from '../src/fish.mjs';
 import * as THREE from '../vendor/three.module.js';
+import { biteAmount } from '../src/bite-feedback.mjs';
 
 function advance(sim, seconds, check) {
   for (let i = 0; i < Math.round(seconds / FIXED_STEP); i++) {
@@ -143,4 +144,32 @@ test('pond geometry retains body landmarks and animated fin shape at lower cost'
     assert.ok([...pond.geometry.attributes.normal.array].every(Number.isFinite));
   }
   full.dispose(); pond.dispose();
+});
+
+test('confirmed bites open the snout gently without moving the swimming body or fins', () => {
+  const sim = new FishSimulation(); sim.id = 0;
+  const fish = new ProceduralFish(new THREE.Scene(), sim, 'pond'); fish.setStyle('ink'); fish.update();
+  const bites = [{ time: 2, fish: 0 }];
+  assert.equal(biteAmount(bites, 0, 1.9), 0);
+  assert.equal(biteAmount(bites, 1, 2.1), 0);
+  assert.equal(biteAmount(bites, 0, 2.5), 0);
+  assert.ok(biteAmount(bites, 0, 2.04) > 0 && biteAmount(bites, 0, 2.04) < 1);
+  for (let age = 0; age < .45; age += .001) assert.ok(Math.abs(biteAmount(bites, 0, 2 + age + .001) - biteAmount(bites, 0, 2 + age)) < .025);
+  const snapshot = () => ({ body: [...fish.geometry.attributes.position.array], mouth: [...fish.mouth.geometry.attributes.position.array], fins: fish.fins.map((f) => [...f.geometry.attributes.position.array]) });
+  const idle = snapshot(), state = JSON.stringify(sim);
+  fish.biteAmount = biteAmount(bites, 0, 2.1); fish.update();
+  const open = snapshot(); let changed = 0, maxDelta = 0;
+  for (let i = 0; i < idle.body.length; i++) {
+    const delta = Math.abs(open.body[i] - idle.body[i]);
+    if (Math.floor(i / 3) < fish.rings * fish.radials && Math.floor(Math.floor(i / 3) / fish.radials) / (fish.rings - 1) > .085) assert.equal(delta, 0);
+    changed += delta > 1e-6 ? 1 : 0; maxDelta = Math.max(maxDelta, delta);
+  }
+  assert.ok(changed > 0 && maxDelta > .02 && maxDelta < .05);
+  const span = (a, axis) => { const values = a.filter((_, i) => i % 3 === axis); return Math.max(...values) - Math.min(...values); };
+  assert.ok(span(open.mouth, 0) > span(idle.mouth, 0) + .06, 'the opening must be visible from above');
+  assert.ok(span(open.mouth, 2) > span(idle.mouth, 2) + .04);
+  assert.deepEqual(open.fins, idle.fins); assert.equal(JSON.stringify(sim), state);
+  fish.biteAmount = biteAmount(bites, 0, 2.5); fish.update();
+  assert.deepEqual(snapshot(), idle, 'the mouth and snout return exactly to their resting geometry');
+  fish.dispose();
 });

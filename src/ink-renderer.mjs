@@ -266,6 +266,7 @@ export class InkRenderer {
     const delta = Math.max(0, Math.min(.1, school.time - this.lastTime));
     this.lastTime = school.time;
     this.water.emitFish(school.fish, school.time, this.params.depth);
+    this.water.emitBites(school.food.bites, school.time);
     this.water.update(school.time);
     this.accumulator += delta;
     if (this.accumulator >= 1 / 30) {

@@ -66,6 +66,7 @@ export class WaterSurface {
   clear() {
     this.index = 0; this.lastTime = -100; this.count = 0;
     this.fishIndex = 0; this.ambientCount = 0; this.nextAmbient = 1;
+    this.biteCount = 0; this.biteClock = 0; this.lastBites = new Map();
     this.fishTimes = new Map();
     this.starts.fill(-100);
     for (const ripple of this.ripples) ripple.set(0, 0, 0, 0);
@@ -101,6 +102,21 @@ export class WaterSurface {
       time, .14 + (.22 - depth) * .32, 4.8, .62);
     this.fishTimes.set(candidate.id, time); this.nextAmbient = time + .8; this.ambientCount++;
     return true;
+  }
+  emitBites(bites, time) {
+    if (time < this.biteClock) this.lastBites.clear();
+    this.biteClock = time;
+    let emitted = 0;
+    for (const bite of bites) {
+      if (![bite.time, bite.mouthX, bite.mouthZ].every(Number.isFinite) || bite.time > time
+        || bite.time <= (this.lastBites.get(bite.fish) ?? -Infinity)) continue;
+      this.lastBites.set(bite.fish, bite.time);
+      if (time - bite.time >= 1.9) continue;
+      const i = CLICK_RIPPLES + this.fishIndex++ % (RIPPLE_COUNT - CLICK_RIPPLES);
+      this.spawn(i, bite.mouthX, bite.mouthZ, bite.time, .30, 1.9, .22);
+      this.biteCount++; emitted++;
+    }
+    return emitted;
   }
   update(time) {
     this.ripples.forEach((ripple, i) => {

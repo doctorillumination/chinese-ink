@@ -1,70 +1,48 @@
 import { writeFile, readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import { performance } from 'node:perf_hooks';
-import { SchoolSimulation, bodySamples, closestBodies } from '../src/school.mjs';
-import { SchoolSimulation as PreviousSchool } from '../archive/v0.15-clean-pond/src/school.mjs';
-import { FishSimulation, FIXED_STEP } from '../src/simulation.mjs';
-import { FishSimulation as PreviousMotor } from '../archive/v0.15-clean-pond/src/simulation.mjs';
+import * as THREE from '../vendor/three.module.js';
+import { SchoolSimulation } from '../src/school.mjs';
+import { SchoolSimulation as PreviousSchool } from '../archive/v0.16-mouth-contact/src/school.mjs';
+import { ProceduralFish } from '../src/fish.mjs';
+import { ProceduralFish as PreviousFish } from '../archive/v0.16-mouth-contact/src/fish.mjs';
+import { WaterSurface } from '../src/water.mjs';
+import { biteAmount } from '../src/bite-feedback.mjs';
+import { FIXED_STEP } from '../src/simulation.mjs';
 
-const report = { edition: '0.16', date: '2026-11-08', startup: {}, feeding: [], motor: {} };
-const start = performance.now(), school = new SchoolSimulation(), previous = new PreviousSchool();
-const bodies = school.fish.map((fish) => bodySamples(fish));
-let clearance = Infinity;
-for (let i = 0; i < bodies.length; i++) for (let j = i + 1; j < bodies.length; j++) clearance = Math.min(clearance, closestBodies(bodies[i], bodies[j]).clearance);
-report.startup = {
-  constructionMs: performance.now() - start,
-  previousHeadingAlignment: previous.metrics.alignment,
-  headingAlignment: school.metrics.alignment,
-  minimumTorsoClearance: clearance,
-  states: school.fish.map((fish) => fish.rhythm.state),
-  fish: school.fish.map((fish) => ({ id: fish.id, x: fish.x, z: fish.z, yaw: fish.yaw, speed: fish.speed, motorAge: fish.time, history: fish.history.length })),
-};
-assert.ok(school.metrics.alignment < .4 && clearance > .7);
-let maximumDeviation = 0;
-for (const mode of ['straight', 'wander']) {
-  const old = new PreviousMotor(), current = new FishSimulation(); old.mode = current.mode = mode;
-  for (let i = 0; i < 60 / FIXED_STEP; i++) {
-    old.step(); current.step();
-    for (const key of ['x', 'y', 'z', 'yaw', 'phase', 'speed', 'effort', 'omega']) maximumDeviation = Math.max(maximumDeviation, Math.abs(old[key] - current[key]));
-  }
-}
-assert.equal(maximumDeviation, 0);
-report.motor = { secondsPerMode: 60, modes: ['straight', 'wander'], noFeedingMaximumDeviation: maximumDeviation };
-for (const [label, at] of [
-  ['ahead of a fish', (f) => [f.x + Math.cos(f.yaw) * 2.5, f.z + Math.sin(f.yaw) * 2.5]],
-  ['beside a fish', (f) => [f.x + 2.5, f.z + 1]],
-  ['behind a fish', (f) => [f.x - 2.5, f.z]],
-  ['centre', () => [0, 0]],
-]) {
-  const pond = new SchoolSimulation();
-  for (let i = 0; i < 3 / FIXED_STEP; i++) pond.step();
-  const [x, z] = at(pond.fish[2]), time = pond.time;
-  pond.feed(x, z);
-  const patch = pond.food.patches[0], landed = patch.pieces.map((piece) => [piece.x, piece.z]);
-  let first = null, finished = null, noticed = null, gap = Infinity, maxResponders = 0;
-  for (let i = 0; i < 25 / FIXED_STEP; i++) {
-    pond.step();
-    assert.deepEqual(patch.pieces.map((piece) => [piece.x, piece.z]), landed, 'food must not be pulled toward a fish');
-    const responders = pond.fish.filter((fish) => fish.foodGoal).length;
-    maxResponders = Math.max(maxResponders, responders);
-    if (noticed === null && responders) noticed = pond.time - time;
-    if (first === null && pond.food.eaten) first = pond.time - time;
-    if (finished === null && pond.food.eaten === 3) finished = pond.time - time;
-    if (i % 12) continue;
-    const bodies = pond.fish.map((fish) => { fish.updateSpine(); return bodySamples(fish); });
-    for (let a = 0; a < bodies.length; a++) for (let b = a + 1; b < bodies.length; b++) gap = Math.min(gap, closestBodies(bodies[a], bodies[b]).clearance);
-  }
-  const maxMouthDistance = Math.max(...pond.food.bites.map((bite) => Math.hypot(bite.x - bite.mouthX, bite.z - bite.mouthZ)));
-  const entry = { label, x, z, noticeSeconds: noticed, firstBiteSeconds: first, allEatenSeconds: finished, eaten: pond.food.eaten, foodPositionChange: 0, maxMouthDistance, minimumTorsoClearance: gap, maxResponders, bites: pond.food.bites };
-  report.feeding.push(entry);
-  assert.ok(noticed < .25 && first < 15 && finished < 25, JSON.stringify(entry));
-  assert.equal(pond.food.eaten, 3); assert.ok(maxMouthDistance < .12 && gap > 0);
-  assert.ok(pond.food.bites.every((bite) => bite.surface > .65 && bite.speed < .82));
-}
-report.preservedSources = [];
-for (const name of ['fish.mjs', 'ink-material.mjs', 'ink-renderer.mjs', 'water.mjs', 'rhythm.mjs']) {
-  assert.equal(await readFile(new URL('../src/' + name, import.meta.url), 'utf8'), await readFile(new URL('../archive/v0.15-clean-pond/src/' + name, import.meta.url), 'utf8'));
+const report = { edition: '0.17', date: '2026-11-08', preservedSources: [], motion: {}, idleGeometry: {}, feedback: {} };
+for (const name of ['simulation.mjs', 'simulation-math.mjs', 'school.mjs', 'pond-life.mjs', 'rhythm.mjs', 'ink-material.mjs', 'ink-garden.mjs', 'shell.html', 'style.css']) {
+  assert.equal(await readFile(new URL('../src/' + name, import.meta.url), 'utf8'), await readFile(new URL('../archive/v0.16-mouth-contact/src/' + name, import.meta.url), 'utf8'));
   report.preservedSources.push(name);
 }
-await writeFile(new URL('../verification/edition-16-behaviour.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
-console.log(JSON.stringify({ startup: report.startup, motor: report.motor, feeding: report.feeding.map(({ bites, ...result }) => result) }, null, 2));
+const school = new SchoolSimulation(), previous = new PreviousSchool(), water = new WaterSurface();
+const model = new ProceduralFish(new THREE.Scene(), school.fish[3], 'pond');
+const oldModel = new PreviousFish(new THREE.Scene(), school.fish[3], 'pond');
+for (const fish of [model, oldModel]) { fish.setStyle('ink'); fish.setInspection({ spine: false, translucent: false, wireframe: false }); }
+let motionDeviation = 0, geometryDeviation = 0, compared = 0, maxOpening = 0, activeFrames = 0;
+for (let i = 0; i < 40 / FIXED_STEP; i++) {
+  if (i === 360) { school.feed(0, 0); previous.feed(0, 0); water.add(0, 0, school.time); }
+  school.step(); previous.step();
+  for (let f = 0; f < school.fish.length; f++) for (const key of ['x', 'y', 'z', 'yaw', 'phase', 'speed', 'omega', 'effort', 'finVelocityX', 'finVelocityZ']) motionDeviation = Math.max(motionDeviation, Math.abs(school.fish[f][key] - previous.fish[f][key]));
+  if (i % 2) continue;
+  water.emitFish(school.fish, school.time); water.emitBites(school.food.bites, school.time); water.update(school.time);
+  model.biteAmount = biteAmount(school.food.bites, model.sim.id, school.time);
+  maxOpening = Math.max(maxOpening, model.biteAmount); activeFrames += model.biteAmount > 0 ? 1 : 0;
+  if (i % 120) continue;
+  model.biteAmount = 0; model.update(); oldModel.update();
+  for (const [current, old] of [[model.geometry, oldModel.geometry], [model.mouth.geometry, oldModel.mouth.geometry], ...model.fins.map((fin, i) => [fin.geometry, oldModel.fins[i].geometry])]) {
+    for (const key of ['position', 'normal']) {
+      if (!current.attributes[key] || !old.attributes[key]) continue;
+      const a = current.attributes[key].array, b = old.attributes[key].array;
+      for (let j = 0; j < a.length; j++) { geometryDeviation = Math.max(geometryDeviation, Math.abs(a[j] - b[j])); compared++; }
+    }
+  }
+}
+assert.equal(motionDeviation, 0); assert.deepEqual(school.food.bites, previous.food.bites);
+assert.equal(geometryDeviation, 0); assert.equal(school.food.eaten, 3); assert.equal(water.biteCount, 3);
+assert.ok(maxOpening > .98 && activeFrames > 30);
+report.motion = { seconds: 40, fish: 12, includesFeeding: true, maximumDeviation: motionDeviation, biteEventsUnchanged: true };
+report.idleGeometry = { poses: 40, comparedValues: compared, maximumDeviation: geometryDeviation };
+report.feedback = { foodEaten: school.food.eaten, biteRipples: water.biteCount, maximumMouthOpening: maxOpening, activeFramesAt60Hz: activeFrames, openingDurationSeconds: .45, rippleLifetimeSeconds: 1.9, rippleStrength: .30, rippleSpeedMultiplier: .22, clickRippleCount: water.count, biteEvents: school.food.bites };
+model.dispose(); oldModel.dispose();
+await writeFile(new URL('../verification/edition-17-bite-feedback.json', import.meta.url), JSON.stringify(report, null, 2) + '\n');
+console.log(JSON.stringify({ ...report, feedback: { ...report.feedback, biteEvents: report.feedback.biteEvents.length } }, null, 2));

@@ -89,3 +89,23 @@ test('only moving fish near the surface emit gentle ripples in their own slots',
   assert.equal(water.count, 1); assert.ok(water.ripples[0].w === 1 && water.ripples[6].w > 0);
   water.update(6); assert.equal(water.ripples[6].w, 0); assert.ok(water.ripples[0].w > 0);
 });
+
+test('each confirmed bite emits one tiny mouth ripple without replacing click waves', () => {
+  const water = new WaterSurface(); water.add(4, 5, 1);
+  const click = water.ripples[0].toArray(), bite = { fish: 3, time: 1.1, mouthX: 2, mouthZ: -1 };
+  assert.equal(water.emitBites([bite], 1), 0, 'future bites must not appear early');
+  assert.equal(water.emitBites([bite], 1.2), 1);
+  assert.equal(water.biteCount, 1); assert.equal(water.ambientCount, 0); assert.equal(water.count, 1);
+  assert.deepEqual(water.ripples[0].toArray(), click);
+  const ripple = water.ripples[6];
+  assert.equal(ripple.x, bite.mouthX); assert.equal(ripple.y, bite.mouthZ);
+  assert.equal(water.starts[6], bite.time);
+  assert.ok(ripple.w <= .3 && ripple.life < 2);
+  assert.ok(RIPPLE_SPEED * water.shapes[6].w * ripple.life < 1.1);
+  assert.equal(water.emitBites([bite], 1.3), 0, 'rendering the event again cannot replay its ripple');
+  assert.equal(water.emitBites([bite, { ...bite, time: 1.4 }], 1.4), 1);
+  assert.equal(water.biteCount, 2);
+  water.update(4); assert.ok(water.ripples.slice(6).every((ripple) => ripple.w === 0));
+  assert.equal(water.emitBites([{ ...bite, fish: 4 }], 4), 0, 'expired bite history must not create late ripples');
+  water.clear(); assert.equal(water.biteCount, 0); assert.equal(water.emitBites([bite], 1.2), 1);
+});
