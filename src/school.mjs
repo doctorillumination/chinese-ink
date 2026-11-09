@@ -45,15 +45,17 @@ function forecast(fish, requestedTurn, brake) {
   const result = [];
   const dt = 0.15;
   for (let step = 1; step <= 20; step++) {
-    const maxTurn = clamp(speed / (fish.bodyLength * 0.78), 0.42, 0.92);
+    const maxTurn = clamp(speed / (fish.bodyLength * 0.78), fish.foodGoal ? .72 : 0.42, 0.92);
     const desired = clamp(requestedTurn, -maxTurn, maxTurn);
     const nextOmega = omega + (desired - omega) * (1 - Math.exp(-2.9 * dt));
     omega += clamp(nextOmega - omega, -1.15 * dt, 1.15 * dt);
     yaw += omega * dt;
     speed = Math.max(0, speed + (((fish.effectiveCruise ?? fish.params.speed * fish.bodyLength) - speed) * 0.7 - brake * speed * 1.5) * dt);
-    distance += speed * dt;
-    x += Math.cos(yaw) * speed * dt;
-    z += Math.sin(yaw) * speed * dt;
+    const drift = Math.exp(-step * dt * 2);
+    const vx = Math.cos(yaw) * speed + fish.finVelocityX * drift, vz = Math.sin(yaw) * speed + fish.finVelocityZ * drift;
+    distance += (fish.finVelocityX || fish.finVelocityZ ? Math.hypot(vx, vz) : speed) * dt;
+    x += vx * dt;
+    z += vz * dt;
     // Constant depth is conservative: a new evasive dive has not happened yet.
     path.push({ x, y: fish.y, z, d: distance });
     if (step % 4) continue;
@@ -95,20 +97,49 @@ export class SchoolSimulation {
     this.fish = [];
     const count = clamp(Math.round(this.params.count), 2, MAX_FISH);
     this.params.count = count;
-    const columns = count > 9 ? 4 : 3;
+    const occupied = [];
     for (let id = 0; id < count; id++) {
-      const row = Math.floor(id / columns);
-      const column = id % columns;
       const scale = 0.88 + value(id, 2) * 0.23;
-      const yaw = (value(id, 3) - 0.5) * 0.4;
       const fish = new FishSimulation(this.motion, {
         scale, seed: 1729 + id * 547,
-        x: (row - (Math.ceil(count / columns) - 1) / 2) * 3.9 + (column - (columns - 1) / 2) * 0.45 + (value(id, 19) - 0.5) * 1.1,
-        z: (column - (columns - 1) / 2) * 2.85 + (value(id, 4) - 0.5) * 0.7,
-        yaw, phase: value(id, 5) * Math.PI * 2,
+        phase: value(id, 5) * Math.PI * 2,
         depth: (value(id, 6) - 0.5) * 0.7,
         pace: 0.78 + value(id, 7) * 0.38,
       });
+      // Mature each independent motor before arranging the first visible frame.
+      // This warms rhythm and path history without advancing the whole school.
+      const age = 7 + value(id, 20) * 23;
+      for (let i = 0; i < age / FIXED_STEP; i++) fish.step();
+      fish.updateSpine();
+      const original = { x: fish.x, z: fish.z, yaw: fish.yaw, body: bodySamples(fish) };
+      const upcoming = forecast(fish, fish.omega, fish.braking).slice(0, 3);
+      let chosen = null;
+      for (let attempt = 0; attempt < 1200; attempt++) {
+        const angle = value(id, 21 + attempt * 3) * Math.PI * 2;
+        const radius = Math.sqrt(value(id, 22 + attempt * 3));
+        const yaw = value(id, 23 + attempt * 3) * Math.PI * 2;
+        const x = Math.cos(angle) * radius * 6.1 + Math.cos(yaw) * fish.bodyLength * .44;
+        const z = Math.sin(angle) * radius * 7.1 + Math.sin(yaw) * fish.bodyLength * .44;
+        const rotation = yaw - original.yaw, c = Math.cos(rotation), s = Math.sin(rotation);
+        const transform = (points) => points.map((p) => ({ ...p, x: x + (p.x - original.x) * c - (p.z - original.z) * s, z: z + (p.x - original.x) * s + (p.z - original.z) * c }));
+        const body = transform(original.body);
+        let clearance = Math.min(Infinity, ...occupied.map((other) => closestBodies(body, other.body).clearance));
+        if (clearance > .85) {
+          const next = upcoming.map(transform);
+          for (const other of occupied) for (let k = 0; k < next.length; k++) clearance = Math.min(clearance, closestBodies(next[k], other.upcoming[k]).clearance + .45);
+        }
+        if (!chosen || clearance > chosen.clearance) chosen = { x, z, yaw, c, s, body, clearance };
+        if (clearance > .85) break;
+      }
+      const { x, z, yaw, c, s } = chosen;
+      for (const point of fish.history) {
+        const dx = point.x - original.x, dz = point.z - original.z;
+        point.x = x + dx * c - dz * s; point.z = z + dx * s + dz * c;
+        point.yaw += yaw - original.yaw;
+      }
+      fish.x = x; fish.z = z; fish.yaw = yaw;
+      Object.assign(fish.origin, { x, z, yaw });
+      fish.updateSpine(); occupied.push({ body: bodySamples(fish), upcoming: forecast(fish, fish.omega, fish.braking).slice(0, 3) });
       fish.id = id;
       fish.surfaceInterest = 0; fish.fedUntil = 0; fish.foodGoal = null;
       fish.traits = {
@@ -271,10 +302,11 @@ export class SchoolSimulation {
     if (feeding) {
       const dx = fish.foodGoal.x - fish.x, dz = fish.foodGoal.z - fish.z;
       const angle = angleDifference(Math.atan2(dz, dx), fish.yaw);
-      turn = angle * 2.8;
-      autonomy = .06;
-      pace = mix(1.08, 1.65, smooth(.8, 3, Math.hypot(dx, dz))) * mix(.80, 1, smooth(-.2, .8, Math.cos(angle)));
+      turn = angle * 3.8 * smooth(.12, .8, Math.hypot(dx, dz));
+      autonomy = 0;
+      pace = mix(.65, 1.6, smooth(.8, 3, Math.hypot(dx, dz)));
     }
+    if (this.time < (fish.nibblingUntil ?? 0)) { pace = .03; brake = Math.max(brake, .75); }
     // A soft oval encourages earlier return turns without a wall or position clamp.
     const lookX = own.center.x + own.velocity.x * 2.2;
     const lookZ = own.center.z + own.velocity.z * 2.2;
@@ -293,7 +325,7 @@ export class SchoolSimulation {
   }
 
   chooseSafeMotion(fish, result, preferredTurn, neighbours) {
-    const maxTurn = clamp(fish.speed / (fish.bodyLength * 0.78), 0.42, 0.92);
+    const maxTurn = clamp(fish.speed / (fish.bodyLength * 0.78), fish.foodGoal ? .72 : 0.42, 0.92);
     const turns = [...new Set([clamp(result.turn, -maxTurn, maxTurn), 0, maxTurn, -maxTurn, maxTurn * 0.5, -maxTurn * 0.5])];
     const brakes = [...new Set([result.brake, 0.45, 0.92])];
     const others = neighbours.map((other) => {
@@ -333,7 +365,7 @@ export class SchoolSimulation {
     const observing = this.fish.some((fish) => this.time >= fish.perceptionAt);
     const snapshots = observing ? this.fish.map((fish) => {
       fish.updateSpine();
-      return { id: fish.id, center: this.center(fish), forward: { x: Math.cos(fish.yaw), z: Math.sin(fish.yaw) }, velocity: { x: Math.cos(fish.yaw) * fish.speed, z: Math.sin(fish.yaw) * fish.speed }, vertical: fish.verticalVelocity, speed: fish.speed, body: bodySamples(fish) };
+      return { id: fish.id, center: this.center(fish), forward: { x: Math.cos(fish.yaw), z: Math.sin(fish.yaw) }, velocity: { x: Math.cos(fish.yaw) * fish.speed + fish.finVelocityX, z: Math.sin(fish.yaw) * fish.speed + fish.finVelocityZ }, vertical: fish.verticalVelocity, speed: fish.speed, body: bodySamples(fish) };
     }) : null;
     // All observations read the same pre-step state, independent of update order.
     for (const fish of this.fish) {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { FoodField, MAX_FOOD_PIECES, socialIntention } from '../src/pond-life.mjs';
+import { FoodField, MAX_FOOD_PIECES, socialIntention, mouthContact } from '../src/pond-life.mjs';
 import { SchoolSimulation } from '../src/school.mjs';
 import { FIXED_STEP } from '../src/simulation.mjs';
 
@@ -11,10 +11,12 @@ test('food drops are bounded, expire, and fade after being eaten', () => {
   assert.equal(food.patches.length, 4); assert.equal(food.remaining, MAX_FOOD_PIECES);
   assert.equal(food.add(0, 0, 5.1), false);
   const piece = food.patches[0].pieces[0];
-  const fish = { id: 0, x: piece.x, z: piece.z, foodGoal: { patch: food.patches[0].id }, surfaceInterest: 1 };
+  const fish = { id: 0, x: piece.x, z: piece.z, yaw: 0, foodGoal: { patch: food.patches[0].id, piece: 0, role: 'eat', until: 10 }, surfaceInterest: 1 };
   food.update(5.2, [fish]);
+  assert.equal(food.eaten, 0, 'a bite requires a brief contact, not an instantaneous hit');
+  food.update(5.3, [fish]);
   assert.equal(food.eaten, 1); assert.ok(fish.fedUntil > 5.2);
-  assert.ok(food.visible(5.8).some((p) => p.fade > 0 && p.fade < 1));
+  assert.ok(food.visible(5.4).some((p) => p.fade > 0 && p.fade < 1));
   food.update(40, [fish]); assert.equal(food.remaining, 0); assert.deepEqual(food.visible(40), []);
 });
 
@@ -38,8 +40,10 @@ test('feeding attracts a local subset through swimming and releases fish after a
   assert.deepEqual(school.fish.map((fish) => [fish.x, fish.y, fish.z, fish.speed]), positions);
   let feeding = 0, lifted = 0, nearest = Infinity, noticed = null, firstBite = null, finished = null;
   const start = school.time;
+  const landed = school.food.patches.flatMap((p) => p.pieces.map((piece) => [piece.x, piece.z]));
   for (let i = 0; i < 28 / FIXED_STEP; i++) {
     school.step();
+    assert.deepEqual(school.food.patches.flatMap((p) => p.pieces.map((piece) => [piece.x, piece.z])).slice(0, landed.length), school.food.patches.length ? landed : []);
     feeding = Math.max(feeding, school.fish.filter((fish) => fish.foodGoal).length);
     lifted = Math.max(lifted, ...school.fish.map((fish) => fish.surfaceInterest));
     nearest = Math.min(nearest, ...school.fish.map((fish) => Math.hypot(fish.x - x, fish.z - z)));
@@ -50,7 +54,7 @@ test('feeding attracts a local subset through swimming and releases fish after a
   assert.ok(feeding > 0 && feeding <= 5);
   assert.ok(lifted > .3 && nearest < 1);
   assert.ok(school.food.eaten > 0, 'at least one fish reaches and eats food');
-  assert.ok(noticed < .25 && firstBite < 4 && finished < 6, `feeding latency: ${noticed}, ${firstBite}, ${finished}`);
+  assert.ok(noticed < .25 && firstBite < 10 && finished < 16, `feeding latency: ${noticed}, ${firstBite}, ${finished}`);
   assert.equal(school.food.eaten, 3, 'food is eaten rather than simply expiring');
   assert.equal(school.food.remaining, 0);
   for (let i = 0; i < 10 / FIXED_STEP; i++) school.step();
@@ -68,9 +72,22 @@ test('food is noticed quickly, commitments persist, and fresh drops interest rec
   assert.equal(chosen.foodGoal, goal, 'a small change in ranking does not replace a committed target');
   const piece = food.patches[0].pieces[goal.piece];
   chosen.x = piece.x; chosen.z = piece.z; food.update(.32, fish);
-  assert.equal(food.eaten, 1); assert.ok(chosen.fedUntil > .32);
+  food.update(.42, fish);
+  assert.equal(food.eaten, 1); assert.ok(chosen.fedUntil > .42);
   assert.notEqual(chosen.foodGoal?.piece, goal.piece, 'a nibble cannot keep targeting the eaten pellet');
   chosen.foodGoal = null;
   food.add(chosen.x + 1, chosen.z, 1); food.update(1.2, fish);
   assert.equal(chosen.foodGoal?.patch, 1, 'a fresh drop can attract a recently fed fish');
+});
+
+test('food can only be swallowed at a slow, surfaced snout, never along the flank or tail', () => {
+  const fish = { x: 0, z: 0, yaw: 0, scale: 1, bodyLength: 3.05, speed: .15, surfaceInterest: 1 };
+  const pellet = { x: .055, z: .02, size: .06 };
+  assert.ok(mouthContact(fish, pellet));
+  for (const [x, z] of [[-.4, 0], [-2, 0], [0, .3], [.4, 0]]) assert.equal(mouthContact(fish, { ...pellet, x, z }), false);
+  assert.equal(mouthContact({ ...fish, speed: 1.5 }, pellet), false);
+  assert.equal(mouthContact({ ...fish, surfaceInterest: .2 }, pellet), false);
+  const turned = { ...fish, yaw: Math.PI / 2 };
+  assert.ok(mouthContact(turned, { ...pellet, x: -.02, z: .055 }));
+  assert.equal(mouthContact(turned, { ...pellet, x: .3, z: 0 }), false);
 });

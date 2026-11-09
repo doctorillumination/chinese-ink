@@ -62,6 +62,8 @@ export class FishSimulation {
     this.effort = 0.3 + 0.25 * Math.cos(this.origin.phase);
     this.braking = 0;
     this.verticalVelocity = 0;
+    this.finVelocityX = 0;
+    this.finVelocityZ = 0;
     this.rhythm = new SwimRhythm(this.seed);
     this.activity = { pace: 1, power: 1, tempo: 1, brake: 0, flutter: 0 };
     this.effectiveCruise = this.params.speed * this.bodyLength;
@@ -115,12 +117,25 @@ export class FishSimulation {
 
     let turnWish = 0;
     let arrival = 1;
+    let feedingSpeed = Infinity;
+    let feedingDistance = Infinity;
+    let stationX = 0, stationZ = 0;
     if (this.target && this.mode !== 'straight') {
       const dx = this.target.x - this.x;
       const dz = this.target.z - this.z;
       const d = Math.hypot(dx, dz);
       turnWish = angleDifference(Math.atan2(dz, dx), this.yaw) * 1.4;
-      arrival = influence?.feeding ? mix(.45, 1, smoothstep(.15, 1.2, d)) : mix(0.18, 1, smoothstep(0.35, 2.5, d));
+      if (influence?.feeding) {
+        feedingDistance = d;
+        const angle = Math.abs(angleDifference(Math.atan2(dz, dx), this.yaw));
+        const alignment = mix(.02, 1, smoothstep(.1, .95, Math.cos(angle)));
+        feedingSpeed = Math.min(d * .85 + .005, this.bodyLength * .78) * mix(alignment, 1, smoothstep(1.5, 4, d));
+        const hovering = (1 - smoothstep(.45, 1.0, d)) * (1 - smoothstep(.25, .65, this.speed));
+        const vx = dx * 1.8 - Math.cos(this.yaw) * this.speed;
+        const vz = dz * 1.8 - Math.sin(this.yaw) * this.speed;
+        const limited = Math.min(1, .32 / Math.max(.001, Math.hypot(vx, vz))) * hovering;
+        stationX = vx * limited; stationZ = vz * limited;
+      } else arrival = mix(0.18, 1, smoothstep(0.35, 2.5, d));
       if (d < 0.3 && this.target.expires !== Infinity) this.target = null;
     } else if (this.mode === 'wander') {
       turnWish = noise(this.time * 0.17 + 3, this.seed) * p.wander * 0.75;
@@ -134,7 +149,7 @@ export class FishSimulation {
     if (influence) turnWish = turnWish * (influence.autonomy ?? 1) + influence.turn;
     turnWish += p.turn * 0.8;
     // Fin-assisted slow turns remain possible; rapid pivots do not.
-    const maxTurn = clamp(this.speed / (this.bodyLength * 0.78), influence ? 0.42 : 0.12, 0.92);
+    const maxTurn = clamp(this.speed / (this.bodyLength * 0.78), influence?.feeding ? .72 : influence ? 0.42 : 0.12, 0.92);
     const desiredOmega = clamp(turnWish, -maxTurn, maxTurn);
     const nextOmega = approach(this.omega, desiredOmega, 2.9, dt);
     this.omega += clamp(nextOmega - this.omega, -1.15 * dt, 1.15 * dt);
@@ -143,7 +158,7 @@ export class FishSimulation {
     const bursting = this.time < this.burstUntil;
     const forcedGlide = this.time < this.glideUntil;
     const activity = this.activity;
-    const targetSpeed = p.speed * this.bodyLength * arrival * (influence?.pace ?? 1) * (bursting ? 1.65 : activity.pace);
+    const targetSpeed = Math.min(feedingSpeed, p.speed * this.bodyLength * arrival * (influence?.pace ?? 1) * (bursting ? 1.65 : activity.pace));
     this.effectiveCruise = targetSpeed;
     const dragAt = (v) => (0.105 + p.drag * 0.2) * v * (1 + v * 0.27);
     const availableThrust = (dragAt(targetSpeed) * 1.3 + this.bodyLength * 0.27) * p.amplitude * (1 + activity.flutter * 0.20) * (influence?.feeding ? 1.3 : 1);
@@ -159,21 +174,29 @@ export class FishSimulation {
       }
     }
     const holding = clamp((dragAt(this.speed) + (targetSpeed - this.speed) * 1.5) / availableThrust, 0, 1);
-    let command = mix(holding, this.beating ? 1 : 0, p.rhythm);
+    const gait = influence?.feeding ? p.rhythm * smoothstep(.5, 2.5, feedingDistance) : p.rhythm;
+    let command = mix(holding, this.beating ? 1 : 0, gait);
     command = Math.max(command, activity.flutter * 0.85);
     command = Math.min(command, activity.power);
     if (bursting) command = 1;
     if (forcedGlide || targetSpeed < 0.015) command = 0;
-    this.braking = approach(this.braking, Math.max(influence?.brake ?? 0, bursting || forcedGlide ? 0 : activity.brake), 5, dt);
+    const arrivalBrake = influence?.feeding ? clamp((this.speed - targetSpeed) * 3.5, 0, .95) : 0;
+    this.braking = approach(this.braking, Math.max(arrivalBrake, influence?.brake ?? 0, bursting || forcedGlide ? 0 : activity.brake), 5, dt);
     command *= 1 - this.braking;
     this.effort = approach(this.effort, command, command > this.effort ? 5 : 3, dt);
     const thrust = this.effort * availableThrust;
     const turningLoss = Math.abs(this.omega) * this.speed * 0.12;
     const finBraking = this.braking * this.speed * 1.5;
     this.speed = clamp(this.speed + (thrust - dragAt(this.speed) - turningLoss - finBraking) * dt, 0, this.bodyLength * 2.3);
-    const travelled = this.speed * dt;
-    this.x += Math.cos(this.yaw) * travelled;
-    this.z += Math.sin(this.yaw) * travelled;
+    // Slow pectoral adjustments move the snout to food without moving the food.
+    this.finVelocityX += clamp((stationX - this.finVelocityX) * 4, -.45, .45) * dt;
+    this.finVelocityZ += clamp((stationZ - this.finVelocityZ) * 4, -.45, .45) * dt;
+    const vx = Math.cos(this.yaw) * this.speed + this.finVelocityX;
+    const vz = Math.sin(this.yaw) * this.speed + this.finVelocityZ;
+    const forwardTravel = this.speed * dt;
+    const travelled = this.finVelocityX || this.finVelocityZ ? Math.hypot(vx, vz) * dt : forwardTravel;
+    this.x += Math.cos(this.yaw) * forwardTravel + this.finVelocityX * dt;
+    this.z += Math.sin(this.yaw) * forwardTravel + this.finVelocityZ * dt;
     const depth = this.origin.depth + 0.027 * Math.sin(this.time * 0.47 + this.origin.phase) + 0.012 * Math.sin(this.time * 0.83 + this.origin.phase * 0.7);
     if (influence) {
       const desiredDepth = clamp(depth + (influence.depthShift ?? 0), -0.95, 0.95);

@@ -79,11 +79,14 @@ let previous = null, accumulator = 0, frames = 0, frameWindow = 0, measuredFps =
 const cost = { simulation: 0, models: 0, render: 0 };
 function diagnostics() {
   Object.assign(surface.dataset, {
-    version: '0.15', simulationTime: school.time.toFixed(4), count: String(school.fish.length),
+    version: '0.16', simulationTime: school.time.toFixed(4), count: String(school.fish.length),
     fps: measuredFps.toFixed(1), simulationMs: cost.simulation.toFixed(2), modelMs: cost.models.toFixed(2), renderMs: cost.render.toFixed(2),
     rendering: 'ink', geometryDetail: 'pond', inkPrecision: ink.precision,
     foodPieces: String(school.food.remaining), foodEaten: String(school.food.eaten),
     feedingFish: String(school.fish.filter((fish) => fish.foodGoal).length),
+    feedingRoles: school.fish.filter((fish) => fish.foodGoal).map((fish) => `${fish.id}:${fish.foodGoal.role}`).join(','),
+    headingAlignment: school.metrics.alignment.toFixed(4), swimmingStates: school.fish.map((fish) => fish.rhythm.state).join(','),
+    lastBite: school.food.bites.length ? JSON.stringify(school.food.bites.at(-1)) : '',
     automaticRipples: String(ink.water.ambientCount), rippleCount: String(ink.water.count),
     surfaceLeaves: String(ink.garden.leafCount), submergedObjects: String(ink.garden.submergedRecords.length),
     cameraTracking: 'false', cameraPosition: camera.position.toArray().map((v) => v.toFixed(6)).join(','),

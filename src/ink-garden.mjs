@@ -217,7 +217,7 @@ export class InkGarden {
       const piece = pieces[i];
       attributes.aFade.setX(i, piece?.fade ?? 0);
       if (!piece) continue;
-      this.movePoint(new THREE.Vector3(piece.x, .07, piece.z), { seed: piece.seed, amplitude: .035 }, 1, time, point);
+      point.set(piece.x, .07, piece.z);
       attributes.aOrigin.setXYZ(i, point.x, point.y, point.z);
       attributes.aAxis.setXYZW(i, piece.seed, .5, piece.size * 2.8, piece.size * 2.6);
       attributes.aPigment.setXYZW(i, 4, piece.seed, 1.8, 0);

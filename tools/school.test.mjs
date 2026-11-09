@@ -27,6 +27,18 @@ function radius(school) {
   }, 0) / school.fish.length;
 }
 
+test('the first frame is dispersed, already moving, and independently phased', () => {
+  const school = new SchoolSimulation();
+  assert.ok(school.metrics.alignment < .4, 'initial headings must not form a synchronized school');
+  assert.ok(new Set(school.fish.map((f) => Math.floor(f.yaw / (Math.PI / 2)))).size >= 3);
+  assert.ok(new Set(school.fish.map((f) => f.rhythm.state)).size >= 2);
+  assert.ok(new Set(school.fish.map((f) => f.time.toFixed(2))).size >= 10);
+  assert.ok(school.fish.every((f) => f.time > 6 && f.speed > .1 && f.history.length > 50));
+  assert.ok(Math.max(...school.fish.map((f) => f.x)) - Math.min(...school.fish.map((f) => f.x)) > 9);
+  assert.ok(Math.max(...school.fish.map((f) => f.z)) - Math.min(...school.fish.map((f) => f.z)) > 8);
+  assert.ok(sample(school) > .7);
+});
+
 test('the six-fish school is deterministic while its individuals retain different gaits', () => {
   const a = new SchoolSimulation({ count: 6, mixed: false }), b = new SchoolSimulation({ count: 6, mixed: false });
   advance(a, 25); advance(b, 25);
@@ -115,8 +127,9 @@ test('social perception ignores fish beyond the local sensing range', () => {
 });
 
 test('schooling produces shared headings more often than the independent preset', () => {
-  const school = new SchoolSimulation();
-  const independent = new SchoolSimulation({ cohesion: 0, alignment: 0, individuality: 1, spacing: 1.15 });
+  // Compare steady social intentions; the artwork deliberately includes explorers.
+  const school = new SchoolSimulation({ mixed: false });
+  const independent = new SchoolSimulation({ mixed: false, cohesion: 0, alignment: 0, individuality: 1, spacing: 1.15 });
   let shared = 0, separate = 0, n = 0;
   for (let i = 0; i < 90 / FIXED_STEP; i++) {
     school.step(); independent.step();

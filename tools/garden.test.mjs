@@ -74,6 +74,10 @@ test('passing ripples carry pads and keep all painted leaf junctions connected',
     garden.update(camera, time);
     const before = leafPoint(garden, freeIndex);
     water.update(time); garden.update(camera, time, water.ripples);
+    const food = { x: 1.25, z: -.7, seed: 9, size: .06, fade: 1 };
+    garden.updateFood([food], time);
+    assert.ok(Math.abs(garden.food.geometry.attributes.aOrigin.getX(0) - food.x) < .000001);
+    assert.ok(Math.abs(garden.food.geometry.attributes.aOrigin.getZ(0) - food.z) < .000001);
     displacement = Math.max(displacement, leafPoint(garden, freeIndex).distanceTo(before));
     assert.ok(centre(garden, garden.strokes[0].start).distanceTo(root) < .000001);
     for (const joint of garden.branchJoints) assert.ok(centre(garden, joint.parentPair).distanceTo(centre(garden, joint.childPair)) < .000005);

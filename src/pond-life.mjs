@@ -4,6 +4,17 @@ const random = (id, salt) => { const n = Math.sin(id * 12.9898 + salt * 78.233) 
 
 export const MAX_FISH = 16;
 export const MAX_FOOD_PIECES = 12;
+const surfaceSpeed = (animal) => Math.hypot(Math.cos(animal.yaw) * (animal.speed ?? 0) + (animal.finVelocityX ?? 0), Math.sin(animal.yaw) * (animal.speed ?? 0) + (animal.finVelocityZ ?? 0));
+
+export function mouthContact(animal, piece) {
+  const scale = animal.scale ?? 1, c = Math.cos(animal.yaw), s = Math.sin(animal.yaw);
+  const dx = piece.x - animal.x - c * .004 * scale, dz = piece.z - animal.z - s * .004 * scale;
+  const forward = dx * c + dz * s, lateral = -dx * s + dz * c;
+  return forward >= -.025 * scale && forward <= .045 * scale + piece.size * .5
+    && Math.abs(lateral) <= .045 * scale + piece.size * .4
+    && surfaceSpeed(animal) < (animal.bodyLength ?? 3.05) * .24
+    && (animal.surfaceInterest ?? 0) > .65;
+}
 
 export function socialIntention(id, time) {
   const phase = Math.floor(id / 3) * 2.1 + random(id, 5) * .8;
@@ -13,7 +24,7 @@ export function socialIntention(id, time) {
 
 export class FoodField {
   constructor() { this.clear(); }
-  clear() { this.patches = []; this.serial = 0; this.lastDrop = -100; this.nextAssignment = 0; this.eaten = 0; this.previousTime = null; }
+  clear() { this.patches = []; this.serial = 0; this.lastDrop = -100; this.nextAssignment = 0; this.eaten = 0; this.bites = []; }
   add(x, z, time) {
     if (![x, z, time].every(Number.isFinite) || time - this.lastDrop < .55) return false;
     this.lastDrop = time;
@@ -30,65 +41,76 @@ export class FoodField {
     return true;
   }
   update(time, fish) {
-    const dt = this.previousTime === null ? 0 : clamp(time - this.previousTime, 0, .05);
-    this.previousTime = time;
-    this.patches = this.patches.filter((p) => time < p.expires && p.pieces.some((piece) => piece.eatenAt === null || time - piece.eatenAt < 1.2));
-    for (const animal of fish) {
-      const goal = animal.foodGoal;
-      if (!goal || ((animal.fedUntil ?? 0) > time && animal.lastFeedPatch === goal.patch)) continue;
-      const patch = this.patches.find((p) => p.id === goal.patch);
-      if (!patch) { animal.foodGoal = null; continue; }
-      const chosen = patch.pieces[goal.piece];
-      if (chosen?.eatenAt === null && (animal.surfaceInterest ?? 0) > .15 && Math.hypot(chosen.x - animal.x, chosen.z - animal.z) < 1.3) {
-        const draw = 1 - Math.exp(-6 * dt);
-        chosen.x += (animal.x - chosen.x) * draw; chosen.z += (animal.z - chosen.z) * draw;
-        goal.x = chosen.x; goal.z = chosen.z;
-      }
-      const piece = patch.pieces.find((p) => p.eatenAt === null && Math.hypot(p.x - animal.x, p.z - animal.z) < .62);
-      if (piece && (animal.surfaceInterest ?? 0) > .15) {
-        piece.eatenAt = time; this.eaten++;
-        const next = patch.pieces.find((p) => p.eatenAt === null && Math.hypot(p.x - animal.x, p.z - animal.z) < 1.6);
-        animal.fedUntil = time + (next ? .25 : 3 + random(animal.id, 6) * 2);
-        animal.lastFeedPatch = patch.id;
-        animal.foodGoal = next ? { x: next.x, z: next.z, patch: patch.id, piece: patch.pieces.indexOf(next), until: time + 1.8 } : null;
-        this.nextAssignment = 0;
-      }
+    this.patches = this.patches.filter((p) => time < p.expires && p.pieces.some((piece) => piece.eatenAt === null || time - piece.eatenAt < .24));
+    for (const patch of this.patches) for (const piece of patch.pieces) {
+      if (piece.eatenAt !== null) continue;
+      const animal = fish.find((animal) => animal.foodGoal?.patch === patch.id && animal.foodGoal.role !== 'waiting'
+        && !((animal.fedUntil ?? 0) > time && animal.lastFeedPatch === patch.id) && mouthContact(animal, piece));
+      if (!animal) { piece.contactFish = null; piece.contactSince = null; continue; }
+      if (piece.contactFish !== animal.id) { piece.contactFish = animal.id; piece.contactSince = time; }
+      if (time - piece.contactSince < .075) continue;
+      piece.eatenAt = time; this.eaten++;
+      this.bites.push({ time, fish: animal.id, x: piece.x, z: piece.z, mouthX: animal.x + Math.cos(animal.yaw) * .004 * (animal.scale ?? 1), mouthZ: animal.z + Math.sin(animal.yaw) * .004 * (animal.scale ?? 1), speed: surfaceSpeed(animal), surface: animal.surfaceInterest });
+      if (this.bites.length > 24) this.bites.shift();
+      const more = patch.pieces.some((p) => p.eatenAt === null);
+      animal.fedUntil = time + (more ? .24 : 3 + random(animal.id, 6) * 2);
+      animal.nibblingUntil = time + .24;
+      animal.lastFeedPatch = patch.id;
+      const next = patch.pieces.filter((p) => p.eatenAt === null).sort((a, b) => Math.hypot(a.x - animal.x, a.z - animal.z) - Math.hypot(b.x - animal.x, b.z - animal.z))[0];
+      animal.foodGoal = next ? { x: next.x, z: next.z, patch: patch.id, piece: patch.pieces.indexOf(next), role: 'eat', until: time + 9 } : null;
+      this.nextAssignment = 0;
     }
     if (time < this.nextAssignment) return;
     this.nextAssignment = time + .10;
     const assigned = new Set();
-    // Keep a chosen pellet until it is eaten or the commitment expires.
     for (const animal of fish) {
       const goal = animal.foodGoal;
       const patch = goal && this.patches.find((p) => p.id === goal.patch);
-      if (patch && patch.pieces[goal.piece]?.eatenAt === null && goal.until > time) assigned.add(animal.id);
+      const alive = patch?.pieces.some((p) => p.eatenAt === null);
+      if (alive && goal.until > time && (goal.role === 'waiting' || patch.pieces[goal.piece]?.eatenAt === null)) assigned.add(animal.id);
       else animal.foodGoal = null;
     }
     for (const patch of [...this.patches].reverse()) {
       const pieces = patch.pieces.filter((p) => p.eatenAt === null);
       if (!pieces.length) continue;
-      const committed = fish.filter((animal) => animal.foodGoal?.patch === patch.id).length;
       const travel = (animal) => {
         const dx = patch.x - animal.x, dz = patch.z - animal.z;
         const angle = Math.atan2(dz, dx) - animal.yaw;
         return Math.hypot(dx, dz) / 1.8 + Math.abs(Math.atan2(Math.sin(angle), Math.cos(angle))) / .85;
       };
-      const candidates = fish.filter((animal) => !assigned.has(animal.id) && ((animal.fedUntil ?? 0) <= time || animal.lastFeedPatch !== patch.id)
+      const available = () => fish.filter((animal) => (!assigned.has(animal.id) || (animal.foodGoal?.patch === patch.id && animal.foodGoal.role === 'waiting'))
+        && ((animal.fedUntil ?? 0) <= time || animal.lastFeedPatch !== patch.id)
         && time - patch.created > .04 + random(animal.id, 7) * .12
-        && Math.hypot(animal.x - patch.x, animal.z - patch.z) < 16)
-        .sort((a, b) => travel(a) - travel(b))
-        .slice(0, Math.max(0, Math.min(3, pieces.length, Math.ceil(fish.length * .42)) - committed));
-      candidates.forEach((animal, index) => {
-        const piece = pieces[(index + committed) % pieces.length];
-        animal.foodGoal = { x: piece.x, z: piece.z, patch: patch.id, piece: patch.pieces.indexOf(piece), until: time + 2.4 };
-        assigned.add(animal.id);
-      });
+        && Math.hypot(animal.x - patch.x, animal.z - patch.z) < 16).sort((a, b) => travel(a) - travel(b));
+      let eater = fish.find((animal) => animal.foodGoal?.patch === patch.id && animal.foodGoal.role !== 'waiting');
+      if (!eater) {
+        eater = available()[0];
+        if (eater) {
+          const piece = [...pieces].sort((a, b) => Math.hypot(a.x - eater.x, a.z - eater.z) - Math.hypot(b.x - eater.x, b.z - eater.z))[0];
+          eater.foodGoal = { x: piece.x, z: piece.z, patch: patch.id, piece: patch.pieces.indexOf(piece), role: 'eat', until: time + 9 };
+          assigned.add(eater.id);
+        }
+      }
+      if (!eater) continue;
+      // Other interested fish approach the outside of the patch, leaving the snout room.
+      let waiting = fish.filter((animal) => animal.foodGoal?.patch === patch.id && animal.foodGoal.role === 'waiting').length;
+      for (const animal of available()) {
+        if (waiting >= Math.min(2, fish.length - 1)) break;
+        if (assigned.has(animal.id)) continue;
+        const dx = animal.x - patch.x, dz = animal.z - patch.z, distance = Math.hypot(dx, dz);
+        if (distance < 2.8) continue;
+        const radius = 2.8 + waiting * .35;
+        animal.foodGoal = { x: patch.x + dx / distance * radius, z: patch.z + dz / distance * radius, patch: patch.id, role: 'waiting', until: time + 9 };
+        assigned.add(animal.id); waiting++;
+      }
     }
   }
+
   get remaining() { return this.patches.reduce((sum, p) => sum + p.pieces.filter((piece) => piece.eatenAt === null).length, 0); }
   visible(time) {
     return this.patches.flatMap((patch) => patch.pieces.map((piece) => ({ ...piece,
-      fade: (piece.eatenAt === null ? 1 : 1 - smooth(0, 1.2, time - piece.eatenAt)) * (1 - smooth(24, 28, time - patch.created)),
+      fade: (piece.eatenAt === null ? 1 : 1 - smooth(0, .24, time - piece.eatenAt)) * (1 - smooth(24, 28, time - patch.created)),
+      size: piece.size * (piece.eatenAt === null ? 1 : 1 - smooth(0, .24, time - piece.eatenAt)),
     }))).filter((piece) => piece.fade > .001);
   }
 }

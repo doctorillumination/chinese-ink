@@ -1,0 +1,44 @@
+{
+  "edition": "0.15",
+  "cases": [
+    {
+      "aspect": 0.45,
+      "polar": 0,
+      "surfaceObjects": 47,
+      "submergedObjects": 24,
+      "freeObjects": 33,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 1.129,
+      "polar": 0,
+      "surfaceObjects": 47,
+      "submergedObjects": 24,
+      "freeObjects": 33,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 2.4,
+      "polar": 0,
+      "surfaceObjects": 47,
+      "submergedObjects": 24,
+      "freeObjects": 33,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    }
+  ]
+}
