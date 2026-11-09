@@ -44,12 +44,13 @@ function dynamicGeometry(count, indices) {
 }
 
 export class ProceduralFish {
-  constructor(scene, simulation) {
+  constructor(scene, simulation, detail = 'full') {
     this.sim = simulation;
+    this.detail = detail;
     this.group = new THREE.Group();
     scene.add(this.group);
-    this.rings = 81;
-    this.radials = 32;
+    this.rings = detail === 'pond' ? 41 : 81;
+    this.radials = detail === 'pond' ? 16 : 32;
     const indices = [];
     for (let i = 0; i < this.rings - 1; i++) {
       for (let j = 0; j < this.radials; j++) {
@@ -192,8 +193,8 @@ export class ProceduralFish {
   }
 
   makeFin(spec) {
-    const nu = spec.type === 'tail' ? 20 : 16;
-    const nv = 9;
+    const nu = this.detail === 'pond' ? (spec.type === 'tail' ? 16 : 12) : (spec.type === 'tail' ? 20 : 16);
+    const nv = this.detail === 'pond' ? 6 : 9;
     const indices = [];
     const rayIndices = [];
     for (let i = 0; i < nu; i++) {
@@ -295,7 +296,7 @@ export class ProceduralFish {
         }
       }
       p.needsUpdate = true;
-      fin.geometry.computeVertexNormals();
+      if (this.style !== 'ink') fin.geometry.computeVertexNormals();
       const rays = fin.rays.geometry.attributes.position;
       for (let k = 0; k < fin.rayIndices.length; k++) {
         const i = fin.rayIndices[k];
@@ -331,7 +332,7 @@ export class ProceduralFish {
       mouth.setXYZ(i, point.x, point.y, point.z);
     }
     mouth.needsUpdate = true;
-    for (let i = 0; i < sim.spine.length; i++) {
+    if (this.spineGroup.visible) for (let i = 0; i < sim.spine.length; i++) {
       const point = sim.spine[i];
       const transform = this.instanceTransform;
       transform.position.set(point.x, point.y, point.z);

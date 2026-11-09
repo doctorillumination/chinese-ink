@@ -1,0 +1,84 @@
+{
+  "edition": "0.15",
+  "date": "2026-11-08",
+  "browser": "Chrome",
+  "url": "http://127.0.0.1:8876/",
+  "final": {
+    "canvas": {
+      "bottom": 1428,
+      "height": 1428,
+      "left": 0,
+      "right": 1612,
+      "top": 0,
+      "width": 1612,
+      "x": 0,
+      "y": 0
+    },
+    "controls": 0,
+    "data": {
+      "automaticRipples": "103",
+      "cameraFrame": "-9.595238,9.595238,8.500000,-8.500000",
+      "cameraPosition": "0.000000,45.000000,0.000000",
+      "cameraRotation": "-0.707107,0.000000,0.000000,0.707107",
+      "cameraTracking": "false",
+      "count": "12",
+      "feedingFish": "0",
+      "foodEaten": "3",
+      "foodPieces": "0",
+      "fps": "20.0",
+      "geometryDetail": "pond",
+      "inkPrecision": "half-float",
+      "modelMs": "17.38",
+      "renderMs": "8.48",
+      "rendering": "ink",
+      "rippleCount": "4",
+      "simulationMs": "5.09",
+      "simulationTime": "106.8083",
+      "submergedObjects": "24",
+      "surfaceLeaves": "47",
+      "version": "0.15",
+      "viewport": "1612,1428"
+    },
+    "errorHidden": true,
+    "viewport": [
+      1612,
+      1428
+    ],
+    "visibleText": ""
+  },
+  "click": {
+    "before": {
+      "foodEaten": 0,
+      "foodPieces": 0,
+      "rippleCount": 0,
+      "simulationTime": 7.0167
+    },
+    "after": {
+      "foodEaten": 3,
+      "foodPieces": 0,
+      "rippleCount": 1,
+      "simulationTime": 55.5333
+    },
+    "note": "A real click created food; all three pieces were consumed. Browser latency was not used for the deterministic timing comparison."
+  },
+  "drag": {
+    "before": {
+      "foodEaten": 3,
+      "foodPieces": 0,
+      "rippleCount": 1
+    },
+    "after": {
+      "foodEaten": 3,
+      "foodPieces": 0,
+      "rippleCount": 4
+    },
+    "note": "Dragging added water disturbances without food. Wheel input retained the overhead camera."
+  },
+  "cameraUnchanged": true,
+  "visibleControls": 0,
+  "visibleArtworkText": "",
+  "artworkWarningsOrErrors": [],
+  "extensionWarningCount": 0,
+  "messageChannelErrorCount": 0,
+  "frameRateNote": "Observed frame-rate samples varied substantially with concurrent graphics load and browser automation. No sustained FPS claim."
+}

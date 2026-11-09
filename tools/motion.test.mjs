@@ -122,3 +122,25 @@ test('generated fish has finite vertices and normals across changing poses', () 
   assert.ok(fish.geometry.attributes.normal.getY(top) > 0.8, 'back normals should face out');
   for (let i = 0; i <= 100; i++) assert.ok(profile(i / 100).every((v) => v > 0));
 });
+
+test('pond geometry retains body landmarks and animated fin shape at lower cost', () => {
+  const sim = new FishSimulation({ turn: .6, amplitude: 1.1 });
+  const full = new ProceduralFish(new THREE.Scene(), sim);
+  const pond = new ProceduralFish(new THREE.Scene(), sim, 'pond');
+  full.setStyle('ink'); pond.setStyle('ink');
+  assert.ok(pond.geometry.attributes.position.count < full.geometry.attributes.position.count * .3);
+  for (let pose = 0; pose < 20; pose++) {
+    advance(sim, .1); full.update(); pond.update();
+    const a = full.geometry.attributes.position, b = pond.geometry.attributes.position;
+    for (let i = 0; i < pond.rings; i++) for (let j = 0; j < pond.radials; j++) for (const key of ['getX', 'getY', 'getZ']) {
+      assert.equal(b[key](i * pond.radials + j), a[key](i * 2 * full.radials + j * 2));
+    }
+    for (let i = 0; i < pond.fins.length; i++) for (const u of [0, .25, .5, .75, 1]) for (const v of [0, .5, 1]) {
+      const a = full.finPoint(full.fins[i].spec, u, v).clone();
+      const b = pond.finPoint(pond.fins[i].spec, u, v).clone();
+      assert.ok(a.distanceTo(b) < 1e-10);
+    }
+    assert.ok([...pond.geometry.attributes.normal.array].every(Number.isFinite));
+  }
+  full.dispose(); pond.dispose();
+});

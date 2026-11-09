@@ -1,0 +1,109 @@
+{
+  "edition": "0.15",
+  "date": "2026-11-08",
+  "noFood": {
+    "seconds": 30,
+    "fish": 12,
+    "maxMotionDeviation": 0
+  },
+  "geometry": {
+    "poses": 40,
+    "comparedBodyValues": 78720,
+    "maxBodyDeviation": 0,
+    "sharedFinLandmarks": "identical",
+    "previousBodyVertices": 2594,
+    "currentBodyVertices": 658,
+    "previousFinVertices": 1230,
+    "currentFinVertices": 665,
+    "previousModelMs": 0.8347083333333349,
+    "currentModelMs": 0.21384305833333503,
+    "timingNote": "Median CPU update cost for one fixed pose; not a browser FPS measurement."
+  },
+  "feeding": [
+    {
+      "edition": "0.14",
+      "offset": [
+        2.5,
+        1
+      ],
+      "noticeSeconds": 0.7249999999999974,
+      "firstBiteSeconds": 1.9333333333333762,
+      "allEatenSeconds": null,
+      "eaten": 2,
+      "minTorsoClearance": 0.4529225351820202,
+      "maxResponders": 5
+    },
+    {
+      "edition": "0.14",
+      "offset": [
+        -2.5,
+        0
+      ],
+      "noticeSeconds": 0.7249999999999974,
+      "firstBiteSeconds": 13.574999999999708,
+      "allEatenSeconds": null,
+      "eaten": 2,
+      "minTorsoClearance": 0.4838014699728637,
+      "maxResponders": 5
+    },
+    {
+      "edition": "0.14",
+      "offset": [
+        0,
+        0
+      ],
+      "noticeSeconds": 0.7249999999999974,
+      "firstBiteSeconds": 17.824999999999466,
+      "allEatenSeconds": null,
+      "eaten": 1,
+      "minTorsoClearance": 0.37468471925209573,
+      "maxResponders": 5
+    },
+    {
+      "edition": "0.15",
+      "offset": [
+        2.5,
+        1
+      ],
+      "noticeSeconds": 0.11666666666666625,
+      "firstBiteSeconds": 2.6416666666667448,
+      "allEatenSeconds": 3.1416666666667696,
+      "eaten": 3,
+      "minTorsoClearance": 0.5003581997994905,
+      "maxResponders": 3
+    },
+    {
+      "edition": "0.15",
+      "offset": [
+        -2.5,
+        0
+      ],
+      "noticeSeconds": 0.11666666666666625,
+      "firstBiteSeconds": 7.141666666666739,
+      "allEatenSeconds": 7.716666666666707,
+      "eaten": 3,
+      "minTorsoClearance": 0.5549561823083814,
+      "maxResponders": 3
+    },
+    {
+      "edition": "0.15",
+      "offset": [
+        0,
+        0
+      ],
+      "noticeSeconds": 0.11666666666666625,
+      "firstBiteSeconds": 5.391666666666839,
+      "allEatenSeconds": 6.100000000000132,
+      "eaten": 3,
+      "minTorsoClearance": 0.6009454230634553,
+      "maxResponders": 3
+    }
+  ],
+  "preservedSources": [
+    "ink-material.mjs",
+    "ink-renderer.mjs",
+    "ink-garden.mjs",
+    "water.mjs",
+    "rhythm.mjs"
+  ]
+}

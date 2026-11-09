@@ -1,35 +1,35 @@
-# Verification: living pond and feeding
+# Verification: full-viewport ink pond
 
-November 8, 2026, America/Vancouver. Web edition v0.14.
+November 8, 2026, America/Vancouver. Web edition v0.15.
 
-## Activity and interaction
+## Presentation and interaction
 
-The default pond has twelve fish, with controls for two through sixteen. Natural grouping varies social interest smoothly, with exploratory individuals alongside temporary groups. Individual propulsion, tail rhythm, the procedural fish shape, ink materials, paper, and surface lighting are retained. Larger groups anticipate encounters with a wider avoidance margin, and Regroup provides a shared gathering cue.
+The current page contains only the full-viewport pond and a normally hidden WebGL error message. It has no visible text, buttons, menus, measurements, sliders, pause, scatter, regroup, or camera controls. The orthographic camera looks directly down from (0, 45, 0), with screen-up along negative Z. It never follows fish or responds to orbit or zoom gestures. Viewport resizing adjusts the projection aspect ratio.
 
-Clicking adds a ripple and three food-like ink blots. Food patches are bounded to four, with up to five nearby fish interested in one patch. Interest reduces as pieces disappear. Fish approach through their existing swimming and avoidance, rise optically toward the surface, nibble, and leave for a satiety interval. Remaining food fades after 28 simulated seconds. Dragging disturbs the surface without creating a trail of food.
+Twelve fish retain loose grouping, independent exploration, tighter roaming bounds, optical depth, defined ink bodies and fins, and gentle spontaneous ripples. All ink, paper, water, plant, and rhythm sources are byte-identical to v0.14. The surface retains 47 shapes, including 33 drifting objects, and 24 submerged leaves and stones. Direct overhead layouts at three aspect ratios and three wave ages have finite geometry.
 
-Near-surface moving fish produce faint single ripples in six separate slots. Their strength is below 0.22 and lifetime is 4.8 seconds. Six click-ripple slots retain the stronger, layered eight-second waves. Deep or stationary fish do not emit surface ripples. Pausing holds the simulation clock for food, depth, and water.
+Clicks and taps make a ripple and add three small food blots. Dragging stirs the surface without feeding. Enter feeds the centre when the artwork has keyboard focus. Food is bounded to four patches. Up to three nearby responders are ranked by distance and heading, notice promptly, and commit to a pellet. Feeding supplies a stronger preferred turn, modestly higher cruise and thrust, quicker tail beats, and a faster optical rise. Predictive avoidance and smooth acceleration retain priority. Close food draws toward the mouth, with a brief interval between nibbles. A fish can finish nearby pieces before leaving, and fresh drops can attract recently fed fish.
 
-## Objects and depth
+## Motion and performance checks
 
-The surface has 47 painted leaves, pads, and fragments, including 33 freely drifting objects. Twenty-four faint submerged leaves and stones render beneath the fish with depth metadata, refraction, reduced contrast, and smaller movement. Rooted plant junctions remain connected during passing waves. Nine aspect-ratio and camera-angle checks, including food geometry, produced finite attributes.
+All 34 checks pass. `test-output.txt` contains the final full-suite output. Coverage includes the supported two-to-sixteen fish counts, long default schooling, torso clearance, turning, rhythm, roaming occupancy, plants, depth, ripples, bounded food, prompt feeding, stable commitments, repeated drops, and lower-resolution geometry.
 
-## Checks and preservation
+`edition-15-comparison.json` records a paired 30-second no-food run against the preserved v0.14 school. Positions, heading, speed, tail phase, turning speed, and effort match exactly for all twelve fish. Feeding-specific changes do not affect this normal swimming path. Snapshots are built only when a social observation is due. Forecast AABBs conservatively reject pairs more than one unit apart before detailed body testing; their existing safety score would be zero at that distance.
 
-All 32 final checks pass. Complete output is in `test-output.txt`. Coverage includes every supported fish count for one simulated minute, three minutes of the twelve-fish default, avoidance, Regroup, fixed-view occupancy, smooth mixed social intentions, food attraction and consumption, satiety, bounded food lifetime, gentle spontaneous ripples, and connected plants.
+Display bodies now use 41 rings and 16 radial samples rather than 81 by 32. Body vertices fall from 2,594 to 658 per fish. Fin vertices fall from 1,230 to 665. Forty animated poses compare 78,720 shared body position values with zero deviation, and shared analytical fin landmarks match. Ink fin materials do not use normals, so their per-frame normal computation is skipped. Hidden spine transforms and the visible interface graph and telemetry work are removed. The full-resolution source model remains available for development.
 
-The individual simulation, simulation math, rhythm, and fish ink material sources remain byte-for-byte identical to v0.13. Model rendering now reuses vectors and static profiles. A comparison over 60 poses and 1,394,640 body/fin/detail position and normal values found zero deviation from v0.13. Body resolution remains 81 rings by 32 radial samples. Results are in `fish-pose-preservation.json`. Peer avoidance predictions are shared within a pre-step snapshot, and bounded-distance calculations use a direct square root. Final checks cover these optimizations.
+The fixed-pose CPU benchmark measured about 0.835 ms per previous model update and 0.214 ms per current model update, approximately a 74% reduction. This is a Node CPU benchmark, not a browser FPS result. The browser retains the existing roughly 3.8-million-pixel budget. Wall-clock FPS reporting now uses uncapped elapsed time. Concurrent graphics load and browser automation caused substantial variation in live samples, so sustained smoothness at a particular frame rate is not certified.
 
-The camera orientation, target, and projection logic are retained. Large canvases use a roughly 3.8-million-pixel rendering budget. Internal timing fields are diagnostic only; changing concurrent machine load and browser-control delays prevent a sustained frame-rate claim.
+Three representative deterministic feeding placements were tested after three simulated seconds of swimming. Food was noticed in about 0.117 simulated seconds. First bites occurred at about 2.64, 7.14, and 5.39 seconds; all three pieces were consumed at about 3.14, 7.72, and 6.10 seconds. Minimum sampled torso clearance stayed positive in each case. In the same 18-second windows, v0.14 left food uneaten in all three cases. These selected tests do not guarantee a fixed arrival time for every possible click, crowd, or heading.
 
 ## Chrome evidence
 
-The final pond was reloaded and visually inspected in Chrome. Sixteen fish were selected and rendered, then the twelve-fish default was restored. A no-click observation recorded spontaneous ripples. A real click placed three blots; nearby fish approached, ate food, and later stopped pursuing it. Camera position, rotation, and projection stayed unchanged through the click. `living-pond-verification.json` records the observations, and `living-pond-chrome.jpg` shows the fuller composition.
+`clean-pond-verification.json` records the final Chrome inspection. The canvas exactly filled a 1612 by 1428 viewport, the artwork had zero visible controls or text, and the WebGL error panel remained hidden. A real click led to three consumed food pieces. Dragging increased the manual ripple count without creating food. Click, drag, and wheel input retained camera position, rotation, and projection. Fish continued moving, and spontaneous ripple counts increased. No artwork runtime, shader, or WebGL warnings or errors were present in the captured log sample.
 
-No artwork shader, WebGL, or runtime warnings or errors were observed in captured logs. Installed-extension warnings and asynchronous browser message-channel errors are counted separately in `browser-verification.json`. The live Chrome tab and localhost server are retained for the user. Native window resizing changes the projection's aspect ratio; pointer interaction does not orbit or zoom Ink mode.
+`clean-pond-chrome.jpg` shows the final artwork without interface. `clean-pond-feeding.jpg` records the click interaction. The live Chrome tab and local server are retained for the user. Earlier evidence files keep their own edition labels.
 
-## Delivery and limits
+## Self-contained delivery
 
-The finished HTML embeds the runtime, procedural assets, shaders, styles, and Three.js MIT license. It has one inline script, one inline style, unique element IDs, and no external asset tags. All thirteen preserved editions match their SHA-256 manifests, including the 69-file v0.13 snapshot.
+The finished HTML contains one inline script, one inline style, two unique element IDs, and no external asset tags. It embeds the procedural assets, shaders, styles, and Three.js MIT license. Fourteen previous editions match their SHA-256 manifests, including the 75-file v0.14 snapshot. The local bundle contains the executable Mac launcher, finished HTML, editable source, verification records, and preserved editions.
 
-The self-contained local bundle includes the Mac launcher and editable source. No hosted deployment is configured. Direct file launch, physical mobile devices, Safari, Firefox, and the 8-bit rendering fallback remain untested. Feeding and water are artistic behavioural and optical approximations. Finite checks do not prove collision-free motion for every setting and duration.
+No hosted deployment is configured. Localhost in Chrome is verified. Direct file launch, physical mobile devices, other browsers, and the 8-bit render-target fallback remain untested. Motion, ink diffusion, depth, and surface light are artistic approximations. Finite checks do not establish collision-free movement for every input and duration.

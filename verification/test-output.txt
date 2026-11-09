@@ -1,44 +1,46 @@
 
-> koi-motion-study@0.14.0 check
+> koi-motion-study@0.15.0 check
 > node --test tools/motion.test.mjs tools/school.test.mjs tools/rhythm.test.mjs tools/roaming.test.mjs tools/garden.test.mjs tools/water.test.mjs tools/pond-life.test.mjs
 
-✔ painted leaves and petioles stay joined to their moving branches (77.62275ms)
-✔ pads and debris drift smoothly while rooted plants remain anchored and pause holds the pose (26.670375ms)
-✔ passing ripples carry pads and keep all painted leaf junctions connected (109.616417ms)
-✔ seeded exploration repeats exactly (34.108542ms)
-✔ spine length stays fixed through hard turns and maximum tail effort (20.653333ms)
-✔ a glide reduces forward speed and muscle effort without an instantaneous velocity change (12.298ms)
-✔ stopping the preferred speed decays to rest without reversing or pivoting rapidly (152.148833ms)
-✔ angular acceleration is bounded during a sudden steering reversal (1.144875ms)
-✔ default cruise includes repeated active and low-effort phases (2.608375ms)
-✔ head path guides the tail through a turn after forward travel (2.746583ms)
-✔ long exploration stays finite and near the bounded study area (132.233958ms)
-✔ generated fish has finite vertices and normals across changing poses (46.023792ms)
-✔ food drops are bounded, expire, and fade after being eaten (3.264375ms)
-✔ grouping intentions vary smoothly and include explorers alongside schoolers (0.766041ms)
-✔ feeding attracts a local subset through swimming and releases fish after a nibble (6614.9205ms)
-✔ spontaneous swimming adds short speed increases and quiet drifts with smooth acceleration (186.194875ms)
-✔ fish take spontaneous flutters and quiet periods on independent schedules (9347.276083ms)
-✔ avoidance braking still takes priority during a spontaneous flutter (36.829042ms)
-✔ the fixed view stays inhabited while individual fish can leave the frame (19195.334083ms)
-✔ the six-fish school is deterministic while its individuals retain different gaits (2698.744709ms)
-✔ three minutes of default schooling maintain torso clearance and bounded 3D motion (20342.9845ms)
-✔ all supported school sizes preserve torso clearance in the initial minute (45494.089458ms)
-✔ head-on and crossing encounters pass without overlapping torso envelopes (221.676416ms)
-✔ scatter and regroup preserve positions at activation, and regroup draws fish together sooner (4559.072958ms)
-✔ a shared pointer destination retains space between the fish (4100.33325ms)
-✔ social perception ignores fish beyond the local sensing range (9.855375ms)
-✔ schooling produces shared headings more often than the independent preset (10984.223917ms)
-✔ a click wave travels outward, stays smooth, and expires without lingering displacement (3.675291ms)
-✔ click waves have repeatable directional variation instead of circular symmetry (2.982125ms)
-✔ water input is bounded during dragging, clears on reset, and rejects invalid coordinates (0.227083ms)
-✔ individual optical depths rise and fall smoothly without mutating swimming state (0.233209ms)
-✔ only moving fish near the surface emit gentle ripples in their own slots (0.206041ms)
-ℹ tests 32
+✔ painted leaves and petioles stay joined to their moving branches (28.69475ms)
+✔ pads and debris drift smoothly while rooted plants remain anchored and pause holds the pose (6.913708ms)
+✔ passing ripples carry pads and keep all painted leaf junctions connected (86.818083ms)
+✔ seeded exploration repeats exactly (67.863917ms)
+✔ spine length stays fixed through hard turns and maximum tail effort (65.705458ms)
+✔ a glide reduces forward speed and muscle effort without an instantaneous velocity change (4.644292ms)
+✔ stopping the preferred speed decays to rest without reversing or pivoting rapidly (54.527292ms)
+✔ angular acceleration is bounded during a sudden steering reversal (2.503375ms)
+✔ default cruise includes repeated active and low-effort phases (4.870459ms)
+✔ head path guides the tail through a turn after forward travel (1.23725ms)
+✔ long exploration stays finite and near the bounded study area (43.301542ms)
+✔ generated fish has finite vertices and normals across changing poses (105.454417ms)
+✔ pond geometry retains body landmarks and animated fin shape at lower cost (117.917334ms)
+✔ food drops are bounded, expire, and fade after being eaten (1.410541ms)
+✔ grouping intentions vary smoothly and include explorers alongside schoolers (0.250416ms)
+✔ feeding attracts a local subset through swimming and releases fish after a nibble (1446.039917ms)
+✔ food is noticed quickly, commitments persist, and fresh drops interest recently fed fish (0.464834ms)
+✔ spontaneous swimming adds short speed increases and quiet drifts with smooth acceleration (83.828458ms)
+✔ fish take spontaneous flutters and quiet periods on independent schedules (2470.504625ms)
+✔ avoidance braking still takes priority during a spontaneous flutter (6.930209ms)
+✔ the fixed view stays inhabited while individual fish can leave the frame (4230.5825ms)
+✔ the six-fish school is deterministic while its individuals retain different gaits (879.080375ms)
+✔ three minutes of default schooling maintain torso clearance and bounded 3D motion (3762.641083ms)
+✔ all supported school sizes preserve torso clearance in the initial minute (10940.107542ms)
+✔ head-on and crossing encounters pass without overlapping torso envelopes (45.995458ms)
+✔ scatter and regroup preserve positions at activation, and regroup draws fish together sooner (1015.336958ms)
+✔ a shared pointer destination retains space between the fish (1205.694125ms)
+✔ social perception ignores fish beyond the local sensing range (3.25275ms)
+✔ schooling produces shared headings more often than the independent preset (3092.294375ms)
+✔ a click wave travels outward, stays smooth, and expires without lingering displacement (12.557291ms)
+✔ click waves have repeatable directional variation instead of circular symmetry (6.104834ms)
+✔ water input is bounded during dragging, clears on reset, and rejects invalid coordinates (0.215375ms)
+✔ individual optical depths rise and fall smoothly without mutating swimming state (0.253292ms)
+✔ only moving fish near the surface emit gentle ripples in their own slots (0.234167ms)
+ℹ tests 34
 ℹ suites 0
-ℹ pass 32
+ℹ pass 34
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 88889.979875
+ℹ duration_ms 21141.393792

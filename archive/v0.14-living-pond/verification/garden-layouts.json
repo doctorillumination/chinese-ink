@@ -1,0 +1,131 @@
+{
+  "edition": "0.14",
+  "cases": [
+    {
+      "aspect": 0.45,
+      "polar": 0.15,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 0.45,
+      "polar": 0.68,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 0.45,
+      "polar": 1.46,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 1.5,
+      "polar": 0.15,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 1.5,
+      "polar": 0.68,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 1.5,
+      "polar": 1.46,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 2,
+      "polar": 0.15,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 2,
+      "polar": 0.68,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    },
+    {
+      "aspect": 2,
+      "polar": 1.46,
+      "surface_leaf_shapes": 47,
+      "submerged_objects": 24,
+      "free_surface_objects": 33,
+      "food_capacity": 12,
+      "times": [
+        0.2,
+        2,
+        6
+      ],
+      "finite": true
+    }
+  ]
+}

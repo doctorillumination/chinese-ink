@@ -65,6 +65,12 @@ function forecast(fish, requestedTurn, brake) {
       const u = clamp((d - a.d) / Math.max(0.000001, b.d - a.d), 0, 1);
       return { x: mix(a.x, b.x, u), y: mix(a.y, b.y, u), z: mix(a.z, b.z, u), r: r * fish.scale };
     });
+    body.bounds = [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity];
+    for (const p of body) {
+      body.bounds[0] = Math.min(body.bounds[0], p.x - p.r); body.bounds[3] = Math.max(body.bounds[3], p.x + p.r);
+      body.bounds[1] = Math.min(body.bounds[1], p.y - p.r); body.bounds[4] = Math.max(body.bounds[4], p.y + p.r);
+      body.bounds[2] = Math.min(body.bounds[2], p.z - p.r); body.bounds[5] = Math.max(body.bounds[5], p.z + p.r);
+    }
     result.push(body);
   }
   return result;
@@ -262,7 +268,13 @@ export class SchoolSimulation {
       autonomy = 0.15;
     }
     const feeding = fish.foodGoal && !this.target && this.time >= this.scatterUntil;
-    if (feeding) { turn *= .25; autonomy = Math.max(autonomy, .9); pace *= 1.08; }
+    if (feeding) {
+      const dx = fish.foodGoal.x - fish.x, dz = fish.foodGoal.z - fish.z;
+      const angle = angleDifference(Math.atan2(dz, dx), fish.yaw);
+      turn = angle * 2.8;
+      autonomy = .06;
+      pace = mix(1.08, 1.65, smooth(.8, 3, Math.hypot(dx, dz))) * mix(.80, 1, smooth(-.2, .8, Math.cos(angle)));
+    }
     // A soft oval encourages earlier return turns without a wall or position clamp.
     const lookX = own.center.x + own.velocity.x * 2.2;
     const lookZ = own.center.z + own.velocity.z * 2.2;
@@ -275,7 +287,7 @@ export class SchoolSimulation {
     const preferredTurn = turn;
     turn = turn * (1 - urgency * 0.95) + avoidTurn * urgency;
     autonomy *= 1 - urgency * 0.95;
-    const result = { turn, autonomy, pace, brake: clamp(brake, 0, 0.98), depthShift, alertness: feeding || gathering || this.time < this.scatterUntil ? 1 : 0 };
+    const result = { turn, autonomy, pace, brake: clamp(brake, 0, 0.98), depthShift, feeding: Boolean(feeding), alertness: feeding || gathering || this.time < this.scatterUntil ? 1 : 0 };
     if (urgency > 0.08) this.chooseSafeMotion(fish, result, preferredTurn, candidates);
     return result;
   }
@@ -297,6 +309,8 @@ export class SchoolSimulation {
       const prediction = forecast(fish, turn, brake);
       let danger = 0, proximity = 0;
       for (const other of others) for (let k = 0; k < prediction.length; k++) {
+        const a = prediction[k].bounds, b = other.body[k].bounds;
+        if (a[0] - b[3] > 1 || b[0] - a[3] > 1 || a[1] - b[4] > 1 || b[1] - a[4] > 1 || a[2] - b[5] > 1 || b[2] - a[5] > 1) continue;
         const gap = closestBodies(prediction[k], other.body[k]).clearance;
         const collision = Math.pow(Math.max(0, (this.fish.length > 9 ? .80 : .40) - gap), 2) * 1200;
         danger = Math.max(danger, collision);
@@ -316,10 +330,11 @@ export class SchoolSimulation {
     this.food.update(this.time, this.fish);
     if (this.target && this.target.expires < this.time) this.target = null;
     const individuality = this.params.individuality;
-    const snapshots = this.fish.map((fish) => {
+    const observing = this.fish.some((fish) => this.time >= fish.perceptionAt);
+    const snapshots = observing ? this.fish.map((fish) => {
       fish.updateSpine();
       return { id: fish.id, center: this.center(fish), forward: { x: Math.cos(fish.yaw), z: Math.sin(fish.yaw) }, velocity: { x: Math.cos(fish.yaw) * fish.speed, z: Math.sin(fish.yaw) * fish.speed }, vertical: fish.verticalVelocity, speed: fish.speed, body: bodySamples(fish) };
-    });
+    }) : null;
     // All observations read the same pre-step state, independent of update order.
     for (const fish of this.fish) {
       if (this.time >= fish.perceptionAt) {
@@ -342,7 +357,7 @@ export class SchoolSimulation {
         fish.setTarget(fish.foodGoal.x, fish.foodGoal.z, true);
       } else fish.target = null;
       const surface = fish.foodGoal && !this.target ? 1 - smooth(1.5, 6, Math.hypot(fish.x - fish.foodGoal.x, fish.z - fish.foodGoal.z)) : 0;
-      fish.surfaceInterest += (surface - fish.surfaceInterest) * (1 - Math.exp(-dt * .85));
+      fish.surfaceInterest += (surface - fish.surfaceInterest) * (1 - Math.exp(-dt * (surface > fish.surfaceInterest ? 2.8 : .85)));
       fish.step(dt, fish.steering);
     }
   }

@@ -120,7 +120,7 @@ export class FishSimulation {
       const dz = this.target.z - this.z;
       const d = Math.hypot(dx, dz);
       turnWish = angleDifference(Math.atan2(dz, dx), this.yaw) * 1.4;
-      arrival = mix(0.18, 1, smoothstep(0.35, 2.5, d));
+      arrival = influence?.feeding ? mix(.45, 1, smoothstep(.15, 1.2, d)) : mix(0.18, 1, smoothstep(0.35, 2.5, d));
       if (d < 0.3 && this.target.expires !== Infinity) this.target = null;
     } else if (this.mode === 'wander') {
       turnWish = noise(this.time * 0.17 + 3, this.seed) * p.wander * 0.75;
@@ -146,7 +146,7 @@ export class FishSimulation {
     const targetSpeed = p.speed * this.bodyLength * arrival * (influence?.pace ?? 1) * (bursting ? 1.65 : activity.pace);
     this.effectiveCruise = targetSpeed;
     const dragAt = (v) => (0.105 + p.drag * 0.2) * v * (1 + v * 0.27);
-    const availableThrust = (dragAt(targetSpeed) * 1.3 + this.bodyLength * 0.27) * p.amplitude * (1 + activity.flutter * 0.20);
+    const availableThrust = (dragAt(targetSpeed) * 1.3 + this.bodyLength * 0.27) * p.amplitude * (1 + activity.flutter * 0.20) * (influence?.feeding ? 1.3 : 1);
     if (targetSpeed < 0.015 || forcedGlide) {
       this.beating = false;
     } else if (this.stateTime > 0.3) {
@@ -184,7 +184,7 @@ export class FishSimulation {
     } else this.y = depth;
     this.distance += travelled;
     const flutterTempo = 1 + (activity.tempo - 1) * (1 - this.braking);
-    this.frequency = (0.64 + 1.12 * this.speed / this.bodyLength) * p.tempo * flutterTempo;
+    this.frequency = (0.64 + 1.12 * this.speed / this.bodyLength) * p.tempo * flutterTempo * (influence?.feeding ? 1.18 : 1);
     this.phase += Math.PI * 2 * this.frequency * dt * mix(0.55, 1, this.effort);
     const last = this.history[this.history.length - 1];
     if (this.distance - last.d > 0.025) {

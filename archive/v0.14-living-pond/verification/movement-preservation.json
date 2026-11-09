@@ -1,0 +1,22 @@
+{
+  "edition": "0.14",
+  "compared_with": "archive/v0.13-paper-and-surface",
+  "unchanged_source_sha256": {
+    "simulation.mjs": "ed52f812778120623403a0d394bb4fe9e6728a1533266b77d6d72ce8bb3fe7b6",
+    "simulation-math.mjs": "a3a5b661924b23ebcef132d3f7c6ab780aeaee8799b3989e4a3e332e1fab5bc7",
+    "rhythm.mjs": "4e53d19e271c7f52a3650ac2f0da68c0b7482653c746c540d98370a8da518684",
+    "ink-material.mjs": "90b29cd93ae45bfdea3bbbe0fac9192b870c087fd4cb2e108692bc66dfd8f20b"
+  },
+  "camera_target_orientation_and_projection_logic_unchanged": true,
+  "fish_pose_comparison": {
+    "edition": "0.14",
+    "compared_with": "archive/v0.13-paper-and-surface",
+    "poses": 60,
+    "values_compared": 1394640,
+    "maximum_position_or_normal_deviation": 0,
+    "body_rings": 81,
+    "body_radials": 32,
+    "geometry_resolution_unchanged": true
+  },
+  "changes": "Default twelve fish, up to sixteen; mixed social intentions, local feeding and satiety, larger-group safety margins, spontaneous surface ripples, and submerged debris. Model vectors and peer predictions are reused without changing fish geometry. Rendering resolution is bounded on large canvases."
+}
