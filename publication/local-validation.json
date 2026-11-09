@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-08",
+  "timezone": "America/Vancouver",
+  "fieldworks": {
+    "command": "npm run check",
+    "passed": true,
+    "runtime_imports": 12,
+    "source_bound_readings": 20,
+    "internal_links": 308,
+    "existing_artwork_checks_passed": true
+  },
+  "cyberdelic_space": {
+    "site_gate": "approved Studio Python reader/validate_tending_site.py --site /tmp/cyberdelic-paper-water-20261108 --no-mirror",
+    "site_gate_passed": true,
+    "exact_sources": 49,
+    "internal_references": 5337,
+    "narration_gate": "approved Studio Python reader/validate_narrations.py --site /tmp/cyberdelic-paper-water-20261108",
+    "narration_gate_passed": true,
+    "recordings": 88,
+    "mirror_gate": "current publication repository .github/scripts/mirror_archive.py validate_mirror",
+    "mirror_gate_passed": true,
+    "mirror_gate_reason": "The repository supports generic artwork parts; the older Studio mirror validator predates that support.",
+    "core_mirror_bytes": 26133484,
+    "core_mirror_limit_bytes": 26214400,
+    "prior_audio_parts_preserved": 26,
+    "new_audio_part": "audio-bundles/lewis-27.zip",
+    "new_artwork_part": "artwork-bundles/paper-water.zip"
+  },
+  "source": {
+    "rename_script_and_styles_identical": true,
+    "edition_comparison": "edition-verification.json",
+    "maximum_motion_deviation": 0,
+    "maximum_resting_geometry_deviation": 0,
+    "confirmed_bites": 3,
+    "bite_ripples": 3
+  }
+}

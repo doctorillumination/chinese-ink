@@ -1,0 +1,44 @@
+{
+  "fieldworks": {
+    "frame": {
+      "bottom": 851,
+      "height": 851,
+      "left": 0,
+      "right": 1647,
+      "top": 0,
+      "width": 1647,
+      "x": 0,
+      "y": 0
+    },
+    "text": "",
+    "title": "Paper Water · Fieldworks · Brad Necyk",
+    "viewport": [
+      1647,
+      851
+    ],
+    "visibleControls": []
+  },
+  "cyberdelic": {
+    "frame": {
+      "bottom": 851,
+      "height": 851,
+      "left": 1,
+      "right": 1646,
+      "top": 0,
+      "width": 1645,
+      "x": 1,
+      "y": 0
+    },
+    "text": "",
+    "title": "Paper Water · Fieldworks · cyberdelic.space",
+    "viewport": {
+      "height": 851,
+      "width": 1647
+    },
+    "visibleControls": []
+  },
+  "optionalLewisPlaybackVerifiedOnBoth": true,
+  "galleriesHaveTwelveWorks": true,
+  "galleryHasSeparateAboutAndListenLink": true,
+  "artworkRuntimeUnmodified": true
+}

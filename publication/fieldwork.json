@@ -1,0 +1,25 @@
+{
+  "slug": "paper-water",
+  "title": "Paper Water",
+  "former_title": "Koi motion study",
+  "edition": "living-ink-pond",
+  "project": "paper-water",
+  "repository": "https://github.com/doctorillumination/chinese-ink",
+  "status": "living",
+  "caption": "An ink pond, alive to a small gesture.",
+  "description": "Fish drift, gather, and feed in an ink pond on textured paper. Small bites send faint ripples across a still overhead view.",
+  "alt": "Pale, mottled, and dark ink fish swimming among painted leaves on softly textured paper, viewed from above.",
+  "gesture": "Click or tap to feed. Drag to stir the water.",
+  "source": "paper-water.md",
+  "themes": [
+    "water",
+    "attention",
+    "play",
+    "gesture",
+    "time",
+    "emergence"
+  ],
+  "related_note": "fn-05",
+  "related_title": "The Physics We Choose",
+  "offline_part": true
+}

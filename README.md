@@ -40,7 +40,9 @@ The simulation is in `src/simulation.mjs`, `src/school.mjs`, `src/rhythm.mjs`, a
 
 Earlier editions are preserved under `archive/` with SHA-256 manifests. The complete v0.14 edition retains the earlier inspection interface; v0.15 preserves the first interface-free edition. The reference artwork prompted the investigation; its source code was not copied.
 
-To host the artwork, upload `index.html` to a static web host and serve it as HTML. No host-side build or application server is required. Hosted deployment is not configured as part of this local edition.
+Paper Water is published on [Fieldworks](https://fieldworks.space/paper-water/) and [Cyberdelic Space](https://cyberdelic.space/fieldworks/paper-water/). Both open as a full-screen ink pond with no visible text or controls. The galleries provide a separate About and listen link for the optional introduction.
+
+To host another copy, upload `index.html` to a static web host and serve it as HTML. No host-side build or application server is required. Publication sources, release hashes, and verification records are under `publication/`.
 
 Source repository: [doctorillumination/chinese-ink](https://github.com/doctorillumination/chinese-ink).
 

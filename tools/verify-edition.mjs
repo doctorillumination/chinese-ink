@@ -10,10 +10,17 @@ import { biteAmount } from '../src/bite-feedback.mjs';
 import { FIXED_STEP } from '../src/simulation.mjs';
 
 const report = { edition: '0.17', date: '2026-11-08', preservedSources: [], motion: {}, idleGeometry: {}, feedback: {} };
-for (const name of ['simulation.mjs', 'simulation-math.mjs', 'school.mjs', 'pond-life.mjs', 'rhythm.mjs', 'ink-material.mjs', 'ink-garden.mjs', 'shell.html', 'style.css']) {
+for (const name of ['simulation.mjs', 'simulation-math.mjs', 'school.mjs', 'pond-life.mjs', 'rhythm.mjs', 'ink-material.mjs', 'ink-garden.mjs', 'style.css']) {
   assert.equal(await readFile(new URL('../src/' + name, import.meta.url), 'utf8'), await readFile(new URL('../archive/v0.16-mouth-contact/src/' + name, import.meta.url), 'utf8'));
   report.preservedSources.push(name);
 }
+const previousShell = await readFile(new URL('../archive/v0.16-mouth-contact/src/shell.html', import.meta.url), 'utf8');
+const namedShell = previousShell
+  .replace('<title>Ink pond</title>', '<title>Paper Water</title>')
+  .replace('content="A living ink pond.', 'content="Paper Water, a living ink pond.')
+  .replace('aria-label="Interactive ink pond.', 'aria-label="Paper Water, interactive ink pond.');
+assert.equal(await readFile(new URL('../src/shell.html', import.meta.url), 'utf8'), namedShell);
+report.shell = { presentationPreserved: true, metadataRenamed: 'Paper Water' };
 const school = new SchoolSimulation(), previous = new PreviousSchool(), water = new WaterSurface();
 const model = new ProceduralFish(new THREE.Scene(), school.fish[3], 'pond');
 const oldModel = new PreviousFish(new THREE.Scene(), school.fish[3], 'pond');

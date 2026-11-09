@@ -1,0 +1,42 @@
+{
+  "title": "Paper Water",
+  "published_date": "2026-11-08",
+  "timezone": "America/Vancouver",
+  "recorded_at": "2026-11-09T03:17:42.716119+00:00",
+  "artwork_revision": "5d64233fb7d398e7d74a74d8b0b5a24e90a02f59",
+  "runtime_sha256": "98a2f70018ca3375428a20b7b27f8a9a9200c3587c92cec7ca74d78f14bd4806",
+  "release_id": "c24eb28788f25e4ed1b7716af5185b4f832b2a6f6b236caa1bf1b3ad5b166815",
+  "source_repository": "https://github.com/doctorillumination/chinese-ink",
+  "sites": [
+    {
+      "name": "Fieldworks",
+      "url": "https://fieldworks.space/paper-water/",
+      "gallery": "https://fieldworks.space/",
+      "pull_request": "https://github.com/doctorillumination/fieldworks/pull/15",
+      "publication_commit": "2f6da957b12eb8326385c38d846a5c09068a4762",
+      "merge_commit": "7e643655f1a0f315b562972336fd03b826e3a24a",
+      "production_build": "456c8f56-8c7c-428c-839c-bf222b98db45",
+      "production_build_success": true,
+      "live_asset_report": "live-fieldworks.json"
+    },
+    {
+      "name": "Cyberdelic Space",
+      "url": "https://cyberdelic.space/fieldworks/paper-water/",
+      "gallery": "https://cyberdelic.space/fieldworks/",
+      "pull_request": "https://github.com/doctorillumination/cyberdelic-space/pull/97",
+      "publication_commit": "5fd4cd6ef97fcd533e7a5cfcdaaf4ff4b7d148bd",
+      "merge_commit": "a059b7dbc1680a62dfedabb65bc3580e0333b6b8",
+      "production_build": "90f86670-0d61-4c20-ab24-fe4fef504aac",
+      "production_build_success": true,
+      "live_asset_report": "live-cyberdelic.json"
+    }
+  ],
+  "presentation": {
+    "visible_controls": false,
+    "visible_text": false,
+    "camera": "fixed overhead",
+    "swimming_and_feeding_code_unchanged": true,
+    "self_contained_artwork_runtime": true,
+    "optional_reading": "separate gallery link or I key"
+  }
+}

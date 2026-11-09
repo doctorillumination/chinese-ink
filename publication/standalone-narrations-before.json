@@ -1,0 +1,1062 @@
+{
+  "schema": "cyberdelic.space/narrations-v1",
+  "voice": "bm_lewis",
+  "voice_name": "Lewis",
+  "model_id": "hexgrad/Kokoro-82M",
+  "model_revision": "f3ff3571791e39611d31c381e3a41a3af07b4987",
+  "speed": 1.0,
+  "offline_generation": true,
+  "extraction_version": 1,
+  "packages": {
+    "kokoro": "0.9.4",
+    "misaki": "0.9.4",
+    "torch": "2.14.1",
+    "transformers": "5.19.0",
+    "beautifulsoup4": "4.14.3",
+    "markdown-it-py": "4.0.0"
+  },
+  "items": [
+    {
+      "id": "fieldworks-overview",
+      "title": "Fieldworks",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        ""
+      ],
+      "source_path": "readings/overview.md",
+      "source_sha256": "b855a43e7f668e6b919f9e0b146d74f8383d0a4a9480984da55c9f41a552c437",
+      "document_sha256": "b855a43e7f668e6b919f9e0b146d74f8383d0a4a9480984da55c9f41a552c437",
+      "text_sha256": "40a2629ce2a63af97b2096c3ec2e53b8b2cd3b32a956efa949ac5de234a7baee",
+      "reading_path": "audio/readings/40a2629ce2a63af97b2096c3ec2e53b8b2cd3b32a956efa949ac5de234a7baee.md",
+      "reading_sha256": "b855a43e7f668e6b919f9e0b146d74f8383d0a4a9480984da55c9f41a552c437",
+      "reading_length": 442,
+      "audio_path": "audio/lewis/40a2629ce2a63af97b2096c3ec2e53b8b2cd3b32a956efa949ac5de234a7baee.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "1f71f5a3c7a783004301b86e3ba05a0dc5e6d28d02e24e651da861ab0ba31752",
+      "audio_length": 407564,
+      "duration_seconds": 33.865,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing. A small vocabulary, an expanding field. A field of competing futures. A picture with weight. A room that keeps trying to sing. A history in formation. A manual, held differently.",
+          "start": 7.16,
+          "duration": 20.8
+        },
+        {
+          "text": "Eleven living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 28.14,
+          "duration": 5.725
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.593643844127655,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-lumen",
+      "title": "Lumen",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "lumen/"
+      ],
+      "source_path": "readings/lumen.md",
+      "source_sha256": "284192a0abdcbeb31905866fe74fbb7184b425597f38683ebc6a3a218cdcba49",
+      "document_sha256": "284192a0abdcbeb31905866fe74fbb7184b425597f38683ebc6a3a218cdcba49",
+      "text_sha256": "5c28f2ce8ad08cb583f33031b2639536a02f013cdce7a10c2925af160bd3b461",
+      "reading_path": "audio/readings/5c28f2ce8ad08cb583f33031b2639536a02f013cdce7a10c2925af160bd3b461.md",
+      "reading_sha256": "284192a0abdcbeb31905866fe74fbb7184b425597f38683ebc6a3a218cdcba49",
+      "reading_length": 1121,
+      "audio_path": "audio/lewis/5c28f2ce8ad08cb583f33031b2639536a02f013cdce7a10c2925af160bd3b461.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "873d2870bc5e48b201defd6cba2c0f499673ae2fe46197b9179d41bb95a090c7",
+      "audio_length": 955916,
+      "duration_seconds": 79.575,
+      "chunks": [
+        {
+          "text": "Lumen",
+          "start": 0.0,
+          "duration": 1.425
+        },
+        {
+          "text": "Impossible matter. A small universe under a macro lens.",
+          "start": 1.605,
+          "duration": 4.775
+        },
+        {
+          "text": "A collection of impossible forms turns through spectral light: crystalline colonies, branching groves, strange attractors, and sculpted fractals. Choose a form, drag to turn it, scroll to approach, or open the studio to explore focus, aperture, transmission, and colour drift. Each form offers another way of encountering the same small universe.",
+          "start": 6.56,
+          "duration": 23.1
+        },
+        {
+          "text": "Some forms unfold fine branches and draw them back again. Cinematographer mode guides the view, while lens compression changes the relationship between near and distant surfaces. Optional lens breathing slowly shifts that perspective. The controls remain yours, and pausing holds the motion still.",
+          "start": 29.84,
+          "duration": 20.625
+        },
+        {
+          "text": "Lumen approaches mathematical form as something to encounter, rather than a diagram to decode. Its light, material, and lens are artistic approximations, not measured physical specimens or scientific simulations. The current edition is Form Atlas. The earlier studies remain preserved in the source project, and this living artwork is still in progress.",
+          "start": 50.645,
+          "duration": 24.1
+        },
+        {
+          "text": "By Brad Necyk. This living artwork is not inscribed.",
+          "start": 74.925,
+          "duration": 4.65
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5434364676475525,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-aeria",
+      "title": "Aeria",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "aeria/"
+      ],
+      "source_path": "readings/aeria.md",
+      "source_sha256": "e41a38547989407604318fc73a63c613898a232df2c8b8ee0bbc75f4b6642d1b",
+      "document_sha256": "e41a38547989407604318fc73a63c613898a232df2c8b8ee0bbc75f4b6642d1b",
+      "text_sha256": "eaa7a4c44878245c42fe1892892768f19f119ea706b200b2d28f752be82ec7ef",
+      "reading_path": "audio/readings/eaa7a4c44878245c42fe1892892768f19f119ea706b200b2d28f752be82ec7ef.md",
+      "reading_sha256": "e41a38547989407604318fc73a63c613898a232df2c8b8ee0bbc75f4b6642d1b",
+      "reading_length": 721,
+      "audio_path": "audio/lewis/eaa7a4c44878245c42fe1892892768f19f119ea706b200b2d28f752be82ec7ef.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "6195f2fdb0c5cbc9ed6b69a7eb3c3f71236e4dd499d6fe9fc29d9d10a40203f9",
+      "audio_length": 621548,
+      "duration_seconds": 51.72,
+      "chunks": [
+        {
+          "text": "Aeria",
+          "start": 0.0,
+          "duration": 1.425
+        },
+        {
+          "text": "An unfinished sky. A little weather of your own.",
+          "start": 1.605,
+          "duration": 3.975
+        },
+        {
+          "text": "Draw a cloud with a mouse, finger, or pen, or choose Make a cloud. Change the light, invite rain, and allow the formations to drift, overlap, evaporate, and gather again. You can pause Life to keep a still moment.",
+          "start": 5.76,
+          "duration": 14.6
+        },
+        {
+          "text": "Aeria begins with a gesture, then makes room for something to continue beyond it. It offers a small, playful encounter with emergence and impermanence. Its weather is an artistic model, not a meteorological simulation, and its connection to Cyberdelic OS is an interpretation rather than a complete implementation.",
+          "start": 20.54,
+          "duration": 21.1
+        },
+        {
+          "text": "By Brad Necyk. Previously developed as Clouds and Cloudroom. Your sky stays in this browser. This living artwork is not inscribed.",
+          "start": 41.82,
+          "duration": 9.9
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.562687337398529,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-everything-is-thinking",
+      "title": "Everything Is Thinking",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "everything-is-thinking/"
+      ],
+      "source_path": "readings/everything-is-thinking.md",
+      "source_sha256": "951b624507ef44fa9b41d2ca751dfb785aec7f8df044257a0f958be7e1db16e1",
+      "document_sha256": "951b624507ef44fa9b41d2ca751dfb785aec7f8df044257a0f958be7e1db16e1",
+      "text_sha256": "782fcfe21b9440ee6857eef5ca5973656c618817b013d59e2dd9cc8868847383",
+      "reading_path": "audio/readings/782fcfe21b9440ee6857eef5ca5973656c618817b013d59e2dd9cc8868847383.md",
+      "reading_sha256": "951b624507ef44fa9b41d2ca751dfb785aec7f8df044257a0f958be7e1db16e1",
+      "reading_length": 1205,
+      "audio_path": "audio/lewis/782fcfe21b9440ee6857eef5ca5973656c618817b013d59e2dd9cc8868847383.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "9767709d6c5ab64706423b908710062380f699e023b27db07f222ad892d9320e",
+      "audio_length": 1031660,
+      "duration_seconds": 85.88,
+      "chunks": [
+        {
+          "text": "Everything Is Thinking",
+          "start": 0.0,
+          "duration": 2.4
+        },
+        {
+          "text": "A field of competing futures.",
+          "start": 2.58,
+          "duration": 2.85
+        },
+        {
+          "text": "Pixel suns, cooling towers, company emblems, error messages, and promises crowd the screen. The visual language remembers the early internet. The argument belongs to the present: artificial intelligence as abundance, appetite, uncertainty, fear, and play, all speaking at once.",
+          "start": 5.61,
+          "duration": 18.95
+        },
+        {
+          "text": "The work draws from a library of 384 individual pixel images. Blue and silver hold the field together while yellow, green, red, and violet interrupt it. Cheerful advertisements sit beside questions of consent, energy, labour, and imagination. These are fictional voices within the artwork, not live market data or company statements.",
+          "start": 24.74,
+          "duration": 23.3
+        },
+        {
+          "text": "A camera travels slowly through the collage. Move the pointer and a room begins to appear: a floor, a wall, a doorway, fragments hanging at different distances. Other images cling to the screen. Every piece stays whole as its neighbours pass, overlap, and reveal another view.",
+          "start": 48.22,
+          "duration": 18.5
+        },
+        {
+          "text": "Pause, change the composition, explore the asset library, or save an image. No live artificial intelligence is running. The field holds its conflicting futures together without settling their argument.",
+          "start": 66.9,
+          "duration": 14.15
+        },
+        {
+          "text": "By Brad Necyk. This living artwork is not inscribed.",
+          "start": 81.23,
+          "duration": 4.65
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.588277280330658,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-vellum",
+      "title": "Vellum",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "vellum/"
+      ],
+      "source_path": "readings/vellum.md",
+      "source_sha256": "e2f01b1c370ae33a457d39542ba545f78665c14ae05e7788095f547940536d56",
+      "document_sha256": "e2f01b1c370ae33a457d39542ba545f78665c14ae05e7788095f547940536d56",
+      "text_sha256": "95a7b467a0d3138f6621718bc5ae086feec1e2d21cb057cf6f0007d2de2e351f",
+      "reading_path": "audio/readings/95a7b467a0d3138f6621718bc5ae086feec1e2d21cb057cf6f0007d2de2e351f.md",
+      "reading_sha256": "e2f01b1c370ae33a457d39542ba545f78665c14ae05e7788095f547940536d56",
+      "reading_length": 752,
+      "audio_path": "audio/lewis/95a7b467a0d3138f6621718bc5ae086feec1e2d21cb057cf6f0007d2de2e351f.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "97d402df7bc0abda5809ca35ac752c3546e5c1bbdfccf9b598415d91ba253015",
+      "audio_length": 657548,
+      "duration_seconds": 54.7,
+      "chunks": [
+        {
+          "text": "Vellum",
+          "start": 0.0,
+          "duration": 1.4
+        },
+        {
+          "text": "A river remembering a drawing.",
+          "start": 1.58,
+          "duration": 2.925
+        },
+        {
+          "text": "Blue, green, and orange pigment move across warm paper, carried by currents that fold into eddies and gather around circular basins. A faint pencil construction gives the water something to follow, and something to escape. Concentrated colour passes into delicate, diluted traces.",
+          "start": 4.685,
+          "duration": 19.275
+        },
+        {
+          "text": "Release ink, stir the water, or place an eddy. A gesture joins the same currents already moving through the sheet. Change the seed to begin another composition, or hold a moment and save it as a print.",
+          "start": 24.14,
+          "duration": 13.9
+        },
+        {
+          "text": "The work explores the meeting of a drawn structure and a moving material. The surface holds their traces as the currents keep changing.",
+          "start": 38.22,
+          "duration": 9.275
+        },
+        {
+          "text": "By Brad Necyk. Previously developed as Capillary. This living artwork is not inscribed.",
+          "start": 47.675,
+          "duration": 7.025
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.6225528717041016,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-primitives",
+      "title": "Primitives",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "primitives/"
+      ],
+      "source_path": "readings/primitives.md",
+      "source_sha256": "eae6ef6edfd727ff35413936746d8c83d85f2c8f09276efb247555265c7ee839",
+      "document_sha256": "eae6ef6edfd727ff35413936746d8c83d85f2c8f09276efb247555265c7ee839",
+      "text_sha256": "50db3f60040f38e06010a154ebf1742657ea8bcca5d55c11c922f44b56d3b3bf",
+      "reading_path": "audio/readings/50db3f60040f38e06010a154ebf1742657ea8bcca5d55c11c922f44b56d3b3bf.md",
+      "reading_sha256": "eae6ef6edfd727ff35413936746d8c83d85f2c8f09276efb247555265c7ee839",
+      "reading_length": 1030,
+      "audio_path": "audio/lewis/50db3f60040f38e06010a154ebf1742657ea8bcca5d55c11c922f44b56d3b3bf.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "43420308175546ba8c9502ce80452f245432c3259d0d5a7a5b703a60e4d0fc36",
+      "audio_length": 871532,
+      "duration_seconds": 72.55,
+      "chunks": [
+        {
+          "text": "Primitives",
+          "start": 0.0,
+          "duration": 1.575
+        },
+        {
+          "text": "A small vocabulary, an expanding field.",
+          "start": 1.755,
+          "duration": 3.725
+        },
+        {
+          "text": "Circles, crosses, rings, and repeated marks gather in a grid. Each shape is flat and translucent. Where the inks overlap, a darker colour appears. A complex design can be only two or three simple forms sharing the same center.",
+          "start": 5.66,
+          "duration": 16.325
+        },
+        {
+          "text": "Constellation opens the work as a field of individual marks and small gatherings. Scroll or pinch to move between large shapes and a distant composition of fine, distinct cells. In Pattern lab, stepped islands gather, break into fragments, or dissolve into scattered cells. Empty space travels with the marks.",
+          "start": 22.165,
+          "duration": 21.075
+        },
+        {
+          "text": "Cyber motion guides the view through smooth changes of scale while individual rows and columns shift one cell at a time. Pause to hold a composition, remix it, or save an image. Optional hand zoom lets you move through the field with two hands: apart for a wider view, together to approach. Hand tracking runs locally in your browser, and the camera starts only when you choose it.",
+          "start": 43.42,
+          "duration": 24.3
+        },
+        {
+          "text": "By Brad Necyk. This living artwork is not inscribed.",
+          "start": 67.9,
+          "duration": 4.65
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.6462122797966003,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-opalia",
+      "title": "Opalia",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "opalia/"
+      ],
+      "source_path": "readings/opalia.md",
+      "source_sha256": "59b4b23efaa88f8217808f020f16afbf97450996cb7762391510245cd8a3df8e",
+      "document_sha256": "59b4b23efaa88f8217808f020f16afbf97450996cb7762391510245cd8a3df8e",
+      "text_sha256": "e4d8f27321eebaa874731f1d54753e15fea88399cbd8b8f34ff3773fb2215e84",
+      "reading_path": "audio/readings/e4d8f27321eebaa874731f1d54753e15fea88399cbd8b8f34ff3773fb2215e84.md",
+      "reading_sha256": "59b4b23efaa88f8217808f020f16afbf97450996cb7762391510245cd8a3df8e",
+      "reading_length": 699,
+      "audio_path": "audio/lewis/e4d8f27321eebaa874731f1d54753e15fea88399cbd8b8f34ff3773fb2215e84.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "703ae63696fb8b946821b828108c94e9b862c6fbe2d9afa760784989074d096e",
+      "audio_length": 620684,
+      "duration_seconds": 51.645,
+      "chunks": [
+        {
+          "text": "Opalia",
+          "start": 0.0,
+          "duration": 1.475
+        },
+        {
+          "text": "A fold in seeing. Light, continually becoming.",
+          "start": 1.655,
+          "duration": 4.3
+        },
+        {
+          "text": "Pearlescent waves pass through a continuous generative field. Their contours breathe while the colours separate, overlap, and return. Open Controls to change the rhythm, seed, spacing, contour, or iridescence, or leave the surface to unfold.",
+          "start": 6.135,
+          "duration": 16.7
+        },
+        {
+          "text": "Opalia invites attention without a task. Repetition becomes a way of noticing difference, rather than a demand to arrive somewhere. Its relation to Cyberdelic OS lies in that encounter with perception and time. This is a curatorial reading, not a claim about consciousness or a physical simulation of light.",
+          "start": 23.015,
+          "duration": 21.5
+        },
+        {
+          "text": "By Brad Necyk. Previously developed as Phase Loom. This living artwork is not inscribed.",
+          "start": 44.695,
+          "duration": 6.95
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.4907299280166626,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-undra",
+      "title": "Undra",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "undra/"
+      ],
+      "source_path": "readings/undra.md",
+      "source_sha256": "8a89ec4cf907ce20c844c5eb127bb7fd7245f212511cf0e976f638d286a93626",
+      "document_sha256": "8a89ec4cf907ce20c844c5eb127bb7fd7245f212511cf0e976f638d286a93626",
+      "text_sha256": "b7b08420093958b70db94788d6cfbef9cd80a6c2d682de4380802aa56a8e429a",
+      "reading_path": "audio/readings/b7b08420093958b70db94788d6cfbef9cd80a6c2d682de4380802aa56a8e429a.md",
+      "reading_sha256": "8a89ec4cf907ce20c844c5eb127bb7fd7245f212511cf0e976f638d286a93626",
+      "reading_length": 681,
+      "audio_path": "audio/lewis/b7b08420093958b70db94788d6cfbef9cd80a6c2d682de4380802aa56a8e429a.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "6baf6f9fee43593616e59c1df234b6fab8bd00ba166244642e710d62f72f3db8",
+      "audio_length": 612620,
+      "duration_seconds": 50.97,
+      "chunks": [
+        {
+          "text": "Undra",
+          "start": 0.0,
+          "duration": 1.525
+        },
+        {
+          "text": "A living surface. A conversation with water.",
+          "start": 1.705,
+          "duration": 3.975
+        },
+        {
+          "text": "Hold empty space to grow a droplet. Drag water together, let it gather, then separate it again. The field responds through a procedural model of fluid motion and light. Its forms are generated in the browser, not played from a film.",
+          "start": 5.86,
+          "duration": 16.325
+        },
+        {
+          "text": "Undra offers a small experience of agency without complete control. Your gesture changes the conditions, and the material answers in its own way. This connection to Cyberdelic OS is a curatorial interpretation, not a claim that the artwork implements the whole operating system.",
+          "start": 22.365,
+          "duration": 19.575
+        },
+        {
+          "text": "By Brad Necyk. Previously developed as Glop, also known as Water Droplet. This living artwork is not inscribed.",
+          "start": 42.12,
+          "duration": 8.85
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5838226079940796,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-soft-signal",
+      "title": "Soft Signal",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "soft-signal/"
+      ],
+      "source_path": "readings/soft-signal.md",
+      "source_sha256": "31ad60b822f64575c26b351206d4643892ccb3169a9104268c4660cfd88a4247",
+      "document_sha256": "31ad60b822f64575c26b351206d4643892ccb3169a9104268c4660cfd88a4247",
+      "text_sha256": "3a23035aa7aa13ebf7ff70cfaf29492ae16bc0e386167dda939a707be00fbbe8",
+      "reading_path": "audio/readings/3a23035aa7aa13ebf7ff70cfaf29492ae16bc0e386167dda939a707be00fbbe8.md",
+      "reading_sha256": "31ad60b822f64575c26b351206d4643892ccb3169a9104268c4660cfd88a4247",
+      "reading_length": 762,
+      "audio_path": "audio/lewis/3a23035aa7aa13ebf7ff70cfaf29492ae16bc0e386167dda939a707be00fbbe8.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "2ca26467a1bf5c3e0df921a546d31e00f438a285da0594f0b7bd8bcab0838124",
+      "audio_length": 684908,
+      "duration_seconds": 57.0,
+      "chunks": [
+        {
+          "text": "Soft Signal",
+          "start": 0.0,
+          "duration": 1.775
+        },
+        {
+          "text": "A picture with weight.",
+          "start": 1.955,
+          "duration": 2.15
+        },
+        {
+          "text": "An early computer dream fills the screen: a chrome sphere, a checkerboard, a lavender ribbon, a distant moon. Take hold anywhere and pull. The image gathers into silk, carrying its small world through every fold. Release it, and watch the surface find its way back to stillness.",
+          "start": 4.285,
+          "duration": 18.9
+        },
+        {
+          "text": "Soft Signal begins with a newly generated image recalling the ray-traced landscapes of the early 1990s. It is an imagined memory of that visual language. The cloth responds to your gesture in the browser. Each lift, hesitation, and fall happens as you touch it.",
+          "start": 23.365,
+          "duration": 18.675
+        },
+        {
+          "text": "A familiar screen becomes something briefly held. You can disturb the picture without losing it. Its return takes time.",
+          "start": 42.22,
+          "duration": 8.525
+        },
+        {
+          "text": "By Brad Necyk, 2026. This living artwork is not inscribed.",
+          "start": 50.925,
+          "duration": 6.075
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5571140646934509,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-of-three-musicians",
+      "title": "Of Three Musicians",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "of-three-musicians/"
+      ],
+      "source_path": "readings/of-three-musicians.md",
+      "source_sha256": "a02c6a81bb7694cef70671dfae29a4adfffc715153efa065c464926454e3ea51",
+      "document_sha256": "a02c6a81bb7694cef70671dfae29a4adfffc715153efa065c464926454e3ea51",
+      "text_sha256": "3c01dab177c061bfa45f83a270e12280af197b3e48a63c8e68115a9613841eea",
+      "reading_path": "audio/readings/3c01dab177c061bfa45f83a270e12280af197b3e48a63c8e68115a9613841eea.md",
+      "reading_sha256": "a02c6a81bb7694cef70671dfae29a4adfffc715153efa065c464926454e3ea51",
+      "reading_length": 915,
+      "audio_path": "audio/lewis/3c01dab177c061bfa45f83a270e12280af197b3e48a63c8e68115a9613841eea.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "b6fab22ed45e69e5804238067fd925c4dfbda7803baffd7200135c9a35ca79ef",
+      "audio_length": 792332,
+      "duration_seconds": 65.95,
+      "chunks": [
+        {
+          "text": "Of Three Musicians",
+          "start": 0.0,
+          "duration": 2.175
+        },
+        {
+          "text": "A room that keeps trying to sing.",
+          "start": 2.355,
+          "duration": 2.7
+        },
+        {
+          "text": "After Picasso, a Pierrot, a Harlequin, and a bearded musician gather in a little company of paper masks, angular instruments, and impossible profiles. Other players accompany them. A dog wanders below their chairs. The camera slips between bodies, hesitates, and leans too close to a playing hand.",
+          "start": 5.235,
+          "duration": 20.625
+        },
+        {
+          "text": "The room is made in code and seen through a coarse field of red, green, and blue light. Its waltz is generated as it plays: a wavering machine voice, plucked chords, bass notes, dry clicks, and small, detuned bells. The same musical events move the fingers, strings, sticks, and keys.",
+          "start": 26.04,
+          "duration": 19.025
+        },
+        {
+          "text": "Of Three Musicians brings the company of Picasso's painting into the uncertain time of an early computer trying to sing. The players keep their awkward commitments to the score. The dog belongs to another rhythm.",
+          "start": 45.245,
+          "duration": 14.45
+        },
+        {
+          "text": "By Brad Necyk, 2026. This living artwork is not inscribed.",
+          "start": 59.875,
+          "duration": 6.075
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5640038251876831,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-btc-swarm",
+      "title": "BTC / SWARM",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "btc-swarm/"
+      ],
+      "source_path": "readings/btc-swarm.md",
+      "source_sha256": "262050e93efdc41118b4fef9454656405c0fbf527aa709dd617fc5f1978b6048",
+      "document_sha256": "262050e93efdc41118b4fef9454656405c0fbf527aa709dd617fc5f1978b6048",
+      "text_sha256": "ad650481814513b797fcb5022068fc1f23d6c4e8a029b8a09f8184612258f15d",
+      "reading_path": "audio/readings/ad650481814513b797fcb5022068fc1f23d6c4e8a029b8a09f8184612258f15d.md",
+      "reading_sha256": "262050e93efdc41118b4fef9454656405c0fbf527aa709dd617fc5f1978b6048",
+      "reading_length": 1035,
+      "audio_path": "audio/lewis/ad650481814513b797fcb5022068fc1f23d6c4e8a029b8a09f8184612258f15d.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "157394ba813d606050549c3d578d16d05b772b0b80fd02ed6c36176c4d287b62",
+      "audio_length": 907820,
+      "duration_seconds": 75.575,
+      "chunks": [
+        {
+          "text": "BTC / SWARM",
+          "start": 0.0,
+          "duration": 2.325
+        },
+        {
+          "text": "A history in formation.",
+          "start": 2.505,
+          "duration": 2.6
+        },
+        {
+          "text": "Hundreds of cursors inhabit a black desktop. They open folders, move windows, copy passages, carry images, and reserve spaces for things that have not arrived. Behind their work, a website keeps assembling and scrolling. No single cursor holds the whole design.",
+          "start": 5.285,
+          "duration": 18.475
+        },
+        {
+          "text": "The material is Bitcoin history: financial collapse, the white paper, a newspaper headline inside the genesis block, early exchanges, lost coins, arguments, institutions, and recurring dreams of a different kind of money. Archival photographs meet diagrams, verified bytes, and clearly labelled imagined scenes. Sources travel with the fragments. Uncertainty remains visible.",
+          "start": 23.94,
+          "duration": 25.225
+        },
+        {
+          "text": "Open a folder. Drag a piece of the page. Gather the swarm and watch it break apart. The desktop is a fiction, but its coordination happens here, through local algorithms. Every seed produces another arrangement. The archive keeps becoming an interface, and the interface keeps becoming a draft.",
+          "start": 49.345,
+          "duration": 19.975
+        },
+        {
+          "text": "By Brad Necyk, 2026. This living artwork is not inscribed.",
+          "start": 69.5,
+          "duration": 6.075
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5640362501144409,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-transplant",
+      "title": "Transplant",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "transplant/"
+      ],
+      "source_path": "readings/transplant.md",
+      "source_sha256": "5b5e3eb15bbd13771ef5171923a947e0b2d6883aaa1c56eed469ca218dfb1c6f",
+      "document_sha256": "5b5e3eb15bbd13771ef5171923a947e0b2d6883aaa1c56eed469ca218dfb1c6f",
+      "text_sha256": "48257de5443cf0893f25dc252aa4782d0d175806b2ce61690dff9651ace21744",
+      "reading_path": "audio/readings/48257de5443cf0893f25dc252aa4782d0d175806b2ce61690dff9651ace21744.md",
+      "reading_sha256": "5b5e3eb15bbd13771ef5171923a947e0b2d6883aaa1c56eed469ca218dfb1c6f",
+      "reading_length": 1074,
+      "audio_path": "audio/lewis/48257de5443cf0893f25dc252aa4782d0d175806b2ce61690dff9651ace21744.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "41ea5619853d9f28c9fa5553c52a0cbade33fe5b4e8526309e13f086548c2ff8",
+      "audio_length": 955052,
+      "duration_seconds": 79.505,
+      "chunks": [
+        {
+          "text": "Transplant",
+          "start": 0.0,
+          "duration": 1.725
+        },
+        {
+          "text": "A manual, held differently.",
+          "start": 1.905,
+          "duration": 2.65
+        },
+        {
+          "text": "Transplant began during Brad Necyk's postdoctoral fellowship at York University. Page by page, he poetically rendered the manual given to patients before a liver transplant. Its headings and instructions become a structure to think and feel within.",
+          "start": 4.735,
+          "duration": 17.45
+        },
+        {
+          "text": "Science explicates; poetry implicates. Columns become parallel voices. Indents open distances between bodies. A sentence can break apart, interrupt another, or disappear beneath a cancellation.",
+          "start": 22.365,
+          "duration": 14.325
+        },
+        {
+          "text": "The web edition holds thirty-three pages. Ribbon red, blue, and green meet dark marker and the pale fibres of worn paper. Ink pools, bleeds, and drips. Some impressions remain defined; others seem rubbed away. Clear passages share a page with partial erasures, and no two leaves weather in the same way.",
+          "start": 36.87,
+          "duration": 20.825
+        },
+        {
+          "text": "Turn a leaf across the spine. Its stained reverse stays beside the next poem, with a faint trace of the writing showing through. Read slowly. Turn back. Let the spaces hold part of the account.",
+          "start": 57.875,
+          "duration": 13.35
+        },
+        {
+          "text": "Poetic manual by Brad Necyk. Web edition, 2026. This living artwork is not inscribed.",
+          "start": 71.405,
+          "duration": 8.1
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.6411321759223938,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-overview-five-works",
+      "title": "Fieldworks, five-work edition",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "readings/overview-five-works.md"
+      ],
+      "source_path": "readings/overview-five-works.md",
+      "source_sha256": "a64b518f1604ef8e675bb7608b4b3284b09d683b1f66e4dd29534099f9752518",
+      "document_sha256": "a64b518f1604ef8e675bb7608b4b3284b09d683b1f66e4dd29534099f9752518",
+      "text_sha256": "07904b3f8fbc1b28bba08b45cb96eb5fdd07ba395f7758dcc1ace9a3fa523deb",
+      "reading_path": "audio/readings/07904b3f8fbc1b28bba08b45cb96eb5fdd07ba395f7758dcc1ace9a3fa523deb.md",
+      "reading_sha256": "a64b518f1604ef8e675bb7608b4b3284b09d683b1f66e4dd29534099f9752518",
+      "reading_length": 261,
+      "audio_path": "audio/lewis/07904b3f8fbc1b28bba08b45cb96eb5fdd07ba395f7758dcc1ace9a3fa523deb.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "8de5adc1511e97ab13b9d93c28cf9c1b35a344e02170820fb42f593c7e918fba",
+      "audio_length": 263852,
+      "duration_seconds": 21.89,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing.",
+          "start": 7.16,
+          "duration": 9.0
+        },
+        {
+          "text": "Five living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 16.34,
+          "duration": 5.55
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.6111775040626526,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-overview-six-works",
+      "title": "Fieldworks, six-work edition",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "readings/overview-six-works.md"
+      ],
+      "source_path": "readings/overview-six-works.md",
+      "source_sha256": "4aead27cccbc58711a789cb84f5660d026a32a3827ea4b5e3488426db4710a48",
+      "document_sha256": "4aead27cccbc58711a789cb84f5660d026a32a3827ea4b5e3488426db4710a48",
+      "text_sha256": "3a9795edf3ad0be2022346f0f1fcfab644a0d3cb29acf9f61887601e500e61de",
+      "reading_path": "audio/readings/3a9795edf3ad0be2022346f0f1fcfab644a0d3cb29acf9f61887601e500e61de.md",
+      "reading_sha256": "4aead27cccbc58711a789cb84f5660d026a32a3827ea4b5e3488426db4710a48",
+      "reading_length": 300,
+      "audio_path": "audio/lewis/3a9795edf3ad0be2022346f0f1fcfab644a0d3cb29acf9f61887601e500e61de.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "e3a09327cb0cd28f94fa9251ca77b5e329d742d45c70476fac79ca14a5947255",
+      "audio_length": 299852,
+      "duration_seconds": 24.89,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing. A small vocabulary, an expanding field.",
+          "start": 7.16,
+          "duration": 12.05
+        },
+        {
+          "text": "Six living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 19.39,
+          "duration": 5.5
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5296674370765686,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-overview-seven-works",
+      "title": "Fieldworks, seven-work edition",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "readings/overview-seven-works.md"
+      ],
+      "source_path": "readings/overview-seven-works.md",
+      "source_sha256": "bed6aacaf2569a2aa3bda7dda69259fbe8eda52989b8312640aabb0d0f181adb",
+      "document_sha256": "bed6aacaf2569a2aa3bda7dda69259fbe8eda52989b8312640aabb0d0f181adb",
+      "text_sha256": "f6d25b3f78d75d4cac7e19c6b66e715f015d69692d4ebe94b711b1e2ea9c1941",
+      "reading_path": "audio/readings/f6d25b3f78d75d4cac7e19c6b66e715f015d69692d4ebe94b711b1e2ea9c1941.md",
+      "reading_sha256": "bed6aacaf2569a2aa3bda7dda69259fbe8eda52989b8312640aabb0d0f181adb",
+      "reading_length": 332,
+      "audio_path": "audio/lewis/f6d25b3f78d75d4cac7e19c6b66e715f015d69692d4ebe94b711b1e2ea9c1941.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "7d5ff70492f3d117aaf691358bb8a6d53fbca4af89fd32b7bdabf22e2d9ba20b",
+      "audio_length": 326636,
+      "duration_seconds": 27.14,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing. A small vocabulary, an expanding field. A field of competing futures.",
+          "start": 7.16,
+          "duration": 14.2
+        },
+        {
+          "text": "Seven living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 21.54,
+          "duration": 5.6
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5177258253097534,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-overview-eight-works",
+      "title": "Fieldworks, eight-work edition",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "readings/overview-eight-works.md"
+      ],
+      "source_path": "readings/overview-eight-works.md",
+      "source_sha256": "7c28c7f94ac90d1bf669eb6482913ff828f3404a1a4468fa47ab6dfa74d06a64",
+      "document_sha256": "7c28c7f94ac90d1bf669eb6482913ff828f3404a1a4468fa47ab6dfa74d06a64",
+      "text_sha256": "4b3cb8f4aaef1a4d5f0d239936f42b59d3a6a7555671f5bb94f62e7da4e0f86c",
+      "reading_path": "audio/readings/4b3cb8f4aaef1a4d5f0d239936f42b59d3a6a7555671f5bb94f62e7da4e0f86c.md",
+      "reading_sha256": "7c28c7f94ac90d1bf669eb6482913ff828f3404a1a4468fa47ab6dfa74d06a64",
+      "reading_length": 355,
+      "audio_path": "audio/lewis/4b3cb8f4aaef1a4d5f0d239936f42b59d3a6a7555671f5bb94f62e7da4e0f86c.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "1efab1f920a981007b9d41e653eaaeed7a5da355353ae0e72664ac97d91dcc5c",
+      "audio_length": 339884,
+      "duration_seconds": 28.24,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing. A small vocabulary, an expanding field. A field of competing futures. A picture with weight.",
+          "start": 7.16,
+          "duration": 15.5
+        },
+        {
+          "text": "Eight living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 22.84,
+          "duration": 5.4
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5486807823181152,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-overview-nine-works",
+      "title": "Fieldworks, nine-work edition",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "readings/overview-nine-works.md"
+      ],
+      "source_path": "readings/overview-nine-works.md",
+      "source_sha256": "0034388a1a2b14a4a773aa14fd10df1264f159716d52800e744ddf90662098a7",
+      "document_sha256": "0034388a1a2b14a4a773aa14fd10df1264f159716d52800e744ddf90662098a7",
+      "text_sha256": "f78f96ded8f35f9f1cfba7cef4396754c5f25748612c3d3999d288d1e860d1f8",
+      "reading_path": "audio/readings/f78f96ded8f35f9f1cfba7cef4396754c5f25748612c3d3999d288d1e860d1f8.md",
+      "reading_sha256": "0034388a1a2b14a4a773aa14fd10df1264f159716d52800e744ddf90662098a7",
+      "reading_length": 388,
+      "audio_path": "audio/lewis/f78f96ded8f35f9f1cfba7cef4396754c5f25748612c3d3999d288d1e860d1f8.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "1daee25ba5fc675d0dd11ec9c6e32e34dd8e040e5cd16a09fe1b85bdfda7785b",
+      "audio_length": 364940,
+      "duration_seconds": 30.315,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing. A small vocabulary, an expanding field. A field of competing futures. A picture with weight. A room that keeps trying to sing.",
+          "start": 7.16,
+          "duration": 17.5
+        },
+        {
+          "text": "Nine living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 24.84,
+          "duration": 5.475
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5480540990829468,
+        "clipped_samples": 0
+      }
+    },
+    {
+      "id": "fieldworks-overview-ten-works",
+      "title": "Fieldworks, ten-work edition",
+      "form": "fieldwork",
+      "release_id": null,
+      "pages": [
+        "readings/overview-ten-works.md"
+      ],
+      "source_path": "readings/overview-ten-works.md",
+      "source_sha256": "454c659b078e8c7617515b52fb6a655b821165c42c70f1ca88b40f13390281cd",
+      "document_sha256": "454c659b078e8c7617515b52fb6a655b821165c42c70f1ca88b40f13390281cd",
+      "text_sha256": "2e584fa16869162e9e4d66b2e087211e5cf9224f885a67d94b53a542efb34fda",
+      "reading_path": "audio/readings/2e584fa16869162e9e4d66b2e087211e5cf9224f885a67d94b53a542efb34fda.md",
+      "reading_sha256": "454c659b078e8c7617515b52fb6a655b821165c42c70f1ca88b40f13390281cd",
+      "reading_length": 411,
+      "audio_path": "audio/lewis/2e584fa16869162e9e4d66b2e087211e5cf9224f885a67d94b53a542efb34fda.mp3",
+      "voice": "bm_lewis",
+      "voice_name": "Lewis",
+      "speed": 1.0,
+      "audio_sha256": "df2c2b40ffb75b6bd571949f3ff98b6513b5b42c99363522b7f4e921cb4ecc14",
+      "audio_length": 384524,
+      "duration_seconds": 31.965,
+      "chunks": [
+        {
+          "text": "Fieldworks",
+          "start": 0.0,
+          "duration": 1.65
+        },
+        {
+          "text": "Generative artworks and interactive environments by Brad Necyk.",
+          "start": 1.83,
+          "duration": 5.15
+        },
+        {
+          "text": "A surface that answers. A fold in seeing. An unfinished sky. Impossible matter. A river remembering a drawing. A small vocabulary, an expanding field. A field of competing futures. A picture with weight. A room that keeps trying to sing. A history in formation.",
+          "start": 7.16,
+          "duration": 19.05
+        },
+        {
+          "text": "Ten living artworks. Enter, explore, and see what a gesture changes.",
+          "start": 26.39,
+          "duration": 5.575
+        }
+      ],
+      "checks": {
+        "all_text_retained": true,
+        "mp3_decodes": true,
+        "finite_samples": true,
+        "peak": 0.5187338590621948,
+        "clipped_samples": 0
+      }
+    }
+  ],
+  "playlists": []
+}

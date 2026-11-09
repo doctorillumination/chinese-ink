@@ -2,8 +2,8 @@
   "edition": "0.17",
   "verified_date": "2026-11-08",
   "timezone": "America/Vancouver",
-  "bytes": 578104,
-  "sha256": "1238a539fa089ab45155570ccb25638123be58cf8f529fc66a277003b1f4fcc8",
+  "bytes": 578133,
+  "sha256": "98a2f70018ca3375428a20b7b27f8a9a9200c3587c92cec7ca74d78f14bd4806",
   "inline_scripts": 1,
   "inline_styles": 1,
   "external_asset_tags": [],
@@ -45,5 +45,7 @@
   "surface_shapes": 47,
   "submerged_objects": 24,
   "maximum_render_pixel_budget": 3800000,
-  "direct_file_browser_test": "unverified; localhost in Chrome is verified"
+  "direct_file_browser_test": "unverified; localhost in Chrome is verified",
+  "title": "Paper Water",
+  "rename_proof": "publication/rename-preservation.json"
 }

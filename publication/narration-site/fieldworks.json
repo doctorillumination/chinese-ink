@@ -1,0 +1,22 @@
+{
+  "overview": {
+    "title": "Fieldworks",
+    "href": "fieldworks/",
+    "source": "overview.md",
+    "source_path": "fieldworks/readings/overview.md",
+    "source_sha256": "680c08f0dc6fb88171cd5098aa955e26bc3976f9d9df9de43fa2411cccc06bc2",
+    "source_length": 473
+  },
+  "items": [
+    {
+      "title": "Paper Water",
+      "href": "fieldworks/paper-water/",
+      "source": "paper-water.md",
+      "source_path": "fieldworks/readings/paper-water.md",
+      "source_sha256": "de3a7927023092dd3e79e98afe0d0b260739c37621fef50c98580ae0a66d6464",
+      "source_length": 824,
+      "slug": "paper-water"
+    }
+  ],
+  "archived_readings": []
+}

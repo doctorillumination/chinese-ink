@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Paper Water capture</title>
+<style>body{background:#f4f0e5;font:14px monospace;color:#222}iframe{display:block;width:960px;height:720px;border:0}button{font:inherit;padding:12px}#result{white-space:pre-wrap}</style>
+<button id="record" disabled>Record the actual canvas</button><pre id="result">Opening Paper Water...</pre>
+<iframe src="../index.html" title="Paper Water capture"></iframe>
+<script>
+const button=document.getElementById('record'),report=document.getElementById('result'),frame=document.querySelector('iframe');
+const save=async(blob,name)=>{const response=await fetch('/capture/'+name,{method:'POST',body:blob});if(!response.ok)throw Error('Local capture save failed');};
+frame.onload=()=>{button.disabled=false;report.textContent='Ready to record ten seconds of the actual Paper Water canvas.';};
+button.onclick=async()=>{
+ button.disabled=true;
+ const canvas=frame.contentDocument.querySelector('canvas'),scene=frame.contentDocument.querySelector('#scene');
+ const stream=canvas.captureStream(24),type=['video/webm;codecs=vp9','video/webm;codecs=vp8'].find(t=>MediaRecorder.isTypeSupported(t));
+ const recorder=new MediaRecorder(stream,{mimeType:type,videoBitsPerSecond:5000000}),chunks=[];
+ const runtime=new Uint8Array(await(await fetch('../index.html')).arrayBuffer());
+ const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',runtime))).map(v=>v.toString(16).padStart(2,'0')).join('');
+ const start=performance.now(),initial={...scene.dataset};
+ recorder.ondataavailable=event=>{if(event.data.size)chunks.push(event.data);};
+ recorder.onstop=async()=>{
+  const metadata={kind:'actual browser canvas, real-time recording, silent',source_runtime_sha256:digest,requested_fps:24,mime_type:type,settings:stream.getVideoTracks()[0].getSettings(),elapsed_ms:performance.now()-start,start:initial,end:{...scene.dataset},camera_recorded:false};
+  await save(new Blob(chunks,{type}),'paper-water-canvas.webm');
+  await save(new Blob([JSON.stringify(metadata,null,2)+'\n'],{type:'application/json'}),'paper-water-capture.json');
+  stream.getTracks().forEach(t=>t.stop());report.textContent='Saved ten seconds of the actual Paper Water canvas locally.';button.disabled=false;
+ };
+ recorder.start();report.textContent='Recording the actual canvas, with no camera or microphone.';
+ setTimeout(()=>recorder.stop(),10000);
+};
+</script></html>

@@ -9,7 +9,6 @@
     "rhythm.mjs",
     "ink-material.mjs",
     "ink-garden.mjs",
-    "shell.html",
     "style.css"
   ],
   "motion": {
@@ -66,5 +65,9 @@
         "surface": 0.9999999999829927
       }
     ]
+  },
+  "shell": {
+    "presentationPreserved": true,
+    "metadataRenamed": "Paper Water"
   }
 }

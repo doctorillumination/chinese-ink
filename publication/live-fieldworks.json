@@ -1,0 +1,126 @@
+{
+  "site": "https://fieldworks.space/",
+  "verified_at": "2026-11-09T03:13:55.918045+00:00",
+  "viewer": "https://fieldworks.space/paper-water/",
+  "release_id": "c24eb28788f25e4ed1b7716af5185b4f832b2a6f6b236caa1bf1b3ad5b166815",
+  "gallery_order": [
+    "lumen",
+    "aeria",
+    "everything-is-thinking",
+    "vellum",
+    "primitives",
+    "opalia",
+    "undra",
+    "soft-signal",
+    "of-three-musicians",
+    "btc-swarm",
+    "transplant",
+    "paper-water"
+  ],
+  "runtime_title": "Paper Water",
+  "runtime_script_and_style_exact": true,
+  "files": [
+    {
+      "path": "fieldworks.json",
+      "bytes": 23291,
+      "sha256": "1e09d3a68d4991e5aece308fd11a392ee1bea2ffa9ceee4ef38b9a13d178dd4a",
+      "content_type": "application/json"
+    },
+    {
+      "path": "narrations.json",
+      "bytes": 49829,
+      "sha256": "d81cc0756cfa7fece7675c6aaef6aeee4063d3c6b8aecf28401c1c2baf821233",
+      "content_type": "application/json"
+    },
+    {
+      "path": "paper-water-player.css",
+      "bytes": 478,
+      "sha256": "94563d803abd2afa13fade1ae2b7a96848aec02f01178a50a76b6ba74c5053f5",
+      "content_type": "text/css"
+    },
+    {
+      "path": "paper-water-player.js",
+      "bytes": 983,
+      "sha256": "3d7907f1ad6736c2995586982247e180681eeefbca619f05e0ae44fe0b95b68b",
+      "content_type": "text/javascript"
+    },
+    {
+      "path": "fieldwork-runtime/paper-water/THREE-LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+      "content_type": "text/plain"
+    },
+    {
+      "path": "sources.json",
+      "bytes": 253024,
+      "sha256": "73234be2b7a58d1cc81224747eea6fac9b124b8746d0a6056de3dea308ddd8de",
+      "content_type": "application/json"
+    },
+    {
+      "path": "previews/captures.json",
+      "bytes": 15937,
+      "sha256": "35343ebaaa22006d96c620eedf02ad339b6e7092b3ed2472aa6db640bb664c3b",
+      "content_type": "application/json"
+    },
+    {
+      "path": "readings/paper-water.md",
+      "bytes": 824,
+      "sha256": "de3a7927023092dd3e79e98afe0d0b260739c37621fef50c98580ae0a66d6464",
+      "content_type": "text/markdown"
+    },
+    {
+      "path": "readings/overview.md",
+      "bytes": 473,
+      "sha256": "680c08f0dc6fb88171cd5098aa955e26bc3976f9d9df9de43fa2411cccc06bc2",
+      "content_type": "text/markdown"
+    },
+    {
+      "path": "readings/overview-eleven-works.md",
+      "bytes": 442,
+      "sha256": "b855a43e7f668e6b919f9e0b146d74f8383d0a4a9480984da55c9f41a552c437",
+      "content_type": "text/markdown"
+    },
+    {
+      "path": "images/paper-water.jpg",
+      "bytes": 17245,
+      "sha256": "dd015cf0cb9609022608479f78ed47c810f1596e3c945aafb1c42d76fd8f9a00",
+      "content_type": "image/jpeg"
+    },
+    {
+      "path": "previews/paper-water.mp4",
+      "bytes": 121397,
+      "sha256": "c38cfa92e2fc0af6bc9810f30c0e8320546cc971cca531e9df14d77ad0bb08b5",
+      "content_type": "video/mp4"
+    },
+    {
+      "path": "releases/paper-water-c24eb28788f25e4ed1b7716af5185b4f832b2a6f6b236caa1bf1b3ad5b166815.json",
+      "bytes": 7760,
+      "sha256": "aa24f15660797c11aab7d604333a337e622bc2a998b8026bb1f7507d3a46fee9",
+      "content_type": "application/json"
+    },
+    {
+      "path": "audio/lewis/58d6b002f0d9e29f8ab8c7c8910cd9eb3e82f4a26eb3cc7bf5471a592eab4fbe.mp3",
+      "bytes": 425708,
+      "sha256": "1eb3b4dac58ab5a10650cdcb0113cf87f0d7686b785f52a5e18a7eddf1978786",
+      "content_type": "audio/mpeg"
+    },
+    {
+      "path": "audio/readings/58d6b002f0d9e29f8ab8c7c8910cd9eb3e82f4a26eb3cc7bf5471a592eab4fbe.md",
+      "bytes": 473,
+      "sha256": "680c08f0dc6fb88171cd5098aa955e26bc3976f9d9df9de43fa2411cccc06bc2",
+      "content_type": "text/markdown"
+    },
+    {
+      "path": "audio/lewis/1f7fcce9bfec7a317f88b7e16cba51c2186d40a3c100b1b4aba460a054a047c4.mp3",
+      "bytes": 724076,
+      "sha256": "fc346f55e6d310ed917f34865c24ab578aeef56e85e3fbab4ee3433949fb6e6c",
+      "content_type": "audio/mpeg"
+    },
+    {
+      "path": "audio/readings/1f7fcce9bfec7a317f88b7e16cba51c2186d40a3c100b1b4aba460a054a047c4.md",
+      "bytes": 824,
+      "sha256": "de3a7927023092dd3e79e98afe0d0b260739c37621fef50c98580ae0a66d6464",
+      "content_type": "text/markdown"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "edition": "0.17",
+  "date": "2026-11-08",
+  "preservedSources": [
+    "simulation.mjs",
+    "simulation-math.mjs",
+    "school.mjs",
+    "pond-life.mjs",
+    "rhythm.mjs",
+    "ink-material.mjs",
+    "ink-garden.mjs",
+    "style.css"
+  ],
+  "motion": {
+    "seconds": 40,
+    "fish": 12,
+    "includesFeeding": true,
+    "maximumDeviation": 0,
+    "biteEventsUnchanged": true
+  },
+  "idleGeometry": {
+    "poses": 40,
+    "comparedValues": 322320,
+    "maximumDeviation": 0
+  },
+  "feedback": {
+    "foodEaten": 3,
+    "biteRipples": 3,
+    "maximumMouthOpening": 1,
+    "activeFramesAt60Hz": 79,
+    "openingDurationSeconds": 0.45,
+    "rippleLifetimeSeconds": 1.9,
+    "rippleStrength": 0.3,
+    "rippleSpeedMultiplier": 0.22,
+    "clickRippleCount": 1,
+    "biteEvents": 3
+  },
+  "shell": {
+    "presentationPreserved": true,
+    "metadataRenamed": "Paper Water"
+  }
+}
