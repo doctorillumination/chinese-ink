@@ -1,10 +1,25 @@
 import * as THREE from '../vendor/three.module.js';
 import { inkNoise } from './ink-material.mjs';
 import { sampleWaterRipples } from './water.mjs';
+import { MAX_FOOD_PIECES } from './pond-life.mjs';
+
+function leafGeometry(leaves) {
+  const geometry = new THREE.InstancedBufferGeometry(), plane = new THREE.PlaneGeometry(1, 1);
+  geometry.index = plane.index.clone();
+  for (const name of ['position', 'uv']) geometry.setAttribute(name, plane.attributes[name].clone());
+  plane.dispose(); geometry.instanceCount = leaves.length;
+  geometry.setAttribute('aOrigin', new THREE.InstancedBufferAttribute(new Float32Array(leaves.flatMap((l) => l.point.toArray())), 3).setUsage(THREE.DynamicDrawUsage));
+  geometry.setAttribute('aAxis', new THREE.InstancedBufferAttribute(new Float32Array(leaves.flatMap((l) => [l.angle, l.anchor, l.width, l.length])), 4).setUsage(THREE.DynamicDrawUsage));
+  geometry.setAttribute('aPigment', new THREE.InstancedBufferAttribute(new Float32Array(leaves.flatMap((l) => [l.kind, l.seed, l.load, l.depth ?? 0])), 4).setUsage(THREE.DynamicDrawUsage));
+  geometry.setAttribute('aFade', new THREE.InstancedBufferAttribute(new Float32Array(leaves.map(() => 1)), 1).setUsage(THREE.DynamicDrawUsage));
+  return geometry;
+}
 
 export class InkGarden {
   constructor() {
     this.scene = new THREE.Scene();
+    this.submergedScene = new THREE.Scene();
+    this.submergedRecords = [];
     this.layoutKey = '';
     this.leafCount = 0;
     this.leafRecords = [];
@@ -18,11 +33,14 @@ export class InkGarden {
         attribute vec3 aOrigin;
         attribute vec4 aAxis;
         attribute vec4 aPigment;
+        attribute float aFade;
         varying vec2 vUv;
         varying vec3 vPigment;
+        varying float vDepth, vFade;
         void main() {
           vUv = uv;
           vPigment = aPigment.xyz;
+          vDepth = aPigment.w; vFade = aFade;
           float c = cos(aAxis.x), s = sin(aAxis.x);
           vec2 local = (uv - vec2(.5, aAxis.y)) * aAxis.zw;
           vec2 p = aOrigin.xz + vec2(c * local.x - s * local.y, s * local.x + c * local.y);
@@ -32,6 +50,7 @@ export class InkGarden {
       fragmentShader: `
         varying vec2 vUv;
         varying vec3 vPigment;
+        varying float vDepth, vFade;
         ${inkNoise}
         void main() {
           float kind = vPigment.x, seed = vPigment.y, load = vPigment.z;
@@ -61,6 +80,11 @@ export class InkGarden {
               veins += exp(-pow(across / (.008 + ink * .008), 2.)) * smoothstep(.06, .25, along) * ink;
             }
             rim = exp(-pow((r - edge + .023) / .045, 2.)) * (.4 + cloud * .6);
+          } else if (kind > 3.5) {
+            float r = length(p * vec2(.90, 1.08));
+            float edge = .31 + (noise2(p * 6. + seed) - .5) * .10;
+            alpha = 1. - smoothstep(edge - .025, edge + wick, r);
+            veins = 0.; rim = exp(-pow((r - edge + .025) / .055, 2.)) * .5;
           } else if (kind < 1.5 || kind > 2.5) {
             float t = vUv.y;
             float bend = sin(t * 3.14159) * (.025 + hash21(vec2(seed, 1.)) * .13);
@@ -92,7 +116,7 @@ export class InkGarden {
           float dry = smoothstep(.17, .34, fbm2(p * vec2(31., 18.) + seed * 2.));
           alpha *= (.88 + cloud * .12) * mix(.82, 1., dry);
           // Surface ink uses premultiplied pigment in red and coverage in green.
-          gl_FragColor = vec4(density, 1., 0., alpha);
+          gl_FragColor = vec4(density * mix(1., .65, vDepth), 1., vDepth, alpha * vFade);
         }
       `,
       side: THREE.DoubleSide, transparent: true, depthTest: false, depthWrite: false, toneMapped: false,
@@ -125,6 +149,13 @@ export class InkGarden {
     this.leaves.frustumCulled = false;
     this.leaves.renderOrder = 1;
     this.scene.add(this.leaves);
+    this.submerged = new THREE.Mesh(new THREE.BufferGeometry(), this.leafMaterial);
+    this.submerged.frustumCulled = false;
+    this.submergedScene.add(this.submerged);
+    const empty = Array.from({ length: MAX_FOOD_PIECES }, (_, seed) => ({ point: new THREE.Vector3(), angle: 0, anchor: .5, width: .2, length: .2, kind: 4, seed, load: 1.8 }));
+    this.food = new THREE.Mesh(leafGeometry(empty), this.leafMaterial);
+    this.food.frustumCulled = false; this.food.renderOrder = 2;
+    this.scene.add(this.food);
   }
 
   update(camera, time, ripples = []) {
@@ -146,7 +177,8 @@ export class InkGarden {
     const flowX = (Math.sin(point.z * .43 + time * .34) - Math.sin(point.z * .43)) * .065;
     const flowZ = (Math.cos(point.x * .36 - time * .29) - Math.cos(point.x * .36)) * .055;
     const water = sampleWaterRipples(this.ripples, point.x, point.z, this.waterSample);
-    return out.set(point.x + (dx + flowX + water.x) * weight, point.y + water.height * weight, point.z + (dz + flowZ + water.z) * weight);
+    const response = motion.depth ? 1 - motion.depth * .8 : 1;
+    return out.set(point.x + (dx + (flowX + water.x) * response) * weight, point.y + water.height * weight * response, point.z + (dz + (flowZ + water.z) * response) * weight);
   }
 
   pose(time) {
@@ -171,6 +203,26 @@ export class InkGarden {
       });
     }
     positions.needsUpdate = true;
+    const submerged = this.submerged.geometry.attributes;
+    this.submergedRecords.forEach((leaf, i) => {
+      this.movePoint(leaf.point, leaf.motion, leaf.weight, time, point);
+      submerged.aOrigin.setXYZ(i, point.x, point.y, point.z);
+    });
+    submerged.aOrigin.needsUpdate = true;
+  }
+
+  updateFood(pieces, time) {
+    const attributes = this.food.geometry.attributes, point = this.posePoint;
+    for (let i = 0; i < MAX_FOOD_PIECES; i++) {
+      const piece = pieces[i];
+      attributes.aFade.setX(i, piece?.fade ?? 0);
+      if (!piece) continue;
+      this.movePoint(new THREE.Vector3(piece.x, .07, piece.z), { seed: piece.seed, amplitude: .035 }, 1, time, point);
+      attributes.aOrigin.setXYZ(i, point.x, point.y, point.z);
+      attributes.aAxis.setXYZW(i, piece.seed, .5, piece.size * 2.8, piece.size * 2.6);
+      attributes.aPigment.setXYZW(i, 4, piece.seed, 1.8, 0);
+    }
+    for (const attribute of Object.values(attributes)) attribute.needsUpdate = true;
   }
 
   layout(camera) {
@@ -275,16 +327,30 @@ export class InkGarden {
       [.925, .44, .48, .5, .70, 198., 3], [.34, .145, .42, -.2, .49, 211., 2], [.715, .205, .44, 1.1, .66, 227., 3], [.075, .12, .35, -.7, .52, 239., 3],
     ]) leaf(at(u, v), angle, size * (kind === 3 ? .54 : 1), size * (kind === 3 ? 1.32 : 1.08), kind, seed, load, { seed, amplitude: .35 + random(seed, 2) * .22 }, 1, true);
 
-    const geometry = new THREE.InstancedBufferGeometry();
-    const plane = new THREE.PlaneGeometry(1, 1);
-    geometry.index = plane.index.clone();
-    for (const name of ['position', 'uv']) geometry.setAttribute(name, plane.attributes[name].clone());
-    plane.dispose();
-    geometry.instanceCount = leaves.length;
-    geometry.setAttribute('aOrigin', new THREE.InstancedBufferAttribute(new Float32Array(leaves.flatMap((l) => l.point.toArray())), 3).setUsage(THREE.DynamicDrawUsage));
-    geometry.setAttribute('aAxis', new THREE.InstancedBufferAttribute(new Float32Array(leaves.flatMap((l) => [l.angle, l.anchor, l.width, l.length])), 4).setUsage(THREE.DynamicDrawUsage));
-    geometry.setAttribute('aPigment', new THREE.InstancedBufferAttribute(new Float32Array(leaves.flatMap((l) => [l.kind, l.seed, l.load, 0])), 4));
+    for (const [u, v, size, seed] of [[.17, .13, 1.35, 251.], [.87, .54, 1.15, 264.], [.46, .91, .95, 279.]]) {
+      leaf(at(u, v), seed, size, size * .94, 0, seed, .55, { seed, amplitude: .30 }, 1, true);
+    }
+    for (let i = 0; i < 18; i++) {
+      const seed = 301 + i * 13.7;
+      let u = .07 + random(seed, 1) * .86, v = .07 + random(seed, 2) * .86;
+      if (Math.hypot((u - .5) / .48, (v - .5) / .48) < .58) u = u < .5 ? u - .20 : u + .20;
+      const kind = i % 3 ? 3 : 2, size = .24 + random(seed, 3) * .34;
+      leaf(at(u, v), seed, size * (kind === 3 ? .48 : 1), size * 1.15, kind, seed, .38 + random(seed, 4) * .31, { seed, amplitude: .25 }, 1, true);
+    }
+
+    this.submergedRecords = Array.from({ length: 24 }, (_, i) => {
+      const seed = 607 + i * 17.3, depth = .62 + random(seed, 8) * .33;
+      const u = .08 + random(seed, 1) * .84, v = .07 + random(seed, 2) * .86;
+      const point = at(u, v); point.y = -depth * 1.5;
+      const kind = i % 3 === 0 ? 3 : i % 3 === 1 ? 2 : 4;
+      const size = .48 + random(seed, 3) * .72;
+      return { point, angle: seed, anchor: .5, width: size * (kind === 3 ? .42 : 1), length: size * (kind === 3 ? 1.4 : .86), kind, seed, load: .24 + random(seed, 4) * .26, depth,
+        motion: { seed, amplitude: kind === 4 ? 0 : .065, depth }, weight: kind === 4 ? 0 : 1 };
+    });
+
+    const geometry = leafGeometry(leaves);
     this.leaves.geometry.dispose(); this.leaves.geometry = geometry;
+    this.submerged.geometry.dispose(); this.submerged.geometry = leafGeometry(this.submergedRecords);
     this.leafRecords = leaves;
     this.leafCount = leaves.length;
     const stems = new THREE.BufferGeometry();

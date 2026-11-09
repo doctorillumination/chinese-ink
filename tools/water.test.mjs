@@ -74,3 +74,18 @@ test('individual optical depths rise and fall smoothly without mutating swimming
   assert.ok(Math.abs(fishWaterDepth(fish) - fishWaterDepth({ ...fish, id: 1 })) > .1);
   assert.deepEqual(fish, before);
 });
+
+test('only moving fish near the surface emit gentle ripples in their own slots', () => {
+  const water = new WaterSurface();
+  const shallow = { id: 0, time: 1, x: 0, y: .9, z: 0, yaw: 0, bodyLength: 3, speed: 1 };
+  assert.equal(water.emitFish([{ ...shallow, y: -2 }], 1), false);
+  assert.equal(water.emitFish([{ ...shallow, speed: 0 }], 1), false);
+  assert.equal(water.emitFish([shallow], 1), true);
+  assert.equal(water.ambientCount, 1); assert.equal(water.count, 0);
+  assert.ok(water.ripples[6].w > 0 && water.ripples[6].w < .22);
+  assert.ok(water.lives[6] < 5 && water.shapes[6].w < .7);
+  assert.equal(water.emitFish([shallow], 1.1), false);
+  water.add(2, 3, 1.2);
+  assert.equal(water.count, 1); assert.ok(water.ripples[0].w === 1 && water.ripples[6].w > 0);
+  water.update(6); assert.equal(water.ripples[6].w, 0); assert.ok(water.ripples[0].w > 0);
+});

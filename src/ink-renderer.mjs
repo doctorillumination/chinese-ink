@@ -1,7 +1,8 @@
 import * as THREE from '../vendor/three.module.js';
 import { inkNoise, inkLoadForFish } from './ink-material.mjs';
 import { InkGarden } from './ink-garden.mjs';
-import { WaterSurface, rippleGLSL, rippleGeometryGLSL, RIPPLE_SPEED } from './water.mjs';
+import { WaterSurface, rippleGLSL, rippleGeometryGLSL, RIPPLE_SPEED, RIPPLE_COUNT } from './water.mjs';
+import { MAX_FISH } from './pond-life.mjs';
 
 const quadVertex = `
   varying vec2 vUv;
@@ -46,9 +47,9 @@ export class InkRenderer {
     this.precision = floatingInk ? 'half-float' : '8-bit';
     this.fields = [0, 1].map(() => new THREE.WebGLRenderTarget(this.fieldSize, this.fieldSize, { type: floatingInk ? THREE.HalfFloatType : THREE.UnsignedByteType, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthBuffer: false }));
     this.read = 0;
-    this.heads = Array.from({ length: 9 }, () => new THREE.Vector4());
-    this.tails = Array.from({ length: 9 }, () => new THREE.Vector4());
-    this.forward = Array.from({ length: 9 }, () => new THREE.Vector4());
+    this.heads = Array.from({ length: MAX_FISH }, () => new THREE.Vector4());
+    this.tails = Array.from({ length: MAX_FISH }, () => new THREE.Vector4());
+    this.forward = Array.from({ length: MAX_FISH }, () => new THREE.Vector4());
     this.water = new WaterSurface();
     this.ripples = this.water.ripples;
     this.flowMaterial = new THREE.ShaderMaterial({
@@ -60,6 +61,7 @@ export class InkRenderer {
         uHeads: { value: this.heads }, uTails: { value: this.tails }, uForward: { value: this.forward },
         uRipples: { value: this.ripples },
         uRippleShapes: { value: this.water.shapes },
+        uRippleLives: { value: this.water.lives },
       },
       vertexShader: quadVertex,
       fragmentShader: `
@@ -67,7 +69,7 @@ export class InkRenderer {
         uniform vec2 uCenter, uOldCenter;
         uniform float uSpan, uTexel, uTime, uDelta, uQuantized;
         uniform int uCount;
-        uniform vec4 uHeads[9], uTails[9], uForward[9];
+        uniform vec4 uHeads[${MAX_FISH}], uTails[${MAX_FISH}], uForward[${MAX_FISH}];
         varying vec2 vUv;
         ${inkNoise}
         ${rippleGeometryGLSL}
@@ -79,7 +81,7 @@ export class InkRenderer {
           vec2 world = uCenter + (vUv - .5) * uSpan;
           vec2 velocity = vec2(sin(world.y * .19 + uTime * .12), cos(world.x * .17 - uTime * .10)) * .045;
           float source = 0.;
-          for (int i = 0; i < 9; i++) {
+          for (int i = 0; i < ${MAX_FISH}; i++) {
             if (i >= uCount) break;
             vec2 dir = uForward[i].xy;
             vec2 side = vec2(-dir.y, dir.x);
@@ -94,7 +96,7 @@ export class InkRenderer {
             float seed = noise2(world * 4.3 + float(i) * 17.8);
             source += wake * (.065 + seed * .055) * (.7 + uForward[i].w * .3) * uHeads[i].w;
           }
-          for (int i = 0; i < 6; i++) {
+          for (int i = 0; i < ${RIPPLE_COUNT}; i++) {
             if (uRipples[i].w < .5) continue;
             vec4 shape = rippleGeometry(world, i);
             float age = uRipples[i].z;
@@ -127,6 +129,7 @@ export class InkRenderer {
         uStrength: { value: 1 }, uBleed: { value: .65 }, uTrails: { value: 0 }, uPaper: { value: .65 },
         uRipples: { value: this.ripples },
         uRippleShapes: { value: this.water.shapes },
+        uRippleLives: { value: this.water.lives },
       },
       vertexShader: quadVertex,
       fragmentShader: `
@@ -262,6 +265,7 @@ export class InkRenderer {
     const renderer = this.renderer;
     const delta = Math.max(0, Math.min(.1, school.time - this.lastTime));
     this.lastTime = school.time;
+    this.water.emitFish(school.fish, school.time, this.params.depth);
     this.water.update(school.time);
     this.accumulator += delta;
     if (this.accumulator >= 1 / 30) {
@@ -287,8 +291,13 @@ export class InkRenderer {
     renderer.setClearColor(0x000000, 1);
     renderer.setRenderTarget(this.fishTarget);
     renderer.clear();
-    renderer.render(scene, camera);
     this.garden.update(camera, school.time, this.ripples);
+    this.garden.updateFood(school.food.visible(school.time), school.time);
+    const autoClear = renderer.autoClear;
+    renderer.autoClear = false;
+    renderer.render(this.garden.submergedScene, camera);
+    renderer.render(scene, camera);
+    renderer.autoClear = autoClear;
     renderer.setRenderTarget(this.gardenTarget);
     renderer.clear();
     renderer.render(this.garden.scene, camera);

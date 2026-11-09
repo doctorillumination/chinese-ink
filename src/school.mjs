@@ -1,6 +1,7 @@
 import { FishSimulation, BODY_LENGTH, DEFAULTS, FIXED_STEP, clamp, angleDifference } from './simulation.mjs';
+import { MAX_FISH, FoodField, socialIntention } from './pond-life.mjs';
 
-export const SCHOOL_DEFAULTS = Object.freeze({ count: 6, cohesion: 0.56, alignment: 0.68, spacing: 1.05, individuality: 0.65 });
+export const SCHOOL_DEFAULTS = Object.freeze({ count: 12, cohesion: 0.56, alignment: 0.68, spacing: 1.05, individuality: 0.65, mixed: true });
 export const SCHOOL_MOTION = Object.freeze({ ...DEFAULTS, speed: 0.47, wander: 0.55 });
 export const SCHOOL_ROAMING = Object.freeze({ halfWidth: 6.8, halfDepth: 8.3 });
 const mix = (a, b, t) => a + (b - a) * t;
@@ -31,7 +32,7 @@ export function closestBodies(a, b, ax = 0, az = 0, bx = 0, bz = 0, ay = 0, by =
     const x = p.x + ax - q.x - bx;
     const z = p.z + az - q.z - bz;
     const y = p.y + ay - q.y - by;
-    const gap = Math.hypot(x, y, z) - p.r - q.r;
+    const gap = Math.sqrt(x * x + y * y + z * z) - p.r - q.r;
     if (gap < clearance) { clearance = gap; dx = x; dz = z; }
   }
   return { clearance, dx, dz };
@@ -83,23 +84,27 @@ export class SchoolSimulation {
     this.target = null;
     this.scatterUntil = 0;
     this.regroupUntil = 0;
+    this.food = new FoodField();
+    this.peerForecasts = new Map();
     this.fish = [];
-    const count = clamp(Math.round(this.params.count), 2, 9);
+    const count = clamp(Math.round(this.params.count), 2, MAX_FISH);
     this.params.count = count;
+    const columns = count > 9 ? 4 : 3;
     for (let id = 0; id < count; id++) {
-      const row = Math.floor(id / 3);
-      const column = id % 3;
+      const row = Math.floor(id / columns);
+      const column = id % columns;
       const scale = 0.88 + value(id, 2) * 0.23;
       const yaw = (value(id, 3) - 0.5) * 0.4;
       const fish = new FishSimulation(this.motion, {
         scale, seed: 1729 + id * 547,
-        x: (row - (Math.ceil(count / 3) - 1) / 2) * 3.9 + (column - 1) * 0.45 + (value(id, 19) - 0.5) * 1.1,
-        z: (column - 1) * 2.85 + (value(id, 4) - 0.5) * 0.7,
+        x: (row - (Math.ceil(count / columns) - 1) / 2) * 3.9 + (column - (columns - 1) / 2) * 0.45 + (value(id, 19) - 0.5) * 1.1,
+        z: (column - (columns - 1) / 2) * 2.85 + (value(id, 4) - 0.5) * 0.7,
         yaw, phase: value(id, 5) * Math.PI * 2,
         depth: (value(id, 6) - 0.5) * 0.7,
         pace: 0.78 + value(id, 7) * 0.38,
       });
       fish.id = id;
+      fish.surfaceInterest = 0; fish.fedUntil = 0; fish.foodGoal = null;
       fish.traits = {
         pace: value(id, 8) * 2 - 1,
         tempo: value(id, 9) * 2 - 1,
@@ -120,6 +125,11 @@ export class SchoolSimulation {
       this.target = { x, z, expires: persistent ? Infinity : this.time + 18 };
       this.scatterUntil = 0;
     }
+  }
+
+  feed(x, z) {
+    this.target = null;
+    return this.food.add(x, z, this.time);
   }
 
   scatter() {
@@ -158,11 +168,12 @@ export class SchoolSimulation {
     let separateX = 0, separateZ = 0;
     let avoidTurn = 0, urgency = 0, brake = 0, depthShift = 0;
     const spacing = p.spacing * BODY_LENGTH;
+    const safetyPad = this.fish.length > 9 ? .40 : 0;
     for (const q of candidates) {
       const actual = closestBodies(own.body, q.body);
       const retreat = norm(actual.dx, actual.dz);
       const personal = spacing * 0.34;
-      const intrusion = 1 - smooth(personal * 0.35, personal * 1.45, actual.clearance);
+      const intrusion = 1 - smooth(personal * 0.35 + safetyPad, personal * 1.45 + safetyPad, actual.clearance);
       separateX += retreat.x * intrusion;
       separateZ += retreat.z * intrusion;
 
@@ -172,8 +183,8 @@ export class SchoolSimulation {
       const approaching = -(q.dx * rvx + q.dz * rvz);
       const t = vv > 0.01 ? clamp(approaching / vv, 0, 3.1) : 0;
       const future = closestBodies(own.body, q.body, own.velocity.x * t, own.velocity.z * t, q.velocity.x * t, q.velocity.z * t, own.vertical * t, q.vertical * t);
-      const risk = (1 - smooth(0.35, 1.15 + spacing * 0.12, future.clearance)) * (1 - t / 4.8);
-      const nearRisk = 1 - smooth(0.25, personal * 0.9, actual.clearance);
+      const risk = (1 - smooth(0.35 + safetyPad, 1.15 + spacing * 0.12 + safetyPad, future.clearance)) * (1 - t / 4.8);
+      const nearRisk = 1 - smooth(0.25 + safetyPad, personal * 0.9 + safetyPad, actual.clearance);
       const danger = Math.max(nearRisk, approaching > 0 ? risk : 0);
       if (danger < 0.01) continue;
       const lateral = q.dx * right.x + q.dz * right.z;
@@ -215,7 +226,9 @@ export class SchoolSimulation {
       weight += w;
     }
     let vx = f.x, vz = f.z;
-    const social = fish.traits.sociability;
+    const intention = !p.mixed || gathering ? 1 : socialIntention(fish.id, this.time);
+    fish.socialIntent = intention;
+    const social = fish.traits.sociability * intention;
     if (weight > 0) {
       const a = norm(alignX, alignZ);
       const c = norm(centerX, centerZ);
@@ -230,11 +243,14 @@ export class SchoolSimulation {
     const desired = Math.atan2(vz, vx);
     const socialTurn = angleDifference(desired, fish.yaw) * 1.6;
     let turn = socialTurn;
-    let autonomy = 1 - Math.max(p.cohesion, p.alignment) * (weight ? 0.72 : 0);
+    let autonomy = clamp(1 - Math.max(p.cohesion, p.alignment) * (weight ? 0.72 : 0) * intention, .1, 1);
     let pace = weight > 0 ? clamp(mix(1, meanSpeed / weight / Math.max(0.25, this.motion.speed * fish.bodyLength), p.alignment * 0.3), 0.83, 1.13) : 1;
     if (gathering && weight > 0) {
-      const attraction = smooth(spacing * .85, spacing * 1.80, Math.hypot(centerX, centerZ) / weight);
-      const returnTurn = angleDifference(Math.atan2(centerZ, centerX), fish.yaw);
+      const goal = this.fish.length > 9 ? this.centroid : null;
+      const gatherX = goal ? goal.x - own.center.x : centerX / weight;
+      const gatherZ = goal ? goal.z - own.center.z : centerZ / weight;
+      const attraction = smooth(spacing * .85, spacing * 1.80, Math.hypot(gatherX, gatherZ));
+      const returnTurn = angleDifference(Math.atan2(gatherZ, gatherX), fish.yaw);
       turn = mix(turn, returnTurn, attraction);
       autonomy *= 1 - attraction * 0.8;
     }
@@ -245,19 +261,21 @@ export class SchoolSimulation {
       pace *= 1.2 + value(fish.id, 17) * 0.15;
       autonomy = 0.15;
     }
+    const feeding = fish.foodGoal && !this.target && this.time >= this.scatterUntil;
+    if (feeding) { turn *= .25; autonomy = Math.max(autonomy, .9); pace *= 1.08; }
     // A soft oval encourages earlier return turns without a wall or position clamp.
     const lookX = own.center.x + own.velocity.x * 2.2;
     const lookZ = own.center.z + own.velocity.z * 2.2;
     if (this.mode !== 'straight') {
       const { halfWidth, halfDepth } = this.roaming;
-      const edge = smooth(.72, 1.15, Math.hypot(lookX / halfWidth, lookZ / halfDepth));
+      const edge = smooth(.72, 1.15, Math.hypot(lookX / halfWidth, lookZ / halfDepth)) * (feeding ? .18 : 1);
       const home = angleDifference(Math.atan2(-own.center.z / (halfDepth * halfDepth), -own.center.x / (halfWidth * halfWidth)), fish.yaw);
       turn = mix(turn, home * 0.9, edge);
     }
     const preferredTurn = turn;
     turn = turn * (1 - urgency * 0.95) + avoidTurn * urgency;
     autonomy *= 1 - urgency * 0.95;
-    const result = { turn, autonomy, pace, brake: clamp(brake, 0, 0.98), depthShift, alertness: gathering || this.time < this.scatterUntil ? 1 : 0 };
+    const result = { turn, autonomy, pace, brake: clamp(brake, 0, 0.98), depthShift, alertness: feeding || gathering || this.time < this.scatterUntil ? 1 : 0 };
     if (urgency > 0.08) this.chooseSafeMotion(fish, result, preferredTurn, candidates);
     return result;
   }
@@ -266,16 +284,21 @@ export class SchoolSimulation {
     const maxTurn = clamp(fish.speed / (fish.bodyLength * 0.78), 0.42, 0.92);
     const turns = [...new Set([clamp(result.turn, -maxTurn, maxTurn), 0, maxTurn, -maxTurn, maxTurn * 0.5, -maxTurn * 0.5])];
     const brakes = [...new Set([result.brake, 0.45, 0.92])];
-    const others = neighbours.map((other) => ({
-      body: forecast(this.fish[other.id], this.fish[other.id].omega, this.fish[other.id].braking),
-    }));
+    const others = neighbours.map((other) => {
+      let body = this.peerForecasts.get(other.id);
+      if (!body) {
+        body = forecast(this.fish[other.id], this.fish[other.id].omega, this.fish[other.id].braking);
+        this.peerForecasts.set(other.id, body);
+      }
+      return { body };
+    });
     let best = null;
     for (const turn of turns) for (const brake of brakes) {
       const prediction = forecast(fish, turn, brake);
       let danger = 0, proximity = 0;
       for (const other of others) for (let k = 0; k < prediction.length; k++) {
         const gap = closestBodies(prediction[k], other.body[k]).clearance;
-        const collision = Math.pow(Math.max(0, 0.4 - gap), 2) * 1200;
+        const collision = Math.pow(Math.max(0, (this.fish.length > 9 ? .80 : .40) - gap), 2) * 1200;
         danger = Math.max(danger, collision);
         proximity += Math.pow(Math.max(0, 1.0 - gap), 2) * 0.45;
       }
@@ -289,6 +312,8 @@ export class SchoolSimulation {
 
   step(dt = FIXED_STEP) {
     this.time += dt;
+    this.peerForecasts.clear();
+    this.food.update(this.time, this.fish);
     if (this.target && this.target.expires < this.time) this.target = null;
     const individuality = this.params.individuality;
     const snapshots = this.fish.map((fish) => {
@@ -313,7 +338,11 @@ export class SchoolSimulation {
         const angle = fish.id * 2.399963 + this.time * 0.025;
         const radius = Math.sqrt((fish.id + 0.8) / this.fish.length) * BODY_LENGTH * this.params.spacing * 1.6;
         fish.setTarget(this.target.x + Math.cos(angle) * radius, this.target.z + Math.sin(angle) * radius, true);
+      } else if (fish.foodGoal && this.mode !== 'straight' && this.time >= this.scatterUntil) {
+        fish.setTarget(fish.foodGoal.x, fish.foodGoal.z, true);
       } else fish.target = null;
+      const surface = fish.foodGoal && !this.target ? 1 - smooth(1.5, 6, Math.hypot(fish.x - fish.foodGoal.x, fish.z - fish.foodGoal.z)) : 0;
+      fish.surfaceInterest += (surface - fish.surfaceInterest) * (1 - Math.exp(-dt * .85));
       fish.step(dt, fish.steering);
     }
   }

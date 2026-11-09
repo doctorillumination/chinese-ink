@@ -18,7 +18,7 @@ function leafPoint(garden, index) {
   return new THREE.Vector3().fromBufferAttribute(garden.leaves.geometry.attributes.aOrigin, index);
 }
 function dispose(garden) {
-  for (const mesh of [garden.leaves, garden.stems]) mesh.geometry.dispose();
+  for (const mesh of [garden.leaves, garden.stems, garden.submerged, garden.food]) mesh.geometry.dispose();
   garden.leafMaterial.dispose(); garden.stemMaterial.dispose();
 }
 
@@ -44,7 +44,10 @@ test('pads and debris drift smoothly while rooted plants remain anchored and pau
   const root = centre(garden, garden.strokes[0].start);
   const free = garden.leafRecords.flatMap((leaf, index) => leaf.free ? [index] : []);
   const initial = free.map((index) => leafPoint(garden, index));
-  assert.equal(free.length, 12);
+  assert.equal(free.length, 33);
+  assert.equal(garden.leafCount, 47);
+  assert.equal(garden.submergedRecords.length, 24);
+  assert.ok(garden.submergedRecords.every((leaf) => leaf.depth > .6 && leaf.point.y < -.9));
   garden.update(camera, 20);
   const moved = free.map((index, i) => leafPoint(garden, index).distanceTo(initial[i]));
   assert.ok(Math.max(...moved) > .15, 'floating objects should visibly drift');

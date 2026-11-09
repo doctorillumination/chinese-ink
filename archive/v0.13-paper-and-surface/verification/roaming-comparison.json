@@ -1,0 +1,30 @@
+{
+  "edition": "0.8",
+  "seconds": 180,
+  "sample_interval_seconds": 0.25,
+  "school_size": 6,
+  "camera": {
+    "world_width": 11,
+    "world_height": 17,
+    "polar": 0.15,
+    "position_radius": 45,
+    "fixed": true
+  },
+  "earlier": {
+    "emptyFraction": 0.4666666666666667,
+    "longestEmptySeconds": 21.75,
+    "partialFraction": 0.975,
+    "meanVisible": 0.9972222222222222,
+    "minVisible": 0,
+    "maxRadius": 18.630316567962122
+  },
+  "tighter": {
+    "emptyFraction": 0,
+    "longestEmptySeconds": 0,
+    "partialFraction": 0.35,
+    "meanVisible": 5.531944444444444,
+    "minVisible": 3,
+    "maxRadius": 8.59672830828256
+  },
+  "visibility_definition": "A fish is visible when at least one spine point projects inside the fixed view. Partial fraction counts samples where one or more fish are entirely outside the frame."
+}

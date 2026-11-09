@@ -162,6 +162,10 @@ export class ProceduralFish {
     this.inkEyeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
     this.inkDetailMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: this.inkVariant.details, toneMapped: false });
     this.style = 'study';
+    this.localFrame = { center: new THREE.Vector3(), forward: new THREE.Vector3(), right: new THREE.Vector3(), up: new THREE.Vector3() };
+    this.pointValue = new THREE.Vector3();
+    this.bodyProfiles = Array.from({ length: this.rings }, (_, i) => profile(i / (this.rings - 1)));
+    this.radialDirections = Array.from({ length: this.radials }, (_, j) => [Math.cos(j / this.radials * Math.PI * 2), Math.sin(j / this.radials * Math.PI * 2)]);
     this.update();
   }
 
@@ -173,17 +177,18 @@ export class ProceduralFish {
     const f = u - i;
     const a = spine[i];
     const b = spine[i + 1];
-    const forward = new THREE.Vector3(a.x - b.x, a.y - b.y, a.z - b.z).normalize();
-    const center = new THREE.Vector3(mix(a.x, b.x, f), mix(a.y, b.y, f), mix(a.z, b.z, f));
+    const { center, forward, right, up } = this.localFrame;
+    forward.set(a.x - b.x, a.y - b.y, a.z - b.z).normalize();
+    center.set(mix(a.x, b.x, f), mix(a.y, b.y, f), mix(a.z, b.z, f));
     if (s > 1) center.addScaledVector(forward, -(s - 1) * this.sim.bodyLength);
-    const right = new THREE.Vector3(-forward.z, 0, forward.x).normalize();
-    const up = new THREE.Vector3().crossVectors(right, forward).normalize();
-    return { center, forward, right, up };
+    right.set(-forward.z, 0, forward.x).normalize();
+    up.crossVectors(right, forward).normalize();
+    return this.localFrame;
   }
 
   point(s, right, height) {
     const f = this.frame(s);
-    return f.center.addScaledVector(f.right, right * this.sim.scale).addScaledVector(f.up, height * this.sim.scale);
+    return this.pointValue.copy(f.center).addScaledVector(f.right, right * this.sim.scale).addScaledVector(f.up, height * this.sim.scale);
   }
 
   makeFin(spec) {
@@ -262,14 +267,16 @@ export class ProceduralFish {
     const positions = this.geometry.attributes.position;
     for (let i = 0; i < this.rings; i++) {
       const s = i / (this.rings - 1);
-      const [width, back, belly] = profile(s);
+      const [width, back, belly] = this.bodyProfiles[i];
       const frame = this.frame(s);
       for (let j = 0; j < this.radials; j++) {
-        const theta = j / this.radials * Math.PI * 2;
-        const sine = Math.sin(theta);
+        const [cosine, sine] = this.radialDirections[j];
         const y = sine * (sine >= 0 ? back : belly);
-        const point = frame.center.clone().addScaledVector(frame.right, Math.cos(theta) * width * sim.scale).addScaledVector(frame.up, y * sim.scale);
-        positions.setXYZ(i * this.radials + j, point.x, point.y, point.z);
+        const xScale = cosine * width * sim.scale, yScale = y * sim.scale;
+        positions.setXYZ(i * this.radials + j,
+          frame.center.x + frame.right.x * xScale + frame.up.x * yScale,
+          frame.center.y + frame.right.y * xScale + frame.up.y * yScale,
+          frame.center.z + frame.right.z * xScale + frame.up.z * yScale);
       }
     }
     const cap = this.rings * this.radials;

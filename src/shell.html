@@ -12,7 +12,7 @@
 <body data-rendering="ink">
   <main class="study">
     <section class="viewport" aria-label="Interactive 3D fish study">
-      <div id="scene" tabindex="0" aria-label="Ink pond. Click for spreading ripples or drag to stir the water. The camera stays still."></div>
+      <div id="scene" tabindex="0" aria-label="Ink pond. Click to place food and ripples, or drag to stir the water. The camera stays still."></div>
       <header class="masthead">
         <p class="eyebrow"><span class="small-line"></span> Swimming study <span class="edition seal">03</span></p>
         <h1>Ink pond</h1>
@@ -27,7 +27,7 @@
         <button data-view="top" class="active" aria-pressed="true">Top</button>
         <button data-view="side" aria-pressed="false">Side</button>
       </div>
-      <div class="scene-caption"><span class="spine-swatch"></span><span id="spine-caption">6 fish / spines hidden</span><span class="caption-separator">/</span><span id="focus-caption">Whole school</span></div>
+      <div class="scene-caption"><span class="spine-swatch"></span><span id="spine-caption">12 fish / spines hidden</span><span class="caption-separator">/</span><span id="focus-caption">Whole school</span></div>
       <div class="telemetry" aria-label="Live swimming measurements">
         <div class="state"><span id="state-dot"></span><span id="swim-state">Schooling</span></div>
         <div class="readouts">
@@ -38,7 +38,7 @@
         <canvas id="motion-graph" width="320" height="58" aria-label="Recent speed and muscle effort graph"></canvas>
         <div class="graph-label"><span><i class="speed-key"></i>speed</span><span><i class="effort-key"></i>effort</span><span class="graph-time">last 12 seconds</span></div>
       </div>
-      <p id="gesture-hint" class="gesture-hint">Click for ripples <span>·</span> Drag to stir the water</p>
+      <p id="gesture-hint" class="gesture-hint">Click to feed nearby fish <span>·</span> Drag to stir the water</p>
       <div class="playback">
         <button id="pause" class="play-button" aria-label="Pause swimming"><span id="play-icon" aria-hidden="true">Ⅱ</span><span id="play-label">Pause</span></button>
         <button id="slow" class="speed-button" aria-pressed="false">0.35×</button>
@@ -50,9 +50,9 @@
     </section>
 
     <aside id="controls" class="controls" aria-label="Swimming controls">
-      <div class="panel-header"><p class="eyebrow">A browser artwork</p><span class="version">v0.13</span></div>
+      <div class="panel-header"><p class="eyebrow">A browser artwork</p><span class="version">v0.14</span></div>
       <h2>Ink &amp; movement</h2>
-      <p class="panel-intro">Soft light over fibrous paper. Touch the surface to send loose ink ripples through the pond.</p>
+      <p class="panel-intro">A living pond, with loose groups, lone swimmers, and faint movement below. Click to feed nearby fish.</p>
       <div class="look-switch" role="group" aria-label="Rendering style"><button data-rendering="ink" class="active" aria-pressed="true">Ink</button><button data-rendering="study" aria-pressed="false">Form study</button></div>
       <section id="ink-controls" class="ink-appearance" aria-label="Ink appearance">
         <div class="slider-group"><div class="slider-label"><label for="ink-strength">Ink density</label><output for="ink-strength" id="ink-strength-value"></output></div><input id="ink-strength" type="range" min="0.5" max="1.6" step="0.01" value="1"></div>
@@ -69,9 +69,10 @@
         <button data-preset="school" class="active" aria-pressed="true">School</button>
         <button data-preset="independent" aria-pressed="false">Independent</button>
       </div>
+      <label class="toggle-row" for="mixed"><span>Natural grouping</span><input id="mixed" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
       <div class="control-row mode-row"><label for="mode">Direction</label><select id="mode"><option value="wander">Explore</option><option value="pointer">Follow pointer</option><option value="straight">Straight swim</option></select></div>
       <div class="sliders">
-        <div class="slider-group"><div class="slider-label"><label for="count">Fish</label><output for="count" id="count-value"></output></div><input id="count" type="range" min="2" max="9" step="1" value="6"><div class="range-ends"><span>Two</span><span>Nine</span></div></div>
+        <div class="slider-group"><div class="slider-label"><label for="count">Fish</label><output for="count" id="count-value"></output></div><input id="count" type="range" min="2" max="16" step="1" value="12"><div class="range-ends"><span>Two</span><span>Sixteen</span></div></div>
         <div class="slider-group"><div class="slider-label"><label for="speed">Cruise speed</label><output for="speed" id="speed-value"></output></div><input id="speed" type="range" min="0" max="0.85" step="0.01" value="0.47"><div class="range-ends"><span>Still</span><span>Quick</span></div></div>
         <div class="slider-group"><div class="slider-label"><label for="cohesion">Togetherness</label><output for="cohesion" id="cohesion-value"></output></div><input id="cohesion" type="range" min="0" max="1" step="0.01" value="0.56"><div class="range-ends"><span>Independent</span><span>Draw together</span></div></div>
         <div class="slider-group"><div class="slider-label"><label for="alignment">Alignment</label><output for="alignment" id="alignment-value"></output></div><input id="alignment" type="range" min="0" max="1" step="0.01" value="0.68"><div class="range-ends"><span>Own heading</span><span>Shared heading</span></div></div>

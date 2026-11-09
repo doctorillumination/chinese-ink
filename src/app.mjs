@@ -3,6 +3,7 @@ import { FIXED_STEP, clamp } from './simulation.mjs';
 import { ProceduralFish } from './fish.mjs';
 import { SchoolSimulation, SCHOOL_DEFAULTS, SCHOOL_MOTION, bodySamples, closestBodies } from './school.mjs';
 import { InkRenderer } from './ink-renderer.mjs';
+import { MAX_FISH } from './pond-life.mjs';
 
 const $ = (id) => document.getElementById(id);
 const school = new SchoolSimulation();
@@ -65,7 +66,7 @@ function rebuildModels() {
 }
 rebuildModels();
 const trailGeometry = new THREE.BufferGeometry();
-trailGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9 * 360 * 6), 3).setUsage(THREE.DynamicDrawUsage));
+trailGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(MAX_FISH * 360 * 6), 3).setUsage(THREE.DynamicDrawUsage));
 const trail = new THREE.LineSegments(trailGeometry, new THREE.LineBasicMaterial({ color: '#82978a', transparent: true, opacity: 0.24 }));
 trail.frustumCulled = false;
 scene.add(trail);
@@ -94,6 +95,8 @@ function resize() {
   aspect = rect.width / rect.height;
   viewportWidth = rect.width;
   viewportHeight = rect.height;
+  // Keep the larger pond responsive on high-density, wide displays.
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5, Math.sqrt(3800000 / (rect.width * rect.height))));
   renderer.setSize(rect.width, rect.height);
   ink.resize(rect.width, rect.height, renderer.getPixelRatio());
   updateProjection();
@@ -179,6 +182,11 @@ function projectPointer(event) {
 function disturbAt(event, strength = 1) {
   if (projectPointer(event)) ink.ripple(pointerWorld.x, pointerWorld.z, school.time, strength);
 }
+function feedAt(event) {
+  if (!projectPointer(event)) return;
+  school.feed(pointerWorld.x, pointerWorld.z);
+  if (school.mode !== 'wander') { school.mode = 'wander'; $('mode').value = school.mode; }
+}
 function steerAt(event, persistent = false) {
   if (projectPointer(event)) {
     // A side view can intersect a distant plane. Keep input local to the fish.
@@ -247,7 +255,10 @@ renderer.domElement.addEventListener('pointermove', (event) => {
   }
 });
 function releasePointer(event, cancelled = false) {
-  if (!cancelled && gesture && !gesture.moved && !gesture.multiple && (state.rendering !== 'ink' || school.mode === 'pointer')) steerAt(event, school.mode === 'pointer');
+  if (!cancelled && gesture && !gesture.moved && !gesture.multiple) {
+    if (state.rendering === 'ink') feedAt(event);
+    else steerAt(event, school.mode === 'pointer');
+  }
   pointers.delete(event.pointerId);
   if (!pointers.size) gesture = null;
   pinchDistance = 0;
@@ -282,6 +293,7 @@ const formatters = {
   wander: (v) => `${Math.round(v * 100)}%`,
 };
 function updateSliders() {
+  $('mixed').checked = school.params.mixed;
   for (const name of Object.keys(formatters)) {
     const input = $(name);
     const value = name in school.params ? school.params[name] : school.motion[name];
@@ -312,6 +324,7 @@ const presets = {
   school: { ...SCHOOL_DEFAULTS },
   independent: { cohesion: 0, alignment: 0, spacing: 1.15, individuality: 1 },
 };
+$('mixed').addEventListener('change', () => { school.params.mixed = $('mixed').checked; clearPreset(); });
 for (const button of document.querySelectorAll('[data-preset]')) {
   button.addEventListener('click', () => {
     const count = school.params.count;
@@ -376,8 +389,8 @@ function applyRendering() {
   renderer.shadowMap.enabled = !isInk;
   for (const model of models) model.setStyle(state.rendering);
   $('ink-controls').hidden = !isInk;
-  $('gesture-hint').innerHTML = isInk ? 'Click for ripples <span>·</span> Drag to stir the water' : 'Drag to orbit <span>·</span> Scroll to zoom <span>·</span> Click to steer';
-  $('scene').setAttribute('aria-label', isInk ? 'Ink pond. Click for spreading ripples or drag to stir the water. The camera stays still.' : '3D fish. Drag to orbit, scroll to zoom, or click to steer.');
+  $('gesture-hint').innerHTML = isInk ? 'Click to feed nearby fish <span>·</span> Drag to stir the water' : 'Drag to orbit <span>·</span> Scroll to zoom <span>·</span> Click to steer';
+  $('scene').setAttribute('aria-label', isInk ? 'Ink pond. Click to place food and ripples, or drag to stir the water. The camera stays still.' : '3D fish. Drag to orbit, scroll to zoom, or click to steer.');
   for (const button of document.querySelectorAll('button[data-rendering]')) {
     const active = button.dataset.rendering === state.rendering;
     button.classList.toggle('active', active);
@@ -456,6 +469,7 @@ function updateTelemetry() {
     effort: effort.toFixed(5), x: center.x.toFixed(5), z: center.z.toFixed(5),
     alignment: metrics.alignment.toFixed(5), spacing: metrics.spacing.toFixed(5),
     clearance: clearance.toFixed(5), focus: state.focus, fps: measuredFps.toFixed(1),
+    simulationMs: frameCost.simulation.toFixed(2), modelMs: frameCost.models.toFixed(2), renderMs: frameCost.render.toFixed(2),
     activities: school.fish.map((fish) => fish.rhythm.state).join(','),
     fluttering: String(school.fish.filter((fish) => fish.activity.flutter > 0.25 && fish.braking < 0.4).length),
     rendering: state.rendering,
@@ -467,6 +481,13 @@ function updateTelemetry() {
     fishDepths: models.map((model) => model.inkDepth.toFixed(3)).join(','),
     activeRipples: String(ink.ripples.filter((ripple) => ripple.w > 0).length),
     rippleCount: String(ink.water.count),
+    automaticRipples: String(ink.water.ambientCount),
+    foodPieces: String(school.food.remaining),
+    foodEaten: String(school.food.eaten),
+    feedingFish: String(school.fish.filter((fish) => fish.foodGoal).length),
+    schoolingFish: String(school.fish.filter((fish) => (fish.socialIntent ?? 1) > .6 && Math.max(school.params.cohesion, school.params.alignment) > 0).length),
+    mixedGroups: String(school.params.mixed),
+    submergedObjects: String(ink.garden.submergedRecords.length),
     pointerAction: state.rendering === 'ink' ? 'water' : 'orbit',
     surfaceLeaves: String(ink.garden.leafCount),
     cameraTracking: String(state.follow),
@@ -478,7 +499,7 @@ function updateTelemetry() {
       return Math.abs(p.x) <= 1 && Math.abs(p.y) <= 1 && Math.abs(p.z) <= 1;
     })).length),
   });
-  const groupState = school.time < school.scatterUntil ? 'Scattering' : school.time < school.regroupUntil ? 'Regrouping' : school.params.alignment === 0 && school.params.cohesion === 0 ? 'Independent swimmers' : metrics.alignment > 0.72 ? 'Schooling' : 'Re-forming';
+  const groupState = school.food.remaining && school.fish.some((fish) => fish.foodGoal) ? 'Feeding' : school.time < school.scatterUntil ? 'Scattering' : school.time < school.regroupUntil ? 'Regrouping' : school.params.alignment === 0 && school.params.cohesion === 0 ? 'Independent swimmers' : school.params.mixed ? 'Loose groups & explorers' : metrics.alignment > 0.72 ? 'Schooling' : 'Re-forming';
   $('swim-state').textContent = state.paused ? 'Paused' : selected ? `Fish ${String(selected.id + 1).padStart(2, '0')} / ${selected.state.toLowerCase()}` : groupState;
   $('state-dot').style.background = state.paused ? '#8b9883' : '#57765e';
   $('speed-readout').innerHTML = `${speed.toFixed(2)} <small>BL/s</small>`;
@@ -553,6 +574,7 @@ let telemetryClock = 0;
 let frames = 0;
 let elapsedReal = 0;
 let measuredFps = 0;
+const frameCost = { simulation: 0, models: 0, render: 0 };
 function animate(now) {
   requestAnimationFrame(animate);
   const realDelta = previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
@@ -561,6 +583,7 @@ function animate(now) {
   frames++;
   elapsedReal += realDelta;
   if (elapsedReal > 1) { measuredFps = frames / elapsedReal; frames = 0; elapsedReal = 0; }
+  const simulationStart = performance.now();
   if (!state.paused) {
     accumulator += realDelta * (state.slow ? 0.35 : 1);
     while (accumulator + 1e-10 >= FIXED_STEP) {
@@ -568,7 +591,10 @@ function animate(now) {
       accumulator -= FIXED_STEP;
     }
   }
+  const modelsStart = performance.now();
+  frameCost.simulation += (modelsStart - simulationStart - frameCost.simulation) * .08;
   for (const fish of models) { fish.depthAmount = ink.params.depth; fish.update(); }
+  frameCost.models += (performance.now() - modelsStart - frameCost.models) * .08;
   if (state.trail) updateTrail();
   updateCamera(realDelta || 1 / 60);
   targetMarker.visible = Boolean(school.target) && state.rendering !== 'ink';
@@ -578,12 +604,14 @@ function animate(now) {
   }
   telemetryClock += realDelta;
   if (telemetryClock > 0.08) { updateTelemetry(); telemetryClock = 0; }
+  const renderStart = performance.now();
   if (state.rendering === 'ink') ink.render(scene, camera, school);
   else {
     renderer.setRenderTarget(null);
     renderer.setClearColor('#e6ebe6', 1);
     renderer.render(scene, camera);
   }
+  frameCost.render += (performance.now() - renderStart - frameCost.render) * .08;
 }
 document.addEventListener('visibilitychange', () => { previous = null; accumulator = 0; });
 renderer.domElement.addEventListener('webglcontextlost', (event) => {

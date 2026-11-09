@@ -39,7 +39,7 @@ test('fish take spontaneous flutters and quiet periods on independent schedules'
       if (fish.rhythm.state === 'quiet' && fish.effort < 0.2) quiet = true;
     }
   }
-  assert.equal(starts.size, 6);
+  assert.equal(starts.size, school.fish.length);
   assert.ok(Math.max(...starts.values()) - Math.min(...starts.values()) > 2);
   assert.ok(isolatedFlutter);
   assert.ok(quiet);

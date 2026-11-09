@@ -28,7 +28,7 @@ function radius(school) {
 }
 
 test('the six-fish school is deterministic while its individuals retain different gaits', () => {
-  const a = new SchoolSimulation(), b = new SchoolSimulation();
+  const a = new SchoolSimulation({ count: 6, mixed: false }), b = new SchoolSimulation({ count: 6, mixed: false });
   advance(a, 25); advance(b, 25);
   assert.deepEqual(a.fish.map((f) => [f.x, f.y, f.z, f.yaw, f.phase]), b.fish.map((f) => [f.x, f.y, f.z, f.yaw, f.phase]));
   assert.equal(new Set(a.fish.map((f) => f.scale)).size, 6);
@@ -52,7 +52,7 @@ test('three minutes of default schooling maintain torso clearance and bounded 3D
 });
 
 test('all supported school sizes preserve torso clearance in the initial minute', () => {
-  for (let count = 2; count <= 9; count++) {
+  for (let count = 2; count <= 16; count++) {
     const school = new SchoolSimulation({ count });
     const gap = advance(school, 60);
     assert.equal(school.fish.length, count);
