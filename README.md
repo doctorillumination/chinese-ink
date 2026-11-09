@@ -1,6 +1,6 @@
-# Ink pond
+# Paper Water
 
-A self-contained browser artwork, version 0.17, November 8, 2026. Twelve fish swim through an ink-painted pond with textured paper, drifting plants, submerged fragments, optical depth, and gentle surface ripples. The artwork fills the browser viewport from a fixed, directly overhead camera. There are no visible labels, menus, buttons, measurements, or settings.
+Paper Water is a self-contained browser artwork, version 0.17, November 8, 2026. Twelve fish swim through an ink-painted pond with textured paper, drifting plants, submerged fragments, optical depth, and gentle surface ripples. The artwork fills the browser viewport from a fixed, directly overhead camera. There are no visible labels, menus, buttons, measurements, or settings.
 
 Click or tap to drop three small ink blots of food and send ripples across the water. Nearby fish notice promptly, approach the food, rise toward the surface, slow at the blots, and place their snouts against them to eat. Drag to stir the water without dropping food. Keyboard users can focus the pond and press Enter to feed its centre. Interaction never rotates or zooms the view.
 
