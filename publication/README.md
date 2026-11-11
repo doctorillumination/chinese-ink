@@ -1,5 +1,7 @@
 # Paper Water publication
 
+The November 10, 2026 thumbnail update is recorded in [thumbnail-60fps](thumbnail-60fps/). The new loop has 450 distinct frames at 60 fps, captured from the artwork canvas with `capture_frames.py`. The records below describe the original November 8 release.
+
 Prepared November 8, 2026, America/Vancouver. Machine timestamps use UTC.
 
 Paper Water is the title of the self-contained version 0.17 ink pond. The rename changes only the document title, description, accessibility name, and README. The embedded artwork script and styles are identical to the preceding edition. Swimming, schooling, feeding, bite feedback, optical depth, ripples, and the fixed overhead camera remain intact.

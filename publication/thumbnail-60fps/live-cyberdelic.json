@@ -1,0 +1,16 @@
+{
+  "gallery": "https://cyberdelic.space/fieldworks/",
+  "preview": "https://cyberdelic.space/fieldworks/previews/paper-water.mp4?v=0f4d7a3c0813",
+  "sha256": "0f4d7a3c08135d5dd7b44da3189c4de788b9fc6608df47e0afa35158176bdfb3",
+  "bytes": 404989,
+  "release_id": "d217ff04e8ed575fbe94863211e51c4ecbef50ff1c92664becdf2278ff86312b",
+  "encoded_fps": 60,
+  "distinct_frames": 450,
+  "runtime_script_and_style_match": true,
+  "verified_at": "2026-11-11T04:47:24.540823+00:00",
+  "offline_artwork_bundle_matches": true,
+  "pull_request": "https://github.com/doctorillumination/cyberdelic-space/pull/100",
+  "production_commit": "c99263773ee9cfeaa7d70f57096d824a2efc21d4",
+  "production_build_passed": true,
+  "chrome_gallery_playback_verified": true
+}

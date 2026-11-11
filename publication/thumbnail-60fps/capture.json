@@ -1,0 +1,25 @@
+{
+  "canvas_width": 960,
+  "canvas_height": 720,
+  "kind": "actual browser canvas rendered at fixed time intervals",
+  "source_runtime_sha256": "98a2f70018ca3375428a20b7b27f8a9a9200c3587c92cec7ca74d78f14bd4806",
+  "capture_driver_sha256": "0d3d030567a238d587767ed50c50fc525494ff48b45556ad007426664a153608",
+  "capture_fps": 60,
+  "captured_frames": 510,
+  "warmup_frames": 120,
+  "distinct_png_frames": 510,
+  "frame_sequence_sha256": "b70464f862837a782de2a070be028b51c47908ae4cf2b7c367886e3f4ea2f08d",
+  "last_sampled_simulation_time": 10.15,
+  "loop_method": "one-second end-to-start crossfade",
+  "camera_recorded": false,
+  "encoded_video": {
+    "codec": "h264",
+    "width": 960,
+    "height": 720,
+    "fps": 60,
+    "streams": 1,
+    "duration": 7.5,
+    "frames": 450,
+    "distinct_decoded_frames": 450
+  }
+}
